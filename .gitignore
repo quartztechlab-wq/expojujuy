@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.vite/
+.chrome-smoke-profile*/
+npm-debug.log*

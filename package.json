@@ -1,0 +1,15 @@
+{
+  "name": "expojuy-2026-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prototipo frontend local de ExpoJuy 2026",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:smoke": "node scripts/smoke-test.mjs"
+  },
+  "devDependencies": {
+    "vite": "^7.1.3"
+  }
+}
