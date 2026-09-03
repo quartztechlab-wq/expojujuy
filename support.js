@@ -90,7 +90,7 @@ const services = {
   `;
   document.head.appendChild(bootStyle);
 
-  const expression = /^\s*\{\{([\s\S]+)\}\}\s*$/;
+  const expression = /^\s*\{\{((?:(?!\}\})[\s\S])+)\}\}\s*$/;
   const interpolation = /\{\{([\s\S]+?)\}\}/g;
 
   function evaluate(code, scope) {
@@ -182,10 +182,8 @@ const services = {
           return;
         }
         const fragment = document.createDocumentFragment();
-        Array.from(node.childNodes).forEach((child) => {
-          processNode(child, scope, refs);
-          if (child.parentNode === node) fragment.appendChild(child);
-        });
+        Array.from(node.childNodes).forEach((child) => processNode(child, scope, refs));
+        while (node.firstChild) fragment.appendChild(node.firstChild);
         node.replaceWith(fragment);
         return;
       }
@@ -197,11 +195,11 @@ const services = {
         const fragment = document.createDocumentFragment();
         Array.from(list).forEach((item, index) => {
           const childScope = Object.assign(Object.create(scope), { [alias]: item, $index: index });
-          templates.forEach((templateNode) => {
-            const child = templateNode.cloneNode(true);
-            processNode(child, childScope, refs);
-            if (child.parentNode == null) fragment.appendChild(child);
-          });
+          // Los clones se procesan dentro de un fragmento para que sc-if/sc-for hijos puedan reemplazarse a sí mismos.
+          const row = document.createDocumentFragment();
+          templates.forEach((templateNode) => row.appendChild(templateNode.cloneNode(true)));
+          Array.from(row.childNodes).forEach((child) => processNode(child, childScope, refs));
+          fragment.appendChild(row);
         });
         node.replaceWith(fragment);
         return;

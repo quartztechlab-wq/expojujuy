@@ -110,6 +110,8 @@ try {
   const keyboardReady = await evaluate(`(() => { const card = document.querySelector('[role="button"][aria-label="Ver ficha del expositor"]'); const tabbable = card?.tabIndex === 0; card?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); return tabbable; })()`);
   await pause(100);
   if (!keyboardReady || !await evaluate(`document.querySelector('[role="dialog"][aria-modal="true"]') === document.activeElement`)) throw new Error('La interacción por teclado o el foco del modal falló.');
+  const fichaReady = await evaluate(`(() => { const t = document.querySelector('[role="dialog"][aria-modal="true"]').innerText; return t.includes('· Stand ') && !t.includes('undefined'); })()`);
+  if (!fichaReady) throw new Error('La ficha del expositor no interpola "Rubro · Stand".');
   await evaluate(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))`);
 
   if (await evaluate(`document.querySelector('button[aria-label="Cambiar tema claro/oscuro"]') !== null || document.body.hasAttribute('data-light')`)) throw new Error('El selector de tema claro todavía está presente.');
