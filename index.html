@@ -539,13 +539,14 @@ body[data-noanim] *{animation:none!important;transition:none!important}
           <canvas ref="{{qrRef}}" width="116" height="116" aria-label="Código QR de acceso (demostración)" style="width:116px;height:116px;border-radius:10px;background:#fff;flex-shrink:0"></canvas>
           <div style="display:flex;flex-direction:column;gap:8px">
             <div style="font:600 12px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Titular</div>
-            <div style="font:700 18px 'Ambit'">Tu nombre acá</div>
+            <div style="font:700 18px 'Ambit'">{{ticketHolder}}</div>
             <div style="font:600 13px 'Ambit';color:var(--tq)">{{tierSelName}}</div>
-            <div style="font:400 12.5px 'Ambit';color:var(--t3)">24 al 27 SEP 2026 · Nº 000482</div>
+            <div style="font:400 12.5px 'Ambit';color:var(--t3)">24 al 27 SEP 2026 · Nº {{ticketNro}}</div>
           </div>
         </div>
         <div style="border-top:1px dashed var(--l18);padding-top:16px;font:300 12.5px/1.55 'Ambit';color:var(--t3)">Presentá este código en los accesos del predio. Funciona sin conexión, pensado para la PWA del evento.</div>
-        <button style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:14px;border-radius:10px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Registrarme y obtener mi QR</button>
+        <button onClick="{{buyTicket}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:14px;border-radius:10px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">{{buyLabel}}</button>
+        <sc-if value="{{hasTicket}}" hint-placeholder-val="{{false}}"><div style="font:400 12.5px 'Ambit';color:var(--ve);text-align:center">Ya tenés una entrada activa. Al confirmar, se reemplaza por el pase seleccionado.</div></sc-if>
       </div>
     </div>
   </div>
@@ -626,6 +627,52 @@ body[data-noanim] *{animation:none!important;transition:none!important}
               </sc-for>
             </section>
           </sc-for>
+        </div>
+      </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{pEntrada}}" hint-placeholder-val="{{false}}">
+      <div id="portal-entrada" role="tabpanel" aria-label="Mi Entrada">
+      <sc-if value="{{noTicket}}" hint-placeholder-val="{{false}}">
+        <div style="background:var(--panel);border:1px dashed var(--l18);border-radius:20px;padding:56px 32px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px">
+          <div aria-hidden="true" style="width:56px;height:56px;border-radius:16px;border:1px solid rgba(199,164,248,.4);background:rgba(199,164,248,.08);display:flex;align-items:center;justify-content:center;color:var(--li);font:700 22px 'Ambit'">QR</div>
+          <div style="font:700 22px 'Ambit'">Todavía no tenés tu entrada</div>
+          <p style="font:300 14.5px/1.6 'Ambit';color:var(--t2);margin:0;max-width:420px;text-wrap:pretty">La entrada general es gratuita con registro previo. Elegí tu pase y tu QR de acceso queda guardado acá, listo para mostrar en el predio.</p>
+          <button onClick="{{goEntradas}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 14px 'Ambit';padding:12px 22px;border-radius:10px;cursor:pointer;margin-top:6px" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Obtener mi entrada</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{hasTicket}}" hint-placeholder-val="{{false}}">
+        <div style="display:grid;grid-template-columns:420px 1fr;gap:28px;align-items:start" data-m="stack">
+          <div style="border-radius:20px;overflow:hidden;border:1px solid rgba(199,164,248,.4);background:linear-gradient(160deg,var(--tick1),var(--tick2))">
+            <div style="height:6px;background:linear-gradient(90deg,var(--tq),var(--ve),var(--oc),var(--ma),var(--vi))"></div>
+            <div style="padding:28px;display:flex;flex-direction:column;gap:20px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="font:700 17px 'Ambit';letter-spacing:.04em">EXPOJUY <span style="color:var(--li)">2026</span></div>
+                <div style="font:600 10.5px 'Ambit';letter-spacing:.18em;color:var(--ve);text-transform:uppercase;display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:7px;height:7px;border-radius:50%;background:var(--ve)"></span>Activa</div>
+              </div>
+              <div style="display:flex;justify-content:center;padding:8px 0"><canvas ref="{{ticketQrRef}}" width="360" height="360" role="img" aria-label="Código QR de acceso (demostración)" style="width:180px;height:180px;border-radius:14px;background:#fff"></canvas></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Titular</div><div style="font:700 15.5px 'Ambit'">{{userName}}</div></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Tipo</div><div style="font:700 15.5px 'Ambit';color:var(--tq)">{{ticketTier}}</div></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Fechas</div><div style="font:600 14px 'Ambit'">{{fechasTexto}}</div></div>
+                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Nº</div><div style="font:600 14px 'Ambit'">{{ticketNro}}</div></div>
+              </div>
+              <div style="border-top:1px dashed var(--l18);padding-top:16px;font:300 12.5px/1.55 'Ambit';color:var(--t3)">Presentá este código en los accesos del predio. Funciona sin conexión.</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="background:var(--panel);border:1px solid var(--l08);border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:8px">
+              <div style="font:700 16px 'Ambit'">{{predioNombre}}</div>
+              <div style="font:300 14px/1.6 'Ambit';color:var(--t2)">{{predioDesc}}</div>
+              <button onClick="{{goMapa}}" style="align-self:flex-start;background:none;border:none;padding:0;cursor:pointer;font:600 13.5px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">Ver mapa del predio →</button>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--l08);border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:8px">
+              <div style="font:700 16px 'Ambit'">{{ticketTier}}</div>
+              <div style="font:300 14px/1.6 'Ambit';color:var(--t2)">{{ticketDesc}}</div>
+              <button onClick="{{goEntradas}}" style="align-self:flex-start;background:none;border:none;padding:0;cursor:pointer;font:600 13.5px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">Cambiar tipo de pase →</button>
+            </div>
+          </div>
         </div>
       </sc-if>
       </div>
@@ -863,6 +910,16 @@ class Component extends DCLogic {
     items.forEach(it => { const o = items.find(x => x !== it && x.day === it.day && Math.abs(x.start - it.start) < DUR); if (o) it.overlapWith = o.title; });
     return items.sort((a, b) => a.day - b.day || a.start - b.start);
   }
+  // Entradas → con sesión crea/reemplaza la entrada y va a Mi Entrada; sin sesión, primero el registro.
+  buyTicket = () => {
+    const doIt = () => { this.setState(s => ({ ticket: { tier: s.tier, nro: s.ticket ? s.ticket.nro : String(400000 + Math.floor(Math.random() * 90000)).slice(-6).padStart(6, '0') } })); this.goPortal('entrada'); };
+    if (!this.state.user) this.openAuth('registro', doIt); else doIt();
+  };
+  // QR real (librería `qrcode`, carga diferida) con datos ficticios del titular.
+  ticketQrRef = (el) => {
+    const st = this.state; if (!el || el._done || !st.user || !st.ticket) return; el._done = 1;
+    services.qr.dibujarQr(el, services.qr.payloadEntrada({ nro: st.ticket.nro, tier: this.TIERS[st.ticket.tier].name, email: st.user.email })).catch(e => console.warn('No se pudo generar el QR', e));
+  };
   logout = () => {
     services.auth.cerrar(); this._lastPersist = null;
     this.setState({ user: null, ticket: null, saved: {}, userMenu: false, mobileMore: false, portalTab: 'agenda', pNombre: '', pEmail: '', pErrs: {}, pSaved: false });
@@ -1023,6 +1080,9 @@ class Component extends DCLogic {
       hasOverlap: overlaps.length > 0, overlapMsg: overlaps.length + (overlaps.length === 1 ? ' actividad se superpone' : ' actividades se superponen') + ' en horario. Revisá tu cronograma antes de descargarlo.',
       portalTabs, pAgenda: tab === 'agenda', pEntrada: tab === 'entrada', pPerfil: tab === 'perfil',
       ticketShort: ticketTierObj ? ticketTierObj.name.replace('Entrada ', '').replace('Pase ', '') : '—',
+      hasTicket: !!st.ticket, noTicket: !st.ticket, ticketTier: ticketTierObj ? ticketTierObj.name : '', ticketDesc: ticketTierObj ? ticketTierObj.desc : '', ticketNro: st.ticket ? st.ticket.nro : '000482', ticketQrRef: this.ticketQrRef,
+      ticketHolder: user ? user.nombre : 'Tu nombre acá', buyTicket: this.buyTicket, buyLabel: user ? (st.ticket ? 'Confirmar cambio de pase' : 'Obtener mi QR') : 'Registrarme y obtener mi QR',
+      fechasTexto: DATA.FECHAS_TEXTO, predioNombre: DATA.PREDIO.nombre, predioDesc: DATA.PREDIO.ciudad + '. ' + DATA.PREDIO.horario + '. Acreditación en el acceso principal, 30 minutos antes de cada jornada.',
       authOpen: !!st.authOpen, authIsReg, authTabs, authInteres, closeAuth: this.closeAuth, authKey: e => { if (e.key === 'Escape') this.closeAuth(); }, authEnter: e => { if (e.key === 'Enter') this.submitAuth(); },
       authTitle: authIsReg ? 'Creá tu cuenta' : 'Ingresá a tu portal', authSub: authIsReg ? 'Armá tu agenda, descargá tu itinerario y guardá tu entrada digital.' : 'Tu agenda y tu entrada te esperan.', authPassAutocomplete: authIsReg ? 'new-password' : 'current-password',
       aNombre: st.aNombre, aEmail: st.aEmail, aPass: st.aPass, setANombre: e => this.setState({ aNombre: e.target.value }), setAEmail: e => this.setState({ aEmail: e.target.value }), setAPass: e => this.setState({ aPass: e.target.value }),

@@ -1,11 +1,13 @@
 import { DATA } from './src/data/evento.js';
 import { authService } from './src/services/auth.js';
+import * as qrService from './src/services/qr.js';
 
 // Servicios que el prototipo usa detrás de una interfaz única (ver src/services/*).
 // Los pesados se cargan bajo demanda con dynamic import: Vite los separa en chunks
 // propios y no penalizan el bundle inicial del sitio.
 const services = {
-  auth: authService
+  auth: authService,
+  qr: qrService // la librería `qrcode` se carga bajo demanda dentro del servicio
 };
 
 (function () {
