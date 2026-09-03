@@ -47,11 +47,16 @@
          evita que el viewport móvil se "aleje" para que entre el contenido. */
       div[style*="grid-template-columns"] > * { min-width: 0; }
       input, select, textarea { max-width: 100%; min-width: 0; box-sizing: border-box; }
-      /* Textos sin espacios (emails, URLs) no pueden imponer el ancho mínimo de su celda. */
-      main, footer { overflow-wrap: anywhere; }
+      /* Palabras largas se cortan solo si no entran en la línea (no altera el ancho mínimo). */
+      main { overflow-wrap: break-word; }
+      /* Emails/URLs sin espacios: acá sí hace falta 'anywhere' para que la celda pueda encoger.
+         No usarlo en todo main: en filas flex reduce el ancho mínimo a un carácter y aplasta
+         los títulos en una columna vertical (pasó en Agenda). */
+      footer, div[style*="grid-template-columns:64px 1fr"] { overflow-wrap: anywhere; }
       /* Agenda: la fila hora · título · eje · botón "Agendar" no entra en una línea. */
       div[style*="padding:20px 24px;display:flex;gap:22px;align-items:center"] { flex-wrap: wrap; gap: 12px 16px !important; padding: 18px !important; }
-      div[style*="padding:20px 24px;display:flex;gap:22px;align-items:center"] > div[style*="flex:1"] { flex: 1 1 200px; min-width: 0; }
+      div[style*="padding:20px 24px;display:flex;gap:22px;align-items:center"] > div[style*="flex:1"] { flex: 1 1 200px; min-width: 65%; }
+      div[style*="padding:20px 24px;display:flex;gap:22px;align-items:center"] > button[aria-label="Agendar actividad"] { margin-left: auto; }
       /* Contacto: el panel del formulario con padding de 32px por lado no deja lugar a los campos. */
       div[style*="border-radius:18px;padding:32px;display:flex;flex-direction:column"] { padding: 22px 18px !important; }
     }
