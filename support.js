@@ -1,4 +1,12 @@
 import { DATA } from './src/data/evento.js';
+import { authService } from './src/services/auth.js';
+
+// Servicios que el prototipo usa detrás de una interfaz única (ver src/services/*).
+// Los pesados se cargan bajo demanda con dynamic import: Vite los separa en chunks
+// propios y no penalizan el bundle inicial del sitio.
+const services = {
+  auth: authService
+};
 
 (function () {
   const bootStyle = document.createElement('style');
@@ -17,7 +25,12 @@ import { DATA } from './src/data/evento.js';
     @media (max-width: 600px) {
       body { padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
       nav[aria-label="Navegación principal"] > div { min-height: 64px; height: 64px !important; padding: 0 14px !important; flex-wrap: nowrap; }
-      nav[aria-label="Navegación principal"] > div > div:nth-child(2), nav[aria-label="Navegación principal"] > div > button:last-child { display: none !important; }
+      nav[aria-label="Navegación principal"] > div > div:nth-child(2) { display: none !important; }
+      /* Portal de usuario: marcas data-m del handoff (oculto en mobile, menú de usuario a todo el ancho, grillas apiladas). */
+      [data-m="hide"] { display: none !important; }
+      [data-m="umenu"] { left: 12px !important; right: 12px !important; width: auto !important; }
+      [data-m="pad"] { padding-left: 20px !important; padding-right: 20px !important; }
+      [data-m="stack"] { grid-template-columns: 1fr !important; }
       nav[aria-label="Navegación principal"] > div > div:first-child > div:last-child { font-size: 16px !important; }
       main { padding-top: 64px !important; }
       .mobile-bottom-nav { position: fixed; z-index: 80; left: 0; right: 0; bottom: 0; width: 100%; max-width: 100vw; box-sizing: border-box; overflow: hidden; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); min-height: 66px; padding: 5px 8px calc(5px + env(safe-area-inset-bottom)); background: var(--navbg); border-top: 1px solid var(--l12); backdrop-filter: blur(16px); }
@@ -134,8 +147,9 @@ import { DATA } from './src/data/evento.js';
   }
 
   function compileComponent(script) {
-    // El prototipo recibe la mock data centralizada como `DATA` (src/data/evento.js).
-    return Function('DCLogic', 'DATA', `${script.textContent}\nreturn Component;`)(DCLogic, DATA);
+    // El prototipo recibe la mock data centralizada como `DATA` (src/data/evento.js)
+    // y los servicios (sesión, QR, PDF) como `services`.
+    return Function('DCLogic', 'DATA', 'services', `${script.textContent}\nreturn Component;`)(DCLogic, DATA, services);
   }
 
   function start() {
@@ -259,10 +273,13 @@ import { DATA } from './src/data/evento.js';
       Array.from(node.childNodes).forEach((child) => processNode(child, scope, refs));
     }
 
+    let modalReturnKey = null; // control que abrió el modal activo; recupera el foco al cerrarlo
     component.__render = function render() {
       const active = root.contains(document.activeElement) ? document.activeElement : null;
       const focusKey = active && active.dataset.dcControl;
       const selectionStart = active && typeof active.selectionStart === 'number' ? active.selectionStart : null;
+      const previousModal = root.querySelector('[role="dialog"][aria-modal="true"]');
+      const activeInModal = !!(active && previousModal && previousModal.contains(active));
       const template = document.createElement('template');
       template.innerHTML = source;
       const refs = [];
@@ -275,18 +292,22 @@ import { DATA } from './src/data/evento.js';
       refs.forEach((callback) => callback());
 
       const modal = root.querySelector('[role="dialog"][aria-modal="true"]');
-      if (modal) {
-        modal.focus({ preventScroll: true });
+      if (modal && !previousModal) modalReturnKey = activeInModal ? null : focusKey;
+      if (!modal && previousModal) {
+        // El modal se cerró: el foco vuelve a quien lo abrió (los índices de los controles cambiaron).
+        const back = modalReturnKey != null ? root.querySelector(`[data-dc-control="${modalReturnKey}"]`) : null;
+        modalReturnKey = null;
+        if (back) back.focus({ preventScroll: true });
+        else if (activeInModal && document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+        if (back || activeInModal) return;
+      }
+      const next = focusKey != null ? root.querySelector(`[data-dc-control="${focusKey}"]`) : null;
+      if (next && (!modal || modal.contains(next))) {
+        next.focus({ preventScroll: true });
+        if (selectionStart != null && typeof next.setSelectionRange === 'function') next.setSelectionRange(selectionStart, selectionStart);
         return;
       }
-
-      if (focusKey != null) {
-        const next = root.querySelector(`[data-dc-control="${focusKey}"]`);
-        if (next) {
-          next.focus({ preventScroll: true });
-          if (selectionStart != null && typeof next.setSelectionRange === 'function') next.setSelectionRange(selectionStart, selectionStart);
-        }
-      }
+      if (modal) modal.focus({ preventScroll: true });
     };
 
     component.__updateLive = function updateLiveValues() {
@@ -311,8 +332,20 @@ import { DATA } from './src/data/evento.js';
 
     component.__render();
     document.addEventListener('keydown', (event) => {
+      if (event.key === 'Tab') {
+        const modal = root.querySelector('[role="dialog"][aria-modal="true"]');
+        if (!modal) return;
+        const focusables = Array.from(modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((el) => !el.disabled && el.getClientRects().length > 0);
+        if (!focusables.length) { event.preventDefault(); return; }
+        const first = focusables[0], last = focusables[focusables.length - 1];
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === modal)) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        return;
+      }
       if (event.key !== 'Escape') return;
-      if (component.state.expoSel) component.setState({ expoSel: null });
+      if (component.state.authOpen) component.closeAuth();
+      else if (component.state.expoSel) component.setState({ expoSel: null });
+      else if (component.state.userMenu) component.setState({ userMenu: false });
       else if (component.state.mobileMore) component.setState({ mobileMore: false });
       else if (component.state.chatOpen) component.setState({ chatOpen: false });
     });

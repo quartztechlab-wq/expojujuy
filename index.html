@@ -26,6 +26,7 @@ input,select,textarea{font-family:'Ambit',system-ui,sans-serif}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 18px rgba(43,196,214,.35)}50%{box-shadow:0 0 34px rgba(120,87,245,.55)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 body[data-noanim] *{animation:none!important;transition:none!important}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -45,8 +46,31 @@ body[data-noanim] *{animation:none!important;transition:none!important}
         <button onClick="{{n.go}}" style="background:none;border:none;cursor:pointer;padding:8px 9px;font:600 13px 'Ambit';letter-spacing:.01em;color:{{n.color}};border-radius:8px;white-space:nowrap" style-hover="color:var(--navon);background:var(--l06)">{{n.label}}</button>
       </sc-for>
     </div>
-    <button onClick="{{goEntradas}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 14px 'Ambit';padding:10px 18px;border-radius:9px;cursor:pointer;white-space:nowrap;flex-shrink:0" style-hover="box-shadow:0 0 22px rgba(120,87,245,.55)">Entradas</button>
+    <button onClick="{{goEntradas}}" data-m="hide" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 14px 'Ambit';padding:10px 18px;border-radius:9px;cursor:pointer;white-space:nowrap;flex-shrink:0" style-hover="box-shadow:0 0 22px rgba(120,87,245,.55)">Entradas</button>
+    <sc-if value="{{noUser}}" hint-placeholder-val="{{true}}">
+      <button onClick="{{openLogin}}" data-m="hide" style="background:none;border:1px solid var(--l16);color:var(--text);font:600 14px 'Ambit';padding:10px 16px;border-radius:9px;cursor:pointer;white-space:nowrap;flex-shrink:0" style-hover="border-color:var(--tq);color:var(--tq)">Ingresar</button>
+    </sc-if>
+    <sc-if value="{{hasUser}}" hint-placeholder-val="{{false}}">
+      <button onClick="{{toggleUserMenu}}" aria-expanded="{{userMenuOpen}}" aria-haspopup="menu" aria-label="Abrir menú de usuario" style="position:relative;background:var(--panel);border:1px solid rgba(43,196,214,.45);border-radius:9px;height:38px;padding:0 12px 0 4px;cursor:pointer;display:flex;align-items:center;gap:9px;color:var(--text);flex-shrink:0" style-hover="border-color:var(--tq)">
+        <span style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--tq),var(--vi));display:flex;align-items:center;justify-content:center;font:700 13px 'Ambit';color:#fff">{{userIni}}</span>
+        <span data-m="hide" style="font:600 13.5px 'Ambit';max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{userFirst}}</span>
+        <sc-if value="{{hasSaved}}" hint-placeholder-val="{{false}}"><span aria-label="Actividades agendadas" style="position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;border-radius:10px;background:var(--ve);color:#fff;font:700 11px/20px 'Ambit';text-align:center;padding:0 5px;box-sizing:border-box">{{savedCount}}</span></sc-if>
+      </button>
+    </sc-if>
   </div>
+  <sc-if value="{{userMenuOpen}}" hint-placeholder-val="{{false}}">
+    <div onClick="{{closeUserMenu}}" style="position:fixed;inset:0;z-index:-1"></div>
+    <div role="menu" aria-label="Menú de usuario" data-m="umenu" style="position:absolute;top:70px;right:max(20px,calc((100vw - 1400px)/2 + 20px));width:280px;background:var(--panel2);border:1px solid var(--l14);border-radius:16px;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:4px;animation:fadeUp .25s ease both">
+      <div style="padding:10px 12px 12px;border-bottom:1px solid var(--l08);margin-bottom:4px;display:flex;flex-direction:column;gap:2px">
+        <div style="font:700 15px 'Ambit'">{{userName}}</div>
+        <div style="font:400 12.5px 'Ambit';color:var(--t3);overflow:hidden;text-overflow:ellipsis">{{userEmail}}</div>
+      </div>
+      <sc-for list="{{userMenuItems}}" as="um" hint-placeholder-count="3">
+        <button role="menuitem" onClick="{{um.go}}" style="background:none;border:none;cursor:pointer;padding:11px 12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;font:600 14px 'Ambit';color:var(--text);text-align:left" style-hover="background:var(--l06);color:var(--tq)"><span>{{um.label}}</span><span style="font:600 12px 'Ambit';color:{{um.badgeColor}}">{{um.badge}}</span></button>
+      </sc-for>
+      <button role="menuitem" onClick="{{logout}}" style="background:none;border:none;border-top:1px solid var(--l08);margin-top:4px;cursor:pointer;padding:12px;font:600 13.5px 'Ambit';color:var(--t3);text-align:left" style-hover="color:var(--ma)">Cerrar sesión</button>
+    </div>
+  </sc-if>
 </nav>
 <sc-if value="{{mobileMoreOpen}}" hint-placeholder-val="{{false}}">
   <div class="mobile-more-menu" role="dialog" aria-label="Más secciones">
@@ -528,6 +552,43 @@ body[data-noanim] *{animation:none!important;transition:none!important}
 </div>
 </sc-if>
 
+<sc-if value="{{isPortal}}" hint-placeholder-val="{{false}}">
+<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:64px 48px 96px" data-m="pad">
+  <sc-if value="{{noUser}}" hint-placeholder-val="{{false}}">
+    <div style="max-width:520px;margin:40px auto;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center">
+      <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,rgba(43,196,214,.2),rgba(120,87,245,.2));border:1px solid rgba(120,87,245,.4);display:flex;align-items:center;justify-content:center;font:700 24px 'Ambit';color:var(--li)">?</div>
+      <h2 style="font:700 34px/1.1 'Ambit';letter-spacing:-.02em;margin:0">Tu portal de visitante</h2>
+      <p style="font:300 15px/1.6 'Ambit';color:var(--t2);margin:0;text-wrap:pretty">Ingresá o creá tu cuenta para armar tu agenda, descargar tu itinerario y guardar tu entrada digital.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button onClick="{{openRegistro}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:13px 24px;border-radius:10px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Registrarme</button>
+        <button onClick="{{openLogin}}" style="background:transparent;border:1px solid var(--l28);color:var(--text);font:600 15px 'Ambit';padding:13px 24px;border-radius:10px;cursor:pointer" style-hover="border-color:var(--tq);color:var(--tq)">Ya tengo cuenta</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{hasUser}}" hint-placeholder-val="{{false}}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px">
+      <div style="display:flex;align-items:center;gap:18px">
+        <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--tq),var(--vi));display:flex;align-items:center;justify-content:center;font:700 24px 'Ambit';color:#fff;flex-shrink:0">{{userIni}}</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Mi portal</div>
+          <h2 style="font:700 34px/1.1 'Ambit';letter-spacing:-.02em;margin:0">{{userName}}</h2>
+          <div style="font:400 13.5px 'Ambit';color:var(--t3)">{{userEmail}}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="background:var(--panel);border:1px solid var(--l09);border-radius:12px;padding:10px 16px;display:flex;flex-direction:column;gap:2px"><div style="font:700 20px 'Ambit';color:var(--ve)">{{savedCount}}</div><div style="font:400 11.5px 'Ambit';color:var(--t3)">actividades</div></div>
+        <div style="background:var(--panel);border:1px solid var(--l09);border-radius:12px;padding:10px 16px;display:flex;flex-direction:column;gap:2px"><div style="font:700 20px 'Ambit';color:var(--tq)">{{ticketShort}}</div><div style="font:400 11.5px 'Ambit';color:var(--t3)">entrada</div></div>
+      </div>
+    </div>
+    <div role="tablist" aria-label="Secciones del portal" style="display:flex;gap:6px;border-bottom:1px solid var(--l08);margin-bottom:32px;overflow-x:auto;scrollbar-width:none">
+      <sc-for list="{{portalTabs}}" as="pt" hint-placeholder-count="3">
+        <button role="tab" aria-selected="{{pt.on}}" aria-controls="{{pt.panelId}}" onClick="{{pt.pick}}" style="background:none;border:none;border-bottom:2px solid {{pt.line}};margin-bottom:-1px;cursor:pointer;padding:12px 16px;font:600 14.5px 'Ambit';color:{{pt.color}};white-space:nowrap;display:flex;gap:8px;align-items:center" style-hover="color:var(--navon)">{{pt.label}}<sc-if value="{{pt.badge}}" hint-placeholder-val="{{false}}"><span style="background:rgba(63,179,128,.18);color:var(--ve);border-radius:10px;padding:1px 8px;font:700 11.5px 'Ambit'">{{pt.badge}}</span></sc-if></button>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
 <sc-if value="{{expoOpen}}" hint-placeholder-val="{{false}}">
   <div onClick="{{closeExpo}}" style="position:fixed;inset:0;z-index:80;background:var(--overlay);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px">
     <div onClick="{{stopProp}}" role="dialog" aria-modal="true" tabindex="-1" aria-label="Ficha de expositor" style="background:var(--panel);border:1px solid rgba(120,87,245,.45);border-radius:20px;padding:34px;max-width:520px;width:100%;display:flex;flex-direction:column;gap:18px;animation:fadeUp .3s ease both">
@@ -546,6 +607,43 @@ body[data-noanim] *{animation:none!important;transition:none!important}
         <button onClick="{{selVerMapa}}" style="flex:1;background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 14px 'Ambit';padding:13px;border-radius:10px;cursor:pointer" style-hover="box-shadow:0 0 20px rgba(120,87,245,.5)">Ubicar en el mapa</button>
         <button style="flex:1;background:none;border:1px solid var(--l22);color:var(--text);font:600 14px 'Ambit';padding:13px;border-radius:10px;cursor:pointer" style-hover="border-color:var(--tq);color:var(--tq)">Agendar reunión</button>
       </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{authOpen}}" hint-placeholder-val="{{false}}">
+  <div onClick="{{closeAuth}}" style="position:fixed;inset:0;z-index:88;background:var(--overlay);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px">
+    <div onClick="{{stopProp}}" onKeyDown="{{authKey}}" role="dialog" aria-modal="true" aria-label="{{authTitle}}" tabindex="-1" style="background:var(--panel);border:1px solid rgba(120,87,245,.45);border-radius:20px;padding:30px;max-width:460px;width:100%;box-sizing:border-box;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:fadeUp .3s ease both;display:flex;flex-direction:column;gap:18px;max-height:calc(100dvh - 40px);overflow-y:auto;outline:none">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div role="tablist" aria-label="Ingresar o registrarme" style="display:flex;gap:4px;background:var(--bg2);border-radius:10px;padding:4px">
+          <sc-for list="{{authTabs}}" as="at" hint-placeholder-count="2">
+            <button role="tab" aria-selected="{{at.on}}" onClick="{{at.pick}}" style="background:{{at.bg}};border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font:600 13.5px 'Ambit';color:{{at.color}}">{{at.label}}</button>
+          </sc-for>
+        </div>
+        <button onClick="{{closeAuth}}" aria-label="Cerrar" style="background:none;border:none;cursor:pointer;font:400 26px/1 'Ambit';color:var(--t3)" style-hover="color:#fff">×</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font:700 24px/1.15 'Ambit';letter-spacing:-.01em">{{authTitle}}</div>
+        <div style="font:300 14px/1.55 'Ambit';color:var(--t2)">{{authSub}}</div>
+      </div>
+      <sc-if value="{{authIsReg}}" hint-placeholder-val="{{true}}">
+        <label style="display:flex;flex-direction:column;gap:7px;font:600 12.5px 'Ambit';color:var(--t2)">Nombre y apellido<input value="{{aNombre}}" onChange="{{setANombre}}" aria-invalid="{{errANombre}}" autocomplete="name" placeholder="Ej.: Valentina Quispe" style="background:var(--bg2);border:1px solid {{aNombreBorder}};border-radius:10px;padding:12px 14px;color:var(--text);font:400 15px 'Ambit';outline:none" style-focus="border-color:var(--tq)"></label>
+      </sc-if>
+      <label style="display:flex;flex-direction:column;gap:7px;font:600 12.5px 'Ambit';color:var(--t2)">Email<input type="email" value="{{aEmail}}" onChange="{{setAEmail}}" aria-invalid="{{errAEmail}}" autocomplete="email" placeholder="nombre@empresa.com" style="background:var(--bg2);border:1px solid {{aEmailBorder}};border-radius:10px;padding:12px 14px;color:var(--text);font:400 15px 'Ambit';outline:none" style-focus="border-color:var(--tq)"></label>
+      <label style="display:flex;flex-direction:column;gap:7px;font:600 12.5px 'Ambit';color:var(--t2)">Contraseña<input type="password" value="{{aPass}}" onChange="{{setAPass}}" onKeyDown="{{authEnter}}" aria-invalid="{{errAPass}}" autocomplete="{{authPassAutocomplete}}" placeholder="Mínimo 6 caracteres" style="background:var(--bg2);border:1px solid {{aPassBorder}};border-radius:10px;padding:12px 14px;color:var(--text);font:400 15px 'Ambit';outline:none" style-focus="border-color:var(--tq)"></label>
+      <sc-if value="{{authIsReg}}" hint-placeholder-val="{{true}}">
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div id="auth-intereses" style="font:600 12.5px 'Ambit';color:var(--t2)">¿Qué te interesa? <span style="font:300 12.5px 'Ambit';color:var(--t3)">Opcional · personaliza tu agenda</span></div>
+          <div role="group" aria-labelledby="auth-intereses" style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{authInteres}}" as="ai" hint-placeholder-count="4">
+              <button type="button" onClick="{{ai.toggle}}" aria-pressed="{{ai.on}}" style="border:1px solid {{ai.border}};background:{{ai.bg}};color:{{ai.color}};font:600 12.5px 'Ambit';padding:7px 14px;border-radius:18px;cursor:pointer">{{ai.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{authErr}}" hint-placeholder-val="{{false}}"><div role="alert" style="background:rgba(212,84,143,.1);border:1px solid rgba(212,84,143,.4);border-radius:10px;padding:10px 14px;font:400 13px/1.5 'Ambit';color:var(--ma)">{{authErr}}</div></sc-if>
+      <button onClick="{{submitAuth}}" aria-busy="{{authBusy}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:14px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;opacity:{{authBtnOpacity}}" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)"><span aria-hidden="true" style="width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:{{authSpinDisp}};box-sizing:border-box"></span>{{authBtnLabel}}</button>
+      <div style="font:300 12.5px/1.5 'Ambit';color:var(--t3);text-align:center">Demo local: no se envían datos a ningún servidor.</div>
     </div>
   </div>
 </sc-if>
@@ -643,9 +741,19 @@ body[data-noanim] *{animation:none!important;transition:none!important}
 </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
-  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', fMensaje:'', errs:{}, formOk:false, tier:0, statP:0 };
+  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', fMensaje:'', errs:{}, formOk:false, tier:0, statP:0,
+    // Portal de usuario (sesión simulada, ver src/services/auth.js)
+    user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
+
+  constructor(props) {
+    super(props);
+    // Hidratar la sesión antes del primer render (sin parpadeo del botón "Ingresar").
+    const s = services.auth.cargar();
+    if (s) Object.assign(this.state, this.sessionPatch(s));
+    else if (this.props.sesionDemo) Object.assign(this.state, this.sessionPatch({ user: { nombre: 'Valentina Quispe', email: 'valentina@datapuna.com.ar' }, intereses: { 'Innovación': true, 'Economía del Conocimiento': true }, saved: { '011:00': true, '015:00': true, '112:00': true, '210:30': true }, ticket: { tier: 1, nro: '000482' } }));
+  }
 
   // Mock data centralizada (src/data/evento.js), inyectada por el runtime como `DATA`.
   DIAS = DATA.DIAS; RUBROS = DATA.RUBROS; EJES = DATA.EJES; EXPOS = DATA.EXPOSITORES; DESCS = DATA.DESCRIPCIONES_RUBRO;
@@ -659,11 +767,47 @@ class Component extends DCLogic {
     this._raf = requestAnimationFrame(step);
     this.syncAnim();
   }
-  componentDidUpdate() { this.syncAnim(); }
+  componentDidUpdate() { this.syncAnim(); this.persist(); }
   componentWillUnmount() { clearInterval(this._tick); cancelAnimationFrame(this._raf); }
   syncAnim() { const off = this.props.reducirAnimaciones ?? false; if (off) document.body.setAttribute('data-noanim',''); else document.body.removeAttribute('data-noanim'); }
 
-  go = (r) => { this.setState({ route: r, expoSel: null, mobileMore: false }); window.scrollTo({ top: 0 }); };
+  go = (r) => { this.setState({ route: r, expoSel: null, mobileMore: false, userMenu: false }); window.scrollTo({ top: 0 }); };
+  goPortal = (tab) => { this.setState({ portalTab: tab || 'agenda', pSaved: false, pdfErr: '' }); this.go('portal'); };
+
+  // ---- Portal de usuario: la sesión vive en el estado y se persiste a través de services.auth ----
+  sessionPatch(s) { return { user: s.user, ticket: s.ticket || null, saved: s.saved || {}, intereses: s.intereses || {}, pNombre: s.user.nombre, pEmail: s.user.email }; }
+  persist() {
+    const st = this.state; if (!st.user) return;
+    const data = JSON.stringify({ user: st.user, ticket: st.ticket, saved: st.saved, intereses: st.intereses });
+    if (data === this._lastPersist) return;
+    this._lastPersist = data;
+    try { services.auth.guardar(JSON.parse(data)); } catch (e) { console.warn(e); }
+  }
+  openAuth = (mode, after) => { this._afterAuth = after || null; this.setState({ authOpen: mode, authErr: '', aErrs: {}, aPass: '', userMenu: false, mobileMore: false }); };
+  closeAuth = () => { this._afterAuth = null; this.setState({ authOpen: null, authBusy: false }); };
+  submitAuth = async () => {
+    const st = this.state; if (st.authBusy) return;
+    const reg = st.authOpen === 'registro';
+    const aErrs = { nombre: reg && st.aNombre.trim().length < 3, email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(st.aEmail.trim()), pass: st.aPass.length < 6 };
+    if (aErrs.nombre || aErrs.email || aErrs.pass) { this.setState({ aErrs, authErr: reg ? 'Completá tu nombre, un email válido y una contraseña de al menos 6 caracteres.' : 'Ingresá un email válido y tu contraseña (mínimo 6 caracteres).' }); return; }
+    this.setState({ aErrs: {}, authErr: '', authBusy: true });
+    try {
+      const sesion = reg
+        ? await services.auth.registrar({ nombre: st.aNombre, email: st.aEmail, password: st.aPass, intereses: { ...st.aInt } })
+        : await services.auth.ingresar({ email: st.aEmail, password: st.aPass });
+      if (!this.state.authOpen) return; // el modal se cerró mientras esperábamos
+      const after = this._afterAuth; this._afterAuth = null; this._lastPersist = null;
+      this.setState({ ...this.sessionPatch(sesion), authOpen: null, authBusy: false, aNombre: '', aEmail: '', aPass: '', aInt: {} });
+      if (after) after(); else if (reg) this.goPortal('agenda');
+    } catch (e) {
+      this.setState({ authBusy: false, authErr: e && e.code ? e.message : 'No pudimos procesar la solicitud. Intentá de nuevo.' });
+    }
+  };
+  logout = () => {
+    services.auth.cerrar(); this._lastPersist = null;
+    this.setState({ user: null, ticket: null, saved: {}, userMenu: false, mobileMore: false, portalTab: 'agenda', pNombre: '', pEmail: '', pErrs: {}, pSaved: false });
+    if (this.state.route === 'portal') this.go('inicio');
+  };
 
   qrRef = (el) => {
     if (!el || el._done) return; el._done = 1;
@@ -743,8 +887,9 @@ class Component extends DCLogic {
       mapa: 'm3 6 5-3 8 3 5-3v15l-5 3-8-3-5 3V6Zm5-3v15m8-12v15'
     };
     const mobilePrimaryNav = ['inicio','expositores','agenda','mapa'].map(r => ({ label: labels[r], icon: mobileIcons[r], current: st.route === r ? 'page' : 'false', go: () => this.go(r) }));
-    const mobileExtraRoutes = ['sobre','noticias','sponsors','faq','contacto','entradas'];
-    const mobileMoreItems = mobileExtraRoutes.map(r => ({ label: r === 'entradas' ? 'Entradas' : labels[r], current: st.route === r ? 'page' : 'false', go: () => this.go(r) }));
+    const mobileExtraRoutes = ['sobre','noticias','sponsors','faq','contacto','entradas','portal'];
+    const mobileLabel = r => labels[r] || (r === 'portal' ? (st.user ? 'Mi portal' : 'Ingresar / Registrarme') : 'Entradas');
+    const mobileMoreItems = mobileExtraRoutes.map(r => ({ label: mobileLabel(r), current: st.route === r ? 'page' : 'false', go: () => { if (r === 'portal' && !st.user) this.openAuth('login', () => this.goPortal('agenda')); else this.go(r); } }));
     const mobileMoreCurrent = mobileExtraRoutes.includes(st.route) ? 'page' : 'false';
 
     const grad = c => `linear-gradient(135deg,${c},color-mix(in srgb,${c} 55%,#05070D))`;
@@ -793,8 +938,31 @@ class Component extends DCLogic {
       ['Economía del Conocimiento', 'var(--li)', 'M9.5 4.5A3 3 0 0 0 5 7a3.2 3.2 0 0 0 .5 6.3A3.5 3.5 0 0 0 9 18h1V6.5a2 2 0 0 0-.5-2Zm5 0A3 3 0 0 1 19 7a3.2 3.2 0 0 1-.5 6.3A3.5 3.5 0 0 1 15 18h-1V6.5a2 2 0 0 1 .5-2ZM7 9h3m4 0h3m-7 5H7m7 0h3']
     ].map(([n, color, icon]) => ({ n, color, icon }));
 
+    // ---- Portal de usuario ----
+    const user = st.user;
+    const savedCount = Object.values(st.saved).filter(Boolean).length;
+    const ticketTierObj = st.ticket ? this.TIERS[st.ticket.tier] : null;
+    const tab = st.portalTab;
+    const portalTabs = [['agenda', 'Mi Agenda', savedCount || ''], ['entrada', 'Mi Entrada', ''], ['perfil', 'Mi Perfil', '']].map(([id, label, badge]) => { const on = tab === id; return { label, badge, on, panelId: 'portal-' + id, pick: () => this.setState({ portalTab: id, pSaved: false, pdfErr: '' }), line: on ? 'var(--tq)' : 'transparent', color: on ? 'var(--navon)' : 'var(--t2)' }; });
+    const authIsReg = st.authOpen === 'registro';
+    const authTabs = [['login', 'Ingresar'], ['registro', 'Registrarme']].map(([id, label]) => { const on = st.authOpen === id; return { label, on, pick: () => this.setState({ authOpen: id, authErr: '', aErrs: {} }), bg: on ? 'var(--panel)' : 'transparent', color: on ? 'var(--navon)' : 'var(--t3)' }; });
+    const authInteres = Object.keys(this.EJES).map(e => { const on = !!st.aInt[e]; return { label: e, on, toggle: () => this.setState({ aInt: { ...st.aInt, [e]: !on } }), bg: on ? 'rgba(199,164,248,.2)' : 'transparent', border: on ? 'var(--li)' : 'var(--l18)', color: on ? 'var(--text)' : 'var(--t2)' }; });
+    const errB = e => e ? 'var(--ma)' : 'var(--l12)';
+
     return {
-      isInicio: st.route === 'inicio', isSobre: st.route === 'sobre', isExpositores: st.route === 'expositores', isAgenda: st.route === 'agenda', isNoticias: st.route === 'noticias', isMapa: st.route === 'mapa', isSponsors: st.route === 'sponsors', isFaq: st.route === 'faq', isContacto: st.route === 'contacto', isEntradas: st.route === 'entradas',
+      isInicio: st.route === 'inicio', isSobre: st.route === 'sobre', isExpositores: st.route === 'expositores', isAgenda: st.route === 'agenda', isNoticias: st.route === 'noticias', isMapa: st.route === 'mapa', isSponsors: st.route === 'sponsors', isFaq: st.route === 'faq', isContacto: st.route === 'contacto', isEntradas: st.route === 'entradas', isPortal: st.route === 'portal',
+      hasUser: !!user, noUser: !user, userName: user ? user.nombre : '', userEmail: user ? user.email : '', userFirst: user ? user.nombre.split(' ')[0] : '', userIni: user ? user.nombre.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() : '',
+      userMenuOpen: st.userMenu, toggleUserMenu: () => this.setState({ userMenu: !st.userMenu }), closeUserMenu: () => this.setState({ userMenu: false }),
+      userMenuItems: [{ label: 'Mi Agenda', badge: savedCount ? savedCount + (savedCount === 1 ? ' actividad' : ' actividades') : '', badgeColor: 'var(--ve)', go: () => this.goPortal('agenda') }, { label: 'Mi Entrada', badge: st.ticket ? 'Activa' : 'Pendiente', badgeColor: st.ticket ? 'var(--ve)' : 'var(--t3)', go: () => this.goPortal('entrada') }, { label: 'Mi Perfil', badge: '', badgeColor: 'var(--t3)', go: () => this.goPortal('perfil') }],
+      logout: this.logout, openLogin: () => this.openAuth('login', () => this.goPortal('agenda')), openRegistro: () => this.openAuth('registro'),
+      savedCount, hasSaved: savedCount > 0, noSaved: savedCount === 0,
+      portalTabs, pAgenda: tab === 'agenda', pEntrada: tab === 'entrada', pPerfil: tab === 'perfil',
+      ticketShort: ticketTierObj ? ticketTierObj.name.replace('Entrada ', '').replace('Pase ', '') : '—',
+      authOpen: !!st.authOpen, authIsReg, authTabs, authInteres, closeAuth: this.closeAuth, authKey: e => { if (e.key === 'Escape') this.closeAuth(); }, authEnter: e => { if (e.key === 'Enter') this.submitAuth(); },
+      authTitle: authIsReg ? 'Creá tu cuenta' : 'Ingresá a tu portal', authSub: authIsReg ? 'Armá tu agenda, descargá tu itinerario y guardá tu entrada digital.' : 'Tu agenda y tu entrada te esperan.', authPassAutocomplete: authIsReg ? 'new-password' : 'current-password',
+      aNombre: st.aNombre, aEmail: st.aEmail, aPass: st.aPass, setANombre: e => this.setState({ aNombre: e.target.value }), setAEmail: e => this.setState({ aEmail: e.target.value }), setAPass: e => this.setState({ aPass: e.target.value }),
+      errANombre: !!st.aErrs.nombre, errAEmail: !!st.aErrs.email, errAPass: !!st.aErrs.pass, aNombreBorder: errB(st.aErrs.nombre), aEmailBorder: errB(st.aErrs.email), aPassBorder: errB(st.aErrs.pass),
+      authErr: st.authErr, authBusy: st.authBusy, authSpinDisp: st.authBusy ? 'block' : 'none', authBtnOpacity: st.authBusy ? '.75' : '1', authBtnLabel: st.authBusy ? (authIsReg ? 'Creando tu cuenta…' : 'Ingresando…') : (authIsReg ? 'Crear cuenta' : 'Ingresar'), submitAuth: this.submitAuth,
       navItems,
       mobilePrimaryNav, mobileMoreItems, mobileMoreOpen: st.mobileMore, mobileMoreCurrent, toggleMobileMore: () => this.setState({ mobileMore: !st.mobileMore }),
       goInicio: () => this.go('inicio'), goSobre: () => this.go('sobre'), goExpositores: () => this.go('expositores'), goAgenda: () => this.go('agenda'), goNoticias: () => this.go('noticias'), goMapa: () => this.go('mapa'), goSponsors: () => this.go('sponsors'), goFaq: () => this.go('faq'), goContacto: () => this.go('contacto'), goEntradas: () => this.go('entradas'),
