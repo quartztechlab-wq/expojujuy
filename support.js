@@ -1,3 +1,5 @@
+import { DATA } from './src/data/evento.js';
+
 (function () {
   const bootStyle = document.createElement('style');
   bootStyle.textContent = `
@@ -132,7 +134,8 @@
   }
 
   function compileComponent(script) {
-    return Function('DCLogic', `${script.textContent}\nreturn Component;`)(DCLogic);
+    // El prototipo recibe la mock data centralizada como `DATA` (src/data/evento.js).
+    return Function('DCLogic', 'DATA', `${script.textContent}\nreturn Component;`)(DCLogic, DATA);
   }
 
   function start() {

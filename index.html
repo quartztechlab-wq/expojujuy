@@ -647,67 +647,10 @@ body[data-noanim] *{animation:none!important;transition:none!important}
 class Component extends DCLogic {
   state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', fMensaje:'', errs:{}, formOk:false, tier:0, statP:0 };
 
-  RUBROS = { 'Minería':'var(--oc)','Energía':'var(--en)','Tecnología':'var(--tq)','Agroindustria':'var(--ve)','Turismo':'var(--ma)','Comercio Exterior':'var(--vi)','Economía del Conocimiento':'var(--li)','Manufactura':'var(--te)' };
-  EJES = { 'Innovación':'var(--tq)','Producción':'var(--oc)','Vinculación':'var(--ma)','Economía del Conocimiento':'var(--li)' };
-  EXPOS = [
-    ['Litio Andino SA','Minería','A-04'],['SolNorte Energía','Energía','A-11'],['Quantum Software Jujuy','Tecnología','B-02'],
-    ['Tabacal Agroindustria','Agroindustria','C-07'],['Altos Andes Turismo','Turismo','B-15'],['NOA Export Group','Comercio Exterior','A-09'],
-    ['Data Puna','Economía del Conocimiento','B-05'],['Cerámica Humahuaca','Manufactura','C-12'],['Verde Litio Tech','Minería','A-06'],
-    ['Andes Cloud','Tecnología','B-08'],['Quinua del Sol','Agroindustria','C-03'],['Jujuy Fintech Hub','Economía del Conocimiento','B-11']
-  ];
-  DESCS = { 'Minería':'Empresa del ecosistema minero-litio del NOA. Presenta sus procesos de producción sustentable y oportunidades de proveeduría local.','Energía':'Desarrolla proyectos de energía renovable en la Puna jujeña. Trae a la expo su portfolio de parques solares y soluciones para industria.','Tecnología':'Compañía de base tecnológica jujeña. Exhibe productos de software, servicios cloud y casos de transformación digital para pymes.','Agroindustria':'Productor agroindustrial regional con proyección exportadora. Presenta su línea de productos y busca compradores internacionales.','Turismo':'Operador de experiencias turísticas en la Quebrada y la Puna. Muestra su propuesta de turismo receptivo y corporativo.','Comercio Exterior':'Especialistas en logística y comercio internacional. Asesoran a empresas del NOA para llegar a nuevos mercados.','Economía del Conocimiento':'Parte del polo de economía del conocimiento de Jujuy. Talento digital, IA y servicios basados en conocimiento para exportar.','Manufactura':'Manufactura regional con identidad jujeña. Diseño, producción local y nuevas capacidades industriales.' };
-  AGENDA = [
-    [0,'09:30','Acto de apertura oficial','Auditorio Principal','Vinculación','Autoridades de la CCEJ y gobierno provincial'],
-    [0,'11:00','Litio y después: la nueva matriz productiva del NOA','Auditorio Principal','Producción','Panel minero-energético'],
-    [0,'15:00','IA aplicada a la agroindustria','Sala de Conferencias','Innovación','Data Puna + INTA'],
-    [0,'18:00','Ronda de negocios internacional (día 1)','Pabellón B','Vinculación','Delegaciones de 12 países'],
-    [1,'10:00','Exportar desde Jujuy: guía práctica','Sala de Conferencias','Vinculación','Cámara de Comercio Exterior de Jujuy'],
-    [1,'12:00','Demo Day de la Zona Startups','Zona Startups','Economía del Conocimiento','10 startups del NOA'],
-    [1,'16:00','Energías renovables: el caso Cauchari','Auditorio Principal','Producción','Cauchari Solar'],
-    [1,'19:00','After Expo: networking y música en vivo','Plaza Gastronómica','Vinculación','Abierto a acreditados'],
-    [2,'10:30','Economía del conocimiento: el empleo del futuro','Auditorio Principal','Economía del Conocimiento','Jujuy Fintech Hub + universidades'],
-    [2,'12:30','Taller: marca personal para emprendedores','Sala de Conferencias','Innovación','Mentores Zona Startups'],
-    [2,'15:30','Turismo + tecnología: experiencias inmersivas en la Quebrada','Sala de Conferencias','Innovación','Altos Andes Turismo'],
-    [2,'17:30','Hackathon ExpoJuy: presentación de equipos','Zona Startups','Economía del Conocimiento','Equipos universitarios'],
-    [3,'11:00','Feria de productores y economía regional','Pabellón C','Producción','Productores de toda la provincia'],
-    [3,'14:00','Final del Hackathon y premiación','Auditorio Principal','Economía del Conocimiento','Jurado + sponsors'],
-    [3,'16:30','Jujuy 2030: visión de desarrollo','Auditorio Principal','Vinculación','Panel institucional de cierre'],
-    [3,'19:00','Cierre + show de drones sobre el predio','Predio central','Innovación','Abierto al público']
-  ];
-  NOTIS = [
-    {tag:'Convocatoria',date:'28 AGO 2026',title:'ExpoJuy 2026 abre la convocatoria a expositores de todo el país',exc:'Empresas de minería, energía, agroindustria, turismo y tecnología ya pueden reservar su stand para la edición más grande de la historia de la expo.',color:'var(--tq)'},
-    {tag:'Tecnología',date:'21 AGO 2026',title:'Cardón, el asistente con IA, debuta en la edición 2026',color:'var(--ve)'},
-    {tag:'Internacional',date:'14 AGO 2026',title:'Rondas de negocios: 12 países confirmaron delegaciones',color:'var(--vi)'},
-    {tag:'Innovación',date:'07 AGO 2026',title:'La Zona Startups duplica su superficie',color:'var(--ma)'},
-    {tag:'Entradas',date:'01 AGO 2026',title:'La inscripción general será gratuita con registro previo',color:'var(--oc)'}
-  ];
-  MAP = [
-    {id:'acc',name:'Acceso y acreditación',sub:'Ingreso principal',area:'1 / 1 / 2 / 4',c:'152,160,184',desc:'Ingreso principal al predio. Acreditación con QR, informes y punto de encuentro. Abre 30 minutos antes de cada jornada.'},
-    {id:'pabA',name:'Pabellón A',sub:'Minería y Energía',area:'2 / 1 / 4 / 6',c:'224,154,69',desc:'El corazón productivo de la expo: empresas de litio, minería y energías renovables del NOA, con maquetas, demos y espacios de proveeduría.'},
-    {id:'pabB',name:'Pabellón B',sub:'Tecnología y Conocimiento',area:'1 / 6 / 4 / 10',c:'120,87,245',desc:'Software, servicios cloud, fintech y el polo de economía del conocimiento jujeño. Acá también se realizan las rondas de negocios internacionales.'},
-    {id:'aud',name:'Auditorio Principal',sub:'Charlas y paneles',area:'1 / 10 / 3 / 13',c:'43,196,214',desc:'Escenario principal: apertura oficial, paneles, keynotes y la premiación del Hackathon. Capacidad para 600 personas, con intérprete de LSA.'},
-    {id:'sala',name:'Sala de Conferencias',sub:'Talleres',area:'3 / 10 / 4 / 13',c:'199,164,248',desc:'Talleres prácticos y charlas técnicas en formato reducido. Requiere reserva de lugar desde la agenda.'},
-    {id:'pabC',name:'Pabellón C',sub:'Agroindustria y Manufactura',area:'4 / 1 / 6 / 5',c:'63,179,128',desc:'Productores y manufactura regional: agroindustria, alimentos, cerámica y diseño con identidad jujeña. Feria de productores el domingo.'},
-    {id:'start',name:'Zona Startups',sub:'Emprendimientos',area:'4 / 5 / 6 / 8',c:'212,84,143',desc:'El espacio más joven de la expo: startups del NOA, Demo Day, mentorías y el Hackathon ExpoJuy con equipos universitarios.'},
-    {id:'gastro',name:'Plaza Gastronómica',sub:'Sabores jujeños',area:'4 / 8 / 6 / 11',c:'192,96,56',desc:'Cocina jujeña y regional: tamales, humita, café de Yungas y vinos de la Quebrada. Sede del After Expo del viernes.'},
-    {id:'serv',name:'Servicios',sub:'Sanitarios · Enfermería',area:'4 / 11 / 5 / 13',c:'106,115,144',desc:'Sanitarios accesibles, enfermería, lactario y guardarropa.'},
-    {id:'inst',name:'Espacio CCEJ',sub:'Institucional',area:'5 / 11 / 6 / 13',c:'43,196,214',desc:'Stand institucional de la Cámara de Comercio Exterior de Jujuy: información sobre cómo exportar y programas de vinculación.'}
-  ];
-  SECTORMAP = {'A':'pabA','B':'pabB','C':'pabC'};
-  FAQS = [
-    ['¿Cuánto cuesta la entrada?','La entrada general es gratuita con registro previo online. Los pases Full y Empresarial (rondas de negocios) tienen costo y cupo limitado. Todas las acreditaciones se gestionan con QR desde este sitio.'],
-    ['¿Cuáles son los días y horarios?','Del jueves 24 al domingo 27 de septiembre de 2026, de 9 a 21 h. La plaza gastronómica extiende su horario los días de eventos nocturnos.'],
-    ['¿Dónde se realiza y cómo llego?','En el predio ferial de Ciudad Cultural, San Salvador de Jujuy. Habrá estacionamiento gratuito, bicicletero y refuerzo de líneas de transporte urbano durante los cuatro días.'],
-    ['¿Cómo hago para exponer?','Completá el formulario de contacto eligiendo el motivo “Quiero exponer”. El equipo comercial te responde dentro de las 48 horas hábiles con el manual del expositor, planos y tarifas.'],
-    ['¿El predio es accesible?','Sí: rampas y circulaciones accesibles, sanitarios adaptados, espacios de descanso e intérprete de Lengua de Señas Argentina en las actividades del Auditorio Principal. Este sitio sigue los lineamientos WCAG 2.1 AA.'],
-    ['¿Pueden ingresar menores?','Sí, los menores de 12 años ingresan gratis acompañados por un adulto. Hay espacios familiares y actividades pensadas para escuelas técnicas el jueves y viernes.']
-  ];
-  TIERS = [
-    {name:'Entrada General',price:'Gratis',desc:'Acceso a pabellones, plaza gastronómica y actividades abiertas durante los 4 días. Requiere registro previo online.'},
-    {name:'Pase Full',price:'$ 15.000',desc:'Todo lo de General + acceso prioritario al Auditorio, talleres con reserva y descuentos en la plaza gastronómica.'},
-    {name:'Pase Empresarial',price:'$ 60.000',desc:'Acreditación business: rondas de negocios internacionales, sala VIP, agenda de reuniones 1:1 y networking con delegaciones.'}
-  ];
-  SPONSORS = { dia:['Andes Litio Corp','Banco NOA'], oro:['TelecomNorte','Cauchari Solar','Aerolíneas del Norte','Grupo Cerro Azul'], plata:['Café Yungas','Quebrada Wines','TecnoJuy','Hostal del Carmen','Impulsa Fintech','Radio Visión'] };
+  // Mock data centralizada (src/data/evento.js), inyectada por el runtime como `DATA`.
+  DIAS = DATA.DIAS; RUBROS = DATA.RUBROS; EJES = DATA.EJES; EXPOS = DATA.EXPOSITORES; DESCS = DATA.DESCRIPCIONES_RUBRO;
+  AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; MAP = DATA.SECTORES; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; SPONSORS = DATA.SPONSORS;
+  keyOf = DATA.claveActividad;
 
   componentDidMount() {
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
@@ -765,7 +708,7 @@ class Component extends DCLogic {
     const labels = { inicio:'Inicio', sobre:'Sobre', expositores:'Expositores', agenda:'Agenda', noticias:'Noticias', mapa:'Mapa', sponsors:'Sponsors', faq:'FAQ', contacto:'Contacto' };
     const navItems = routes.map(r => ({ label: labels[r], go: () => this.go(r), color: st.route === r ? 'var(--navon)' : 'var(--t2)' }));
 
-    const target = new Date(P.fechaObjetivo ?? '2026-09-24T09:00:00-03:00').getTime();
+    const target = new Date(P.fechaObjetivo ?? DATA.FECHA_APERTURA).getTime();
     let diff = Math.max(0, target - st.now);
     const dd = Math.floor(diff / 864e5), hh = Math.floor(diff % 864e5 / 36e5), mm = Math.floor(diff % 36e5 / 6e4), ss = Math.floor(diff % 6e4 / 1e3);
     const pad = n => String(n).padStart(2, '0');
@@ -806,21 +749,21 @@ class Component extends DCLogic {
 
     const grad = c => `linear-gradient(135deg,${c},color-mix(in srgb,${c} 55%,#05070D))`;
     const ql = st.q.trim().toLowerCase();
-    const expoAll = this.EXPOS.map(([name, rubro, stand]) => ({ name, rubro, stand }));
+    const expoAll = this.EXPOS.map(e => ({ name: e.nombre, rubro: e.rubro, stand: e.stand }));
     const expoList = expoAll
       .filter(e => (st.rubro === 'Todos' || e.rubro === st.rubro) && (!ql || e.name.toLowerCase().includes(ql) || e.rubro.toLowerCase().includes(ql)))
       .map(e => ({ ...e, ini: e.name.split(' ').slice(0, 2).map(w => w[0]).join(''), color: this.RUBROS[e.rubro], borderc: `color-mix(in srgb,${this.RUBROS[e.rubro]} 40%,transparent)`, grad: grad(this.RUBROS[e.rubro]), open: () => this.setState({ expoSel: e }) }));
     const rubroChips = ['Todos', ...Object.keys(this.RUBROS)].map(r => { const on = st.rubro === r; return { label: r, on, pick: () => this.setState({ rubro: r }), bg: on ? 'rgba(43,196,214,.16)' : 'transparent', border: on ? 'var(--tq)' : 'var(--l16)', color: on ? 'var(--tq)' : 'var(--t2)' }; });
     const sel = st.expoSel;
 
-    const dayNames = [['JUE 24', 'Apertura'], ['VIE 25', 'Negocios'], ['SÁB 26', 'Conocimiento'], ['DOM 27', 'Cierre']];
+    const dayNames = this.DIAS.map(d => [d.corto, d.tema]);
     const dayTabs = dayNames.map(([label, sub], i) => { const on = st.day === i; return { label, sub, on, pick: () => this.setState({ day: i }), bg: on ? 'linear-gradient(120deg,rgba(43,196,214,.2),rgba(120,87,245,.2))' : 'var(--panel)', border: on ? 'rgba(43,196,214,.6)' : 'var(--l09)', color: on ? 'var(--navon)' : 'var(--t2)' }; });
     const ejeChips = ['Todos', ...Object.keys(this.EJES)].map(e => { const on = st.eje === e; return { label: e, on, pick: () => this.setState({ eje: e }), bg: on ? 'rgba(199,164,248,.16)' : 'transparent', border: on ? 'var(--li)' : 'var(--l14)', color: on ? 'var(--li)' : 'var(--t3)' }; });
     const interesChips = Object.keys(this.EJES).map(e => { const on = !!st.intereses[e]; return { label: e, on, toggle: () => this.setState({ intereses: { ...st.intereses, [e]: !on } }), bg: on ? 'rgba(199,164,248,.2)' : 'transparent', border: on ? 'var(--li)' : 'var(--l18)', color: on ? 'var(--text)' : 'var(--t2)' }; });
     const anyInt = Object.values(st.intereses).some(Boolean);
-    const agendaList = this.AGENDA.filter(a => a[0] === st.day && (st.eje === 'Todos' || a[4] === st.eje)).map((a, i) => {
-      const key = a[0] + a[1]; const saved = !!st.saved[key]; const rec = anyInt && !!st.intereses[a[4]];
-      return { time: a[1], title: a[2], meta: a[3] + ' · ' + a[5], eje: a[4], ejeColor: this.EJES[a[4]], rec, cardBorder: rec ? 'rgba(199,164,248,.55)' : 'var(--l08)', saved, save: () => this.setState({ saved: { ...st.saved, [key]: !saved } }), saveLabel: saved ? '✓ Agendado' : 'Agendar', saveBg: saved ? 'rgba(63,179,128,.15)' : 'transparent', saveBorder: saved ? 'rgba(63,179,128,.55)' : 'var(--l18)', saveColor: saved ? 'var(--ve)' : 'var(--t2)' };
+    const agendaList = this.AGENDA.filter(a => a.dia === st.day && (st.eje === 'Todos' || a.eje === st.eje)).map((a) => {
+      const key = this.keyOf(a); const saved = !!st.saved[key]; const rec = anyInt && !!st.intereses[a.eje];
+      return { time: a.hora, title: a.titulo, meta: a.lugar + ' · ' + a.disertante, eje: a.eje, ejeColor: this.EJES[a.eje], rec, cardBorder: rec ? 'rgba(199,164,248,.55)' : 'var(--l08)', saved, save: () => this.setState({ saved: { ...st.saved, [key]: !saved } }), saveLabel: saved ? '✓ Agendado' : 'Agendar', saveBg: saved ? 'rgba(63,179,128,.15)' : 'transparent', saveBorder: saved ? 'rgba(63,179,128,.55)' : 'var(--l18)', saveColor: saved ? 'var(--ve)' : 'var(--t2)' };
     });
 
     const feedBgs = ['linear-gradient(140deg,var(--oc),var(--ma))', 'linear-gradient(140deg,var(--tq),var(--vi))', 'linear-gradient(140deg,var(--ve),var(--tq))', 'linear-gradient(140deg,var(--vi),var(--ma))'];
