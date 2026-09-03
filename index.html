@@ -677,6 +677,37 @@ body[data-noanim] *{animation:none!important;transition:none!important}
       </sc-if>
       </div>
     </sc-if>
+
+    <sc-if value="{{pPerfil}}" hint-placeholder-val="{{false}}">
+      <div id="portal-perfil" role="tabpanel" aria-label="Mi Perfil" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start" data-m="stack">
+        <div style="background:var(--panel);border:1px solid var(--l08);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:18px">
+          <div style="font:700 20px 'Ambit'">Datos básicos</div>
+          <label style="display:flex;flex-direction:column;gap:7px;font:600 12.5px 'Ambit';color:var(--t2)">Nombre y apellido<input value="{{pNombre}}" onChange="{{setPNombre}}" onKeyDown="{{profileEnter}}" aria-invalid="{{errPNombre}}" autocomplete="name" style="background:var(--bg2);border:1px solid {{pNombreBorder}};border-radius:10px;padding:12px 14px;color:var(--text);font:400 15px 'Ambit';outline:none" style-focus="border-color:var(--tq)"></label>
+          <label style="display:flex;flex-direction:column;gap:7px;font:600 12.5px 'Ambit';color:var(--t2)">Email<input type="email" value="{{pEmail}}" onChange="{{setPEmail}}" onKeyDown="{{profileEnter}}" aria-invalid="{{errPEmail}}" autocomplete="email" style="background:var(--bg2);border:1px solid {{pEmailBorder}};border-radius:10px;padding:12px 14px;color:var(--text);font:400 15px 'Ambit';outline:none" style-focus="border-color:var(--tq)"></label>
+          <sc-if value="{{pErr}}" hint-placeholder-val="{{false}}"><div role="alert" style="font:400 13px 'Ambit';color:var(--ma)">Revisá el nombre (mínimo 3 letras) y que el email sea válido.</div></sc-if>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button onClick="{{saveProfile}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 14px 'Ambit';padding:12px 22px;border-radius:10px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Guardar cambios</button>
+            <sc-if value="{{pSaved}}" hint-placeholder-val="{{false}}"><span role="status" style="font:600 13px 'Ambit';color:var(--ve)">✓ Perfil actualizado</span></sc-if>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="background:linear-gradient(120deg,rgba(199,164,248,.1),rgba(43,196,214,.07));border:1px solid rgba(199,164,248,.3);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:14px">
+            <div id="perfil-intereses" style="font:700 20px 'Ambit'">Mis intereses</div>
+            <div style="font:300 14px/1.55 'Ambit';color:var(--t2)">Alimentan el recomendador de la Agenda: las actividades de estos ejes aparecen marcadas “Para vos”.</div>
+            <div role="group" aria-labelledby="perfil-intereses" style="display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{interesChips}}" as="ic" hint-placeholder-count="4">
+                <button onClick="{{ic.toggle}}" aria-pressed="{{ic.on}}" style="border:1px solid {{ic.border}};background:{{ic.bg}};color:{{ic.color}};font:600 13px 'Ambit';padding:8px 16px;border-radius:20px;cursor:pointer">{{ic.label}}</button>
+              </sc-for>
+            </div>
+            <div role="status" style="font:400 13px 'Ambit';color:var(--t3)">{{recCount}}</div>
+          </div>
+          <div style="background:var(--panel);border:1px solid var(--l08);border-radius:20px;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:3px"><div style="font:700 15px 'Ambit'">Sesión</div><div style="font:400 13px 'Ambit';color:var(--t3)">Tus datos se guardan solo en este dispositivo (demo).</div></div>
+            <button onClick="{{logout}}" style="background:transparent;border:1px solid var(--l18);color:var(--t2);font:600 13.5px 'Ambit';padding:10px 18px;border-radius:10px;cursor:pointer" style-hover="border-color:var(--ma);color:var(--ma)">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
   </sc-if>
 </div>
 </sc-if>
@@ -920,6 +951,12 @@ class Component extends DCLogic {
     const st = this.state; if (!el || el._done || !st.user || !st.ticket) return; el._done = 1;
     services.qr.dibujarQr(el, services.qr.payloadEntrada({ nro: st.ticket.nro, tier: this.TIERS[st.ticket.tier].name, email: st.user.email })).catch(e => console.warn('No se pudo generar el QR', e));
   };
+  saveProfile = () => {
+    const st = this.state;
+    const pErrs = { nombre: st.pNombre.trim().length < 3, email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(st.pEmail.trim()) };
+    if (pErrs.nombre || pErrs.email) { this.setState({ pErrs, pSaved: false }); return; }
+    this.setState({ pErrs: {}, pSaved: true, user: { nombre: st.pNombre.trim(), email: st.pEmail.trim().toLowerCase() } });
+  };
   logout = () => {
     services.auth.cerrar(); this._lastPersist = null;
     this.setState({ user: null, ticket: null, saved: {}, userMenu: false, mobileMore: false, portalTab: 'agenda', pNombre: '', pEmail: '', pErrs: {}, pSaved: false });
@@ -1068,6 +1105,7 @@ class Component extends DCLogic {
     const authTabs = [['login', 'Ingresar'], ['registro', 'Registrarme']].map(([id, label]) => { const on = st.authOpen === id; return { label, on, pick: () => this.setState({ authOpen: id, authErr: '', aErrs: {} }), bg: on ? 'var(--panel)' : 'transparent', color: on ? 'var(--navon)' : 'var(--t3)' }; });
     const authInteres = Object.keys(this.EJES).map(e => { const on = !!st.aInt[e]; return { label: e, on, toggle: () => this.setState({ aInt: { ...st.aInt, [e]: !on } }), bg: on ? 'rgba(199,164,248,.2)' : 'transparent', border: on ? 'var(--li)' : 'var(--l18)', color: on ? 'var(--text)' : 'var(--t2)' }; });
     const errB = e => e ? 'var(--ma)' : 'var(--l12)';
+    const recCountN = Object.keys(st.intereses).some(k => st.intereses[k]) ? this.AGENDA.filter(a => st.intereses[a.eje]).length : 0;
 
     return {
       isInicio: st.route === 'inicio', isSobre: st.route === 'sobre', isExpositores: st.route === 'expositores', isAgenda: st.route === 'agenda', isNoticias: st.route === 'noticias', isMapa: st.route === 'mapa', isSponsors: st.route === 'sponsors', isFaq: st.route === 'faq', isContacto: st.route === 'contacto', isEntradas: st.route === 'entradas', isPortal: st.route === 'portal',
@@ -1079,6 +1117,9 @@ class Component extends DCLogic {
       savedSummary: savedCount + (savedCount === 1 ? ' actividad' : ' actividades') + ' en ' + myDays.length + (myDays.length === 1 ? ' día' : ' días') + ' · duración estimada ' + DATA.DURACION_ACTIVIDAD_MIN + ' min por actividad',
       hasOverlap: overlaps.length > 0, overlapMsg: overlaps.length + (overlaps.length === 1 ? ' actividad se superpone' : ' actividades se superponen') + ' en horario. Revisá tu cronograma antes de descargarlo.',
       portalTabs, pAgenda: tab === 'agenda', pEntrada: tab === 'entrada', pPerfil: tab === 'perfil',
+      pNombre: st.pNombre, pEmail: st.pEmail, setPNombre: e => this.setState({ pNombre: e.target.value, pSaved: false }), setPEmail: e => this.setState({ pEmail: e.target.value, pSaved: false }), profileEnter: e => { if (e.key === 'Enter') this.saveProfile(); },
+      errPNombre: !!st.pErrs.nombre, errPEmail: !!st.pErrs.email, pNombreBorder: errB(st.pErrs.nombre), pEmailBorder: errB(st.pErrs.email), pErr: !!(st.pErrs.nombre || st.pErrs.email), pSaved: st.pSaved, saveProfile: this.saveProfile,
+      recCount: recCountN ? recCountN + (recCountN === 1 ? ' actividad recomendada' : ' actividades recomendadas') + ' en la agenda' : 'Elegí al menos un eje para recibir recomendaciones.',
       ticketShort: ticketTierObj ? ticketTierObj.name.replace('Entrada ', '').replace('Pase ', '') : '—',
       hasTicket: !!st.ticket, noTicket: !st.ticket, ticketTier: ticketTierObj ? ticketTierObj.name : '', ticketDesc: ticketTierObj ? ticketTierObj.desc : '', ticketNro: st.ticket ? st.ticket.nro : '000482', ticketQrRef: this.ticketQrRef,
       ticketHolder: user ? user.nombre : 'Tu nombre acá', buyTicket: this.buyTicket, buyLabel: user ? (st.ticket ? 'Confirmar cambio de pase' : 'Obtener mi QR') : 'Registrarme y obtener mi QR',
