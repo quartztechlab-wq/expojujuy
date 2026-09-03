@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test:smoke": "node scripts/smoke-test.mjs",
-    "test:mobile": "node scripts/mobile-audit.mjs"
+    "test:mobile": "node scripts/mobile-audit.mjs",
+    "test:portal": "node scripts/portal-test.mjs",
+    "test": "npm run test:smoke && npm run test:mobile && npm run test:portal"
   },
   "devDependencies": {
     "vite": "^7.1.3"

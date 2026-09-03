@@ -1,6 +1,25 @@
 # Handoff: Sitio Web ExpoJuy 2026
 
-> Estado actual: prototipo frontend funcional y navegable preparado para ejecución local. Esta entrega no incluye backend, base de datos, pasarela de pagos ni servicios externos.
+> Estado actual: prototipo frontend funcional y navegable preparado para ejecución local, con **Portal de Usuario** (sesión simulada, Mi Agenda con itinerario en PDF, Mi Entrada con QR y Mi Perfil). Esta entrega no incluye backend, base de datos, pasarela de pagos ni servicios externos.
+
+## Portal de Usuario (handoff v3, 2026-09-03)
+Implementado según `design_handoff_expojuy_2026/PORTAL-USUARIO.md` sobre el stack actual del repo (Vite + runtime `.dc.html` propio). Sin backend: todo vive en el cliente.
+
+- **Sesión simulada**: registro / ingreso desde el header (`Ingresar`) o desde "Más" en mobile. Los datos se guardan en `localStorage` (`expojuy2026.portal`) con la contraseña como hash SHA-256; `demo@…` ingresa sin registro. Con sesión, el header muestra el chip con iniciales, el conteo de actividades y el menú Mi Agenda / Mi Entrada / Mi Perfil / Cerrar sesión.
+- **Mi Agenda**: "Agendar" en la Agenda escribe en la sesión (sin sesión abre el registro y agenda al terminar). El cronograma se agrupa por día y hora, estima 90 min por actividad, marca superposiciones (mismo día, inicios a menos de 90 min) y permite quitar actividades. **Descargar mi itinerario (PDF)** genera el documento en el cliente con jsPDF + autotable (carga diferida) siguiendo la plantilla del handoff.
+- **Mi Entrada**: el CTA de Entradas crea la entrada (tipo + número) y muestra la tarjeta con un QR real (`qrcode`, carga diferida) con datos ficticios del titular, más tarjetas de Predio y Pase.
+- **Mi Perfil**: nombre y email con validación, intereses compartidos con el recomendador de la Agenda ("Para vos") y cierre de sesión.
+- **Accesibilidad**: modal `role=dialog` con `aria-modal`, foco inicial, Tab atrapado y Escape; tabs `role=tablist`/`aria-controls`; errores `role=alert`; avisos `role=status`; `aria-pressed`/`aria-busy`; targets ≥ 44 px en mobile; `prefers-reduced-motion` respetado por el sitio.
+- **Tweak**: la prop `sesionDemo` del prototipo precarga una sesión con agenda, intereses y entrada.
+
+### Estructura del código
+- `index.html` — el sitio: markup en `<x-dc>` y lógica (clase `Component`) en el `<script data-dc-script>`. Es la versión que se compila y despliega.
+- `support.js` — runtime propio del prototipo (renderiza `sc-if`/`sc-for`/`{{ }}`, foco y accesibilidad, CSS mobile) e inyección de `DATA` y `services` en `Component`.
+- `src/data/evento.js` — **mock data centralizada y tipada (JSDoc)**: `DIAS`, `RUBROS`, `EJES`, `EXPOSITORES`, `AGENDA`, `NOTICIAS`, `SECTORES`, `FAQS`, `TIPOS_ENTRADA`, `SPONSORS`, `PREDIO`. Buscador, mapa, agenda, recomendador, entradas y portal consumen esta única fuente; la API real reemplaza este módulo.
+- `src/services/auth.js` — servicio único de sesión (`cargar`, `registrar`, `ingresar`, `guardar`, `cerrar`) con interfaz de Promises lista para apuntar a Spring Boot sin tocar la UI.
+- `src/services/qr.js` — QR de la entrada (`qrcode`, dynamic import, caché).
+- `src/services/itinerario-pdf.js` — PDF del itinerario (jsPDF + jspdf-autotable, dynamic import).
+- `scripts/` — tests E2E sin dependencias sobre Chrome headless: `smoke-test.mjs`, `mobile-audit.mjs`, `portal-test.mjs` (helper `cdp.mjs`).
 
 ## Overview
 Propuesta conceptual y visual del sitio web oficial de **ExpoJuy 2026** (Desafío Digital ExpoJuy 2026, Cámara de Comercio Exterior de Jujuy), diseñada por **Quartz Tech Labs**. Incluye el sitio desktop navegable completo (10 secciones + entradas con QR + asistente IA "Cardón") y 6 pantallas mobile clave.
@@ -196,7 +215,7 @@ En producción podría conectarse a un modelo con recuperación de información 
 - El formulario valida datos localmente pero no envía información.
 - Los botones de registro, reuniones y Wallet son demostrativos.
 - El mapa representa una distribución ilustrativa del predio.
-- No se incluyen autenticación, administración, pagos ni persistencia.
+- La autenticación del portal es simulada en el cliente (localStorage de este dispositivo); no hay administración ni pagos.
 
 ## Ejecución y verificación
 
@@ -212,4 +231,13 @@ npm run build
 npm run preview
 ```
 
-La salida se crea en `dist/`. También puede ejecutarse `npm run test:smoke` mientras el servidor de desarrollo está disponible en `http://127.0.0.1:4173`.
+La salida se crea en `dist/`. Con `npm run preview` sirviendo `dist/` en `http://127.0.0.1:4173` se pueden ejecutar los tests E2E (requieren Chrome o Edge; `CHROME_PATH` para otra ruta):
+
+```bash
+npm run test:smoke    # portada, navegación, filtros, ficha, responsive
+npm run test:mobile   # cada ruta a 390 px sin ensanchar el viewport
+npm run test:portal   # registro/login, Mi Agenda + PDF, Mi Entrada + QR, Mi Perfil, mobile
+npm test              # los tres
+```
+
+`SHOTS_DIR=<carpeta> npm run test:portal` guarda además capturas de cada paso y el PDF generado.

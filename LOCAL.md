@@ -23,10 +23,10 @@ npm run build
 npm run preview
 ```
 
-La compilación estática queda en `dist/`.
+La compilación estática queda en `dist/`. Con el preview activo en `http://127.0.0.1:4173`, `npm test` corre los tests E2E (smoke, mobile y portal; requieren Chrome o Edge).
 
 ## Alcance
 
-- Los formularios, entradas, QR y el asistente Cardón son demostraciones locales.
+- Los formularios, entradas, QR, el asistente Cardón y el Portal de Usuario (sesión en `localStorage`) son demostraciones locales.
 - Los datos están embebidos en el frontend.
 - Los HTML `.dc.html` y las capturas originales se conservan como referencia.
