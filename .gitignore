@@ -3,3 +3,4 @@ dist/
 .vite/
 .chrome-smoke-profile*/
 npm-debug.log*
+deploy.md

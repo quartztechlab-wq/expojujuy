@@ -1,0 +1,13 @@
+node_modules
+dist
+.vite
+.git
+.idea
+.chrome-smoke-profile*
+screenshots
+*.dc.html
+ios-frame.jsx
+deploy.md
+README.md
+LOCAL.md
+npm-debug.log*

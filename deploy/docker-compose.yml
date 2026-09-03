@@ -1,0 +1,25 @@
+name: expojuy
+
+# ExpoJuy 2026 — despliegue AISLADO en el VPS compartido con Turismo (yacobook.com)
+# y Sociedad de Tiro (artinnex.com). Este proyecto NO publica puertos: el proxy de
+# borde es el Caddy de Turismo (/opt/turismo), que importa ./caddy/expojuy.caddy y
+# alcanza este contenedor por la red externa "edge" (ya existe: docker network create edge).
+#
+# Operar siempre desde /opt/expojuy/deploy.
+
+services:
+  web:
+    build:
+      context: ..
+    image: expojuy-web
+    container_name: expojuy-web
+    restart: unless-stopped
+    networks:
+      - edge
+    # Sitio estático: con esto sobra y no le compite RAM a los otros stacks.
+    mem_limit: 128m
+    cpus: 0.5
+
+networks:
+  edge:
+    external: true

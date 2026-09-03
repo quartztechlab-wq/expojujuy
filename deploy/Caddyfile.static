@@ -1,0 +1,21 @@
+# Caddy INTERNO del contenedor expojuy-web: solo sirve /srv (el dist/ de Vite) en :80.
+# TLS, dominio y cabeceras de seguridad los pone el Caddy de borde (deploy/caddy/expojuy.caddy).
+{
+	auto_https off
+	admin off
+}
+
+:80 {
+	root * /srv
+	encode zstd gzip
+
+	# Los assets llevan hash en el nombre (Vite): cache larga e inmutable.
+	@hashed path /assets/*
+	header @hashed Cache-Control "public, max-age=31536000, immutable"
+
+	# index.html sin cache para que cada deploy se vea al instante.
+	@html path / /index.html
+	header @html Cache-Control "no-cache"
+
+	file_server
+}

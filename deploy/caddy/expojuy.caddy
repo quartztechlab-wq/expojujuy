@@ -1,0 +1,42 @@
+# ExpoJuy 2026 — importado por el Caddy de Turismo (turismo-caddy).
+# En /opt/turismo/docker-compose.prod.yml el servicio caddy monta este directorio
+# (/opt/expojuy/deploy/caddy → /etc/caddy/expojuy) y su Caddyfile termina con
+#   import /etc/caddy/expojuy/*.caddy
+# El upstream vive en la red externa "edge", compartida con turismo-caddy.
+# Tras editar: docker exec turismo-caddy caddy validate --config /etc/caddy/Caddyfile
+#              docker exec turismo-caddy caddy reload   --config /etc/caddy/Caddyfile
+#
+# Dominio: expojujuy.quartztechlabs.com (subdominio de Quartz Tech Labs, sin www).
+# DNS en Cloudflare con PROXY activo (nube naranja) → Cloudflare termina el TLS público y
+# habla TLS con este origen en modo Full. Como Caddy no puede emitir Let's Encrypt detrás
+# del proxy, el origen usa `tls internal` (CA propia de Caddy, que Full acepta).
+# Si el registro pasa a DNS only (nube gris): quitar `tls internal`, validar y recargar;
+# Caddy emite Let's Encrypt solo.
+# Los snippets llevan prefijo expojuy_ para no chocar con los de artinnex ni con los del
+# Caddyfile de Turismo.
+
+(expojuy_security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+		-X-Powered-By
+	}
+}
+
+# Sitio 100% estático sin backend: nada de orígenes externos. 'unsafe-inline' es
+# necesario porque el prototipo usa estilos y handlers inline en el markup.
+(expojuy_csp) {
+	header Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; worker-src 'self'; manifest-src 'self'"
+}
+
+expojujuy.quartztechlabs.com {
+	tls internal
+	encode zstd gzip
+	import expojuy_security_headers
+	import expojuy_csp
+	reverse_proxy expojuy-web:80
+}
