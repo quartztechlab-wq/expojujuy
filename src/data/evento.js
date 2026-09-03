@@ -122,22 +122,30 @@ export const EXPOSITORES = [
 /** Duración estimada de cada actividad, en minutos (no hay hora de fin en la agenda oficial). */
 export const DURACION_ACTIVIDAD_MIN = 90;
 
-/** @type {Actividad[]} */
+/**
+ * Agenda demostrativa. Incluye actividades en paralelo (11:30, 12:30, 16:00 y 15:00) para que el
+ * recomendador y la detección de superposiciones de Mi Agenda sean verificables con datos locales.
+ * @type {Actividad[]}
+ */
 export const AGENDA = [
   { dia: 0, hora: '09:30', titulo: 'Acto de apertura oficial', lugar: 'Auditorio Principal', eje: 'Vinculación', disertante: 'Autoridades de la CCEJ y gobierno provincial' },
   { dia: 0, hora: '11:00', titulo: 'Litio y después: la nueva matriz productiva del NOA', lugar: 'Auditorio Principal', eje: 'Producción', disertante: 'Panel minero-energético' },
+  { dia: 0, hora: '11:30', titulo: 'Proveedores locales para la minería: cómo calificar', lugar: 'Pabellón A', eje: 'Producción', disertante: 'Litio Andino SA + NOA Export Group' },
   { dia: 0, hora: '15:00', titulo: 'IA aplicada a la agroindustria', lugar: 'Sala de Conferencias', eje: 'Innovación', disertante: 'Data Puna + INTA' },
   { dia: 0, hora: '18:00', titulo: 'Ronda de negocios internacional (día 1)', lugar: 'Pabellón B', eje: 'Vinculación', disertante: 'Delegaciones de 12 países' },
   { dia: 1, hora: '10:00', titulo: 'Exportar desde Jujuy: guía práctica', lugar: 'Sala de Conferencias', eje: 'Vinculación', disertante: 'Cámara de Comercio Exterior de Jujuy' },
   { dia: 1, hora: '12:00', titulo: 'Demo Day de la Zona Startups', lugar: 'Zona Startups', eje: 'Economía del Conocimiento', disertante: '10 startups del NOA' },
+  { dia: 1, hora: '12:30', titulo: 'Taller: cómo armar tu pitch para inversores', lugar: 'Sala de Conferencias', eje: 'Economía del Conocimiento', disertante: 'Impulsa Fintech' },
   { dia: 1, hora: '16:00', titulo: 'Energías renovables: el caso Cauchari', lugar: 'Auditorio Principal', eje: 'Producción', disertante: 'Cauchari Solar' },
   { dia: 1, hora: '19:00', titulo: 'After Expo: networking y música en vivo', lugar: 'Plaza Gastronómica', eje: 'Vinculación', disertante: 'Abierto a acreditados' },
   { dia: 2, hora: '10:30', titulo: 'Economía del conocimiento: el empleo del futuro', lugar: 'Auditorio Principal', eje: 'Economía del Conocimiento', disertante: 'Jujuy Fintech Hub + universidades' },
   { dia: 2, hora: '12:30', titulo: 'Taller: marca personal para emprendedores', lugar: 'Sala de Conferencias', eje: 'Innovación', disertante: 'Mentores Zona Startups' },
   { dia: 2, hora: '15:30', titulo: 'Turismo + tecnología: experiencias inmersivas en la Quebrada', lugar: 'Sala de Conferencias', eje: 'Innovación', disertante: 'Altos Andes Turismo' },
+  { dia: 2, hora: '16:00', titulo: 'Ronda de negocios internacional (día 3)', lugar: 'Pabellón B', eje: 'Vinculación', disertante: 'Delegaciones de 12 países' },
   { dia: 2, hora: '17:30', titulo: 'Hackathon ExpoJuy: presentación de equipos', lugar: 'Zona Startups', eje: 'Economía del Conocimiento', disertante: 'Equipos universitarios' },
   { dia: 3, hora: '11:00', titulo: 'Feria de productores y economía regional', lugar: 'Pabellón C', eje: 'Producción', disertante: 'Productores de toda la provincia' },
   { dia: 3, hora: '14:00', titulo: 'Final del Hackathon y premiación', lugar: 'Auditorio Principal', eje: 'Economía del Conocimiento', disertante: 'Jurado + sponsors' },
+  { dia: 3, hora: '15:00', titulo: 'Cocina en vivo: sabores de la Quebrada', lugar: 'Plaza Gastronómica', eje: 'Producción', disertante: 'Cocineros de la Quebrada y la Puna' },
   { dia: 3, hora: '16:30', titulo: 'Jujuy 2030: visión de desarrollo', lugar: 'Auditorio Principal', eje: 'Vinculación', disertante: 'Panel institucional de cierre' },
   { dia: 3, hora: '19:00', titulo: 'Cierre + show de drones sobre el predio', lugar: 'Predio central', eje: 'Innovación', disertante: 'Abierto al público' }
 ];
