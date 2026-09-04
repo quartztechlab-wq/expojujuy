@@ -18,8 +18,11 @@
 @font-face{font-family:'Ambit';src:url('assets/fonts/Ambit-Regular.otf');font-weight:400}
 @font-face{font-family:'Ambit';src:url('assets/fonts/Ambit-SemiBold.otf');font-weight:600}
 @font-face{font-family:'Ambit';src:url('assets/fonts/Ambit-Bold.otf');font-weight:700}
-:root{--bg0:#05070D;--bg1:#0A1428;--bg2:#070B16;--panel:#0D1428;--panel2:#0B101F;--navbg:rgba(5,7,13,.85);--footbg:#04060B;--text:#EEF0F8;--t15:#B7BDD1;--t2:#98A0B8;--t3:#6A7390;--t4:#4E5670;--navon:#FFFFFF;--tq:#2BC4D6;--vi:#7857F5;--li:#C7A4F8;--ve:#3FB380;--oc:#E09A45;--ma:#D4548F;--te:#C06038;--en:#F2C14E;--verdet:#8FD9B8;--grid:rgba(255,255,255,.04);--mapsub:rgba(255,255,255,.55);--l06:rgba(255,255,255,.06);--l07:rgba(255,255,255,.07);--l08:rgba(255,255,255,.08);--l09:rgba(255,255,255,.09);--l10:rgba(255,255,255,.1);--l12:rgba(255,255,255,.12);--l14:rgba(255,255,255,.14);--l16:rgba(255,255,255,.16);--l18:rgba(255,255,255,.18);--l20:rgba(255,255,255,.2);--l22:rgba(255,255,255,.22);--l25:rgba(255,255,255,.25);--l28:rgba(255,255,255,.28);--glass:rgba(13,20,40,.75);--glass2:rgba(13,20,40,.5);--overlay:rgba(3,4,9,.72);--cdA:#FFFFFF;--tagbg:#2BC4D6;--tagfg:#05070D;--tick1:#141033;--tick2:#0A1428;--feat1:#1A1040;--feat2:#0A1428;--feat3:#07301F;--fadec:rgba(5,7,13,.92);--vid1:#0A1428;--vid2:#1A1040}
+:root{--bg0:#05070D;--bg1:#0A1428;--bg2:rgba(7,11,22,.55);--panel:rgba(13,20,40,.78);--panel2:rgba(11,16,31,.7);--pagebg:url(assets/bg-mountains.jpg);--pageveil:linear-gradient(180deg,rgba(5,7,13,.55),rgba(5,7,13,.72));--navbg:rgba(5,7,13,.85);--footbg:#04060B;--text:#EEF0F8;--t15:#B7BDD1;--t2:#98A0B8;--t3:#6A7390;--t4:#4E5670;--navon:#FFFFFF;--tq:#2BC4D6;--vi:#7857F5;--li:#C7A4F8;--ve:#3FB380;--oc:#E09A45;--ma:#D4548F;--te:#C06038;--en:#F2C14E;--verdet:#8FD9B8;--grid:rgba(255,255,255,.04);--mapsub:rgba(255,255,255,.55);--l06:rgba(255,255,255,.06);--l07:rgba(255,255,255,.07);--l08:rgba(255,255,255,.08);--l09:rgba(255,255,255,.09);--l10:rgba(255,255,255,.1);--l12:rgba(255,255,255,.12);--l14:rgba(255,255,255,.14);--l16:rgba(255,255,255,.16);--l18:rgba(255,255,255,.18);--l20:rgba(255,255,255,.2);--l22:rgba(255,255,255,.22);--l25:rgba(255,255,255,.25);--l28:rgba(255,255,255,.28);--glass:rgba(13,20,40,.75);--glass2:rgba(13,20,40,.5);--overlay:rgba(3,4,9,.72);--cdA:#FFFFFF;--tagbg:#2BC4D6;--tagfg:#05070D;--tick1:#141033;--tick2:#0A1428;--feat1:#1A1040;--feat2:#0A1428;--feat3:#07301F;--fadec:rgba(5,7,13,.92);--vid1:#0A1428;--vid2:#1A1040}
 body{margin:0;background:var(--bg0);color:var(--text);font-family:'Ambit',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+/* Fondo fotográfico global (handoff v4): capa fija detrás de todo el sitio. Se usa un pseudo-elemento
+   position:fixed en lugar de background-attachment:fixed porque iOS lo ignora. */
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--pageveil),var(--pagebg) center top/cover no-repeat var(--bg0)}
 a{color:var(--tq);text-decoration:none}a:hover{color:var(--li)}
 button{font-family:'Ambit',system-ui,sans-serif}
 input,select,textarea{font-family:'Ambit',system-ui,sans-serif}
@@ -60,6 +63,19 @@ main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 .map-sector-selected{position:absolute;top:9px;left:10px;font:700 9px/1 'Ambit';letter-spacing:.12em;text-transform:uppercase;color:#fff}
 @media(max-width:900px){.map-layout{grid-template-columns:1fr!important}}
 @media(max-width:600px){.countdown-wrap{width:100%}#expo-cd{width:100%;gap:7px!important}.fc-unit{width:auto;flex:1;min-width:0}.fc-card{height:46px}.fc-n{font-size:29px}.fc-label{font-size:7px;letter-spacing:.1em;padding:5px 2px 9px}.map-filter-row{flex-wrap:nowrap!important;overflow-x:auto;padding:9px!important}.map-filter-row>span{position:sticky;left:0;z-index:2;background:var(--bg2);padding:8px 7px}.map-canvas{margin:10px!important;padding:8px!important;gap:6px!important}.map-sector-badge{top:5px;right:5px;padding:2px 5px;font-size:8px}.map-sector-selected{display:none}}
+/* Entradas v4 (layout A): tabs de tier + panel de detalle + credencial. */
+@keyframes shimmer{from{background-position:0% 50%}to{background-position:300% 50%}}
+@keyframes shine{0%,70%{transform:translateX(-140%) skewX(-18deg)}100%{transform:translateX(240%) skewX(-18deg)}}
+.tk-tabs{scrollbar-width:none}.tk-tabs::-webkit-scrollbar{display:none}
+.tk-tab{min-height:44px;transition:background .2s ease,color .2s ease,box-shadow .2s ease}
+.tk-price-shimmer{background-size:300% 100%;animation:shimmer 6s linear infinite}
+.tk-cta-shine{position:relative;overflow:hidden;isolation:isolate}
+.tk-cta-shine::after{content:'';position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
+.tk-layout{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+.tk-cred{position:sticky;top:88px}
+@media(max-width:1000px){.tk-layout{grid-template-columns:1fr}.tk-cred{position:static}}
+@media(max-width:600px){.tk-panel{padding:26px 20px!important}.tk-price{font-size:46px!important}}
+@media(max-width:760px){.tk-ctrl{flex-direction:column;align-items:stretch!important}.tk-tabs{overflow-x:auto;max-width:100%}.tk-tab{white-space:nowrap}}
 @keyframes kenBurns{from{transform:scale(1) translateY(0)}to{transform:scale(1.07) translateY(-1%)}}
 #hero-media{position:absolute;inset:-8% 0;will-change:transform}
 .hero-img{width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.72;filter:saturate(1.1) brightness(.8);animation:kenBurns 22s ease-in-out infinite alternate;transform-origin:center center}
@@ -618,45 +634,95 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </sc-if>
 
 <sc-if value="{{isEntradas}}" hint-placeholder-val="{{false}}">
-<div style="animation:fadeUp .45s ease both;max-width:1140px;margin:0 auto;padding:80px 48px">
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:44px">
+<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:96px 48px" data-m="pad">
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:36px">
     <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Entradas</div>
     <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Tu pase a ExpoJuy 2026</h2>
-    <p style="font:300 15px 'Ambit';color:var(--t3);margin:4px 0 0">Demo del flujo de acreditación digital con QR. La integración final se conectará al sistema de gestión del evento.</p>
+    <p style="font:300 16px/1.6 'Ambit';color:var(--t2);margin:4px 0 0;max-width:520px;text-wrap:pretty">Elegí el nivel de acceso que va con vos. Todas las entradas son digitales: recibís tu QR en el portal y lo mostrás en los accesos del predio.</p>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start">
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <sc-for list="{{tiers}}" as="t" hint-placeholder-count="3">
-        <div onClick="{{t.pick}}" role="button" aria-pressed="{{t.on}}" style="background:var(--panel);border:1.5px solid {{t.border}};border-radius:16px;padding:26px 28px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:18px" style-hover="border-color:var(--tq)">
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <div style="font:700 20px 'Ambit'">{{t.name}}</div>
-            <div style="font:300 14px/1.5 'Ambit';color:var(--t2);max-width:420px">{{t.desc}}</div>
-          </div>
-          <div style="font:700 22px 'Ambit';color:var(--tq);white-space:nowrap">{{t.price}}</div>
-        </div>
+
+  <div class="tk-ctrl" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+    <div class="tk-tabs" role="tablist" aria-label="Tipo de entrada" style="display:flex;gap:4px;background:var(--glass2);border:1px solid var(--l12);border-radius:16px;padding:5px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)">
+      <sc-for list="{{tierTabs}}" as="t" hint-placeholder-count="3">
+        <button class="tk-tab" role="tab" id="{{t.tabId}}" aria-selected="{{t.on}}" aria-controls="{{t.panelId}}" onClick="{{t.pick}}" style="background:{{t.bg}};box-shadow:{{t.shadow}};border:none;border-radius:12px;padding:10px 18px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;color:{{t.color}}" style-hover="color:var(--text)">
+          <span style="font:700 14px 'Ambit'">{{t.name}}</span>
+          <span style="font:400 12.5px 'Ambit';color:{{t.priceColor}}">{{t.price}}</span>
+        </button>
       </sc-for>
     </div>
-    <div style="position:sticky;top:88px;border-radius:20px;overflow:hidden;border:1px solid rgba(199,164,248,.4);background:linear-gradient(160deg,var(--tick1),var(--tick2))">
-      <div style="height:6px;background:linear-gradient(90deg,var(--tq),var(--ve),var(--oc),var(--ma),var(--vi))"></div>
-      <div style="padding:28px;display:flex;flex-direction:column;gap:18px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font:700 17px 'Ambit';letter-spacing:.04em">EXPOJUY <span style="color:var(--li)">2026</span></div>
-          <div style="font:600 10.5px 'Ambit';letter-spacing:.18em;color:var(--t3);text-transform:uppercase">Acreditación</div>
-        </div>
-        <div style="display:flex;gap:18px;align-items:center">
-          <canvas ref="{{qrRef}}" width="116" height="116" aria-label="Código QR de acceso (demostración)" style="width:116px;height:116px;border-radius:10px;background:#fff;flex-shrink:0"></canvas>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="font:600 12px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Titular</div>
-            <div style="font:700 18px 'Ambit'">{{ticketHolder}}</div>
-            <div style="font:600 13px 'Ambit';color:var(--tq)">{{tierSelName}}</div>
-            <div style="font:400 12.5px 'Ambit';color:var(--t3)">24 al 27 SEP 2026 · Nº {{ticketNro}}</div>
-          </div>
-        </div>
-        <div style="border-top:1px dashed var(--l18);padding-top:16px;font:300 12.5px/1.55 'Ambit';color:var(--t3)">Presentá este código en los accesos del predio. Funciona sin conexión, pensado para la PWA del evento.</div>
-        <button onClick="{{buyTicket}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:14px;border-radius:10px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">{{buyLabel}}</button>
-        <sc-if value="{{hasTicket}}" hint-placeholder-val="{{false}}"><div style="font:400 12.5px 'Ambit';color:var(--ve);text-align:center">Ya tenés una entrada activa. Al confirmar, se reemplaza por el pase seleccionado.</div></sc-if>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div role="group" aria-label="Modalidad de compra" style="display:flex;gap:3px;background:var(--glass2);border:1px solid var(--l12);border-radius:999px;padding:4px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)">
+        <button aria-pressed="{{grupoCtl.indOn}}" onClick="{{grupoCtl.setInd}}" style="min-height:36px;background:{{grupoCtl.indBg}};box-shadow:{{grupoCtl.indShadow}};border:none;border-radius:999px;padding:0 18px;cursor:pointer;font:700 13px 'Ambit';color:{{grupoCtl.indColor}}" style-hover="color:var(--text)">Individual</button>
+        <button aria-pressed="{{grupoCtl.on}}" onClick="{{grupoCtl.setGrp}}" style="min-height:36px;background:{{grupoCtl.grpBg}};border:none;border-radius:999px;padding:0 18px;cursor:pointer;font:700 13px 'Ambit';color:{{grupoCtl.grpColor}};display:flex;align-items:center;gap:6px" style-hover="color:var(--text)">Grupal <span style="font:600 11.5px 'Ambit';opacity:.8">· {{grupoCtl.minimo}}</span></button>
+      </div>
+      <span style="font:600 12px 'Ambit';color:var(--verdet);background:rgba(63,179,128,.14);border:1px solid rgba(63,179,128,.35);border-radius:999px;padding:7px 12px;white-space:nowrap">{{grupoCtl.badge}}</span>
+    </div>
+  </div>
+
+  <div class="tk-layout">
+    <div class="tk-panel" role="tabpanel" id="{{tierVals.panelId}}" aria-labelledby="{{tierVals.tabId}}" style="border:1.5px solid {{tierVals.border}};background:{{tierVals.borderImg}};border-radius:20px;padding:36px 40px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font:600 11px 'Ambit';letter-spacing:.24em;color:{{tierVals.accent}};text-transform:uppercase">{{tierVals.nivel}}</span>
+        <span style="font:600 11.5px 'Ambit';color:{{tierVals.accent}};background:{{tierVals.tagBg}};border:1px solid {{tierVals.tagBorder}};border-radius:999px;padding:5px 11px">{{tierVals.tag}}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h3 style="font:700 38px/1.08 'Ambit';letter-spacing:-.02em;margin:0">{{tierVals.name}}</h3>
+        <p style="font:300 16px/1.55 'Ambit';color:var(--t2);margin:0;max-width:560px;text-wrap:pretty">{{tierVals.ideal}}</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div class="tk-price {{tierVals.priceClass}}" style="font:700 56px/1 'Ambit';letter-spacing:-.03em;padding-bottom:4px;background:{{tierVals.priceGrad}};background-size:{{tierVals.priceSize}};-webkit-background-clip:text;background-clip:text;color:transparent;width:fit-content">{{tierVals.price}}</div>
+        <div style="font:400 13px 'Ambit';color:var(--t3)">{{tierVals.priceSub}}</div>
+        <sc-if value="{{grupoCtl.on}}" hint-placeholder-val="{{false}}"><div style="font:600 12.5px 'Ambit';color:var(--verdet)">{{tierVals.ahorro}}</div></sc-if>
+      </div>
+      <ul style="list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{tierVals.perks}}" as="pk" hint-placeholder-count="4">
+          <li style="display:flex;align-items:flex-start;gap:12px;font:400 15px/1.5 'Ambit';color:var(--text)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{tierVals.accent}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;margin-top:3px"><circle cx="12" cy="12" r="10" opacity=".35"/><path d="m8 12.5 2.6 2.6L16 9.6"/></svg>
+            <span>{{pk.p}}</span>
+          </li>
+        </sc-for>
+      </ul>
+      <div style="font:300 13px/1.55 'Ambit';color:var(--t3);border-top:1px solid var(--l08);padding-top:16px">{{tierVals.nota}}</div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <button class="{{tierVals.ctaClass}}" onClick="{{buyTicket}}" style="background:{{tierVals.ctaBg}};border:none;color:{{tierVals.ctaColor}};font:700 15px 'Ambit';padding:14px 26px;border-radius:11px;cursor:pointer;min-height:48px" style-hover="box-shadow:{{tierVals.ctaGlow}}">{{buyLabel}}</button>
+        <sc-if value="{{hasTicket}}" hint-placeholder-val="{{false}}"><span style="font:400 12.5px/1.5 'Ambit';color:var(--verdet)">Ya tenés una entrada activa. Al confirmar, se reemplaza por el pase seleccionado.</span></sc-if>
       </div>
     </div>
+
+    <div class="tk-cred" aria-label="Vista previa de tu credencial" style="border-radius:20px;overflow:hidden;border:1px solid var(--l10);background:var(--panel)">
+      <div style="height:6px;background:{{tierVals.credStrip}}"></div>
+      <div style="padding:26px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font:700 17px 'Ambit';letter-spacing:.04em">EXPOJUY <span style="color:var(--li)">2026</span></div>
+          <div style="font:600 10.5px 'Ambit';letter-spacing:.18em;color:var(--t3);text-transform:uppercase">Credencial</div>
+        </div>
+        <div style="display:flex;justify-content:center;padding:6px 0">
+          <canvas ref="{{qrRef}}" width="160" height="160" aria-label="Código QR de acceso (demostración)" style="width:160px;height:160px;border-radius:12px;background:#fff"></canvas>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;text-align:center">
+          <div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Titular</div>
+          <div style="font:700 19px 'Ambit'">{{ticketHolder}}</div>
+          <div style="font:600 13.5px 'Ambit';color:{{tierVals.accent}}">{{tierSelName}}</div>
+          <div style="font:400 12.5px 'Ambit';color:var(--t3)">Nº {{ticketNro}} · 24 al 27 SEP 2026</div>
+        </div>
+        <div style="border-top:1px dashed var(--l18);padding-top:14px;font:300 12.5px/1.55 'Ambit';color:var(--t3);text-align:center">Presentá este código en los accesos del predio. Funciona sin conexión desde la PWA del evento.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:840px;margin:56px auto 0;display:flex;flex-direction:column;gap:10px">
+    <h3 style="font:700 24px/1.15 'Ambit';letter-spacing:-.015em;margin:0 0 8px">Preguntas frecuentes sobre entradas</h3>
+    <sc-for list="{{tFaqs}}" as="f" hint-placeholder-count="4">
+      <div style="background:var(--glass2);border:1px solid {{f.border}};border-radius:14px;overflow:hidden;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)">
+        <button onClick="{{f.toggle}}" aria-expanded="{{f.open}}" style="width:100%;min-height:44px;background:none;border:none;cursor:pointer;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;text-align:left">
+          <span style="font:700 15.5px 'Ambit';color:var(--text)">{{f.q}}</span>
+          <span style="font:400 24px/1 'Ambit';color:var(--tq);flex-shrink:0" aria-hidden="true">{{f.icon}}</span>
+        </button>
+        <sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
+          <div class="faq-answer" style="padding:0 22px 18px;font:300 15px/1.65 'Ambit';color:var(--t2);text-wrap:pretty">{{f.a}}</div>
+        </sc-if>
+      </div>
+    </sc-for>
   </div>
 </div>
 </sc-if>
@@ -978,7 +1044,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
-  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', motivoOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, statP:0, statP2:0,
+  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', motivoOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, statP:0, statP2:0,
     // Portal de usuario (sesión simulada, ver src/services/auth.js)
     user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
 
@@ -992,7 +1058,7 @@ class Component extends DCLogic {
 
   // Mock data centralizada (src/data/evento.js), inyectada por el runtime como `DATA`.
   DIAS = DATA.DIAS; RUBROS = DATA.RUBROS; EJES = DATA.EJES; EXPOS = DATA.EXPOSITORES; DESCS = DATA.DESCRIPCIONES_RUBRO;
-  AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; MAP = DATA.SECTORES; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; SPONSORS = DATA.SPONSORS;
+  AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; MAP = DATA.SECTORES; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; GRUPO = DATA.GRUPO; TFAQS = DATA.FAQ_ENTRADAS; SPONSORS = DATA.SPONSORS;
   keyOf = DATA.claveActividad;
 
   _runCounter(stateKey, rafKey, startedKey, obsKey, dur = 1400) {
@@ -1226,9 +1292,9 @@ class Component extends DCLogic {
 
   qrRef = (el) => {
     if (!el || el._done) return; el._done = 1;
-    const g = el.getContext('2d'); const N = 25, M = 116 / (N + 4); let seed = 42;
+    const S = el.width || 116; const g = el.getContext('2d'); const N = 25, M = S / (N + 4); let seed = 42;
     const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
-    g.fillStyle = '#fff'; g.fillRect(0, 0, 116, 116); g.fillStyle = '#0A1428';
+    g.fillStyle = '#fff'; g.fillRect(0, 0, S, S); g.fillStyle = '#0A1428';
     for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
       const fin = (x < 7 && y < 7) || (x >= N - 7 && y < 7) || (x < 7 && y >= N - 7);
       if (!fin && rnd() > .52) g.fillRect((x + 2) * M, (y + 2) * M, M, M);
@@ -1359,7 +1425,43 @@ class Component extends DCLogic {
 
     const faqs = this.FAQS.map(([q, a], i) => { const open = st.faqOpen === i; return { q, a, open, icon: open ? '−' : '+', border: open ? 'rgba(43,196,214,.45)' : 'var(--l08)', toggle: () => this.setState({ faqOpen: open ? -1 : i }) }; });
 
-    const tiers = this.TIERS.map((t, i) => { const on = st.tier === i; return { ...t, on, border: on ? 'var(--tq)' : 'var(--l10)', pick: () => this.setState({ tier: i }) }; });
+    // ---- Entradas v4: tabs por tier + toggle grupal (−20 % por persona, 5+) + panel de detalle ----
+    const grupo = st.grupo;
+    const priceOf = t => grupo ? Math.round(t.base * (1 - this.GRUPO.descuento)) : t.base;
+    const fmtP = n => n === 0 ? 'Gratis' : '$ ' + n.toLocaleString('es-AR');
+    const isEmp = i => i === this.TIERS.length - 1;
+    const tierTabs = this.TIERS.map((t, i) => {
+      const on = st.tier === i;
+      return {
+        name: t.short, price: fmtP(priceOf(t)), on, panelId: 'tier-' + i, tabId: 'tier-tab-' + i,
+        bg: on ? (isEmp(i) ? 'linear-gradient(135deg,rgba(242,193,78,.22),rgba(13,20,40,.92))' : 'var(--panel)') : 'transparent',
+        shadow: on ? 'inset 0 0 0 1px ' + (isEmp(i) ? 'rgba(242,193,78,.45)' : 'var(--l14)') : 'none',
+        color: on ? 'var(--text)' : 'var(--t2)', priceColor: on ? (isEmp(i) ? 'var(--en)' : 'var(--tq)') : 'var(--t3)',
+        pick: () => this.setState({ tier: i })
+      };
+    });
+    const TD = this.TIERS[st.tier]; const emp = isEmp(st.tier);
+    const tierVals = {
+      nivel: TD.nivel, tag: TD.tag, name: TD.name, ideal: TD.ideal, nota: TD.nota, panelId: 'tier-' + st.tier, tabId: 'tier-tab-' + st.tier,
+      accent: TD.accent, tagBorder: emp ? 'rgba(242,193,78,.5)' : TD.accent, tagBg: emp ? 'rgba(242,193,78,.12)' : 'color-mix(in srgb,' + TD.accent + ' 14%,transparent)',
+      price: fmtP(priceOf(TD)), priceSub: TD.base === 0 ? (grupo ? 'con registro previo · grupo 5+' : 'con registro previo') : (grupo ? 'por persona · grupo 5+' : 'por persona · válido los 4 días'),
+      priceGrad: emp ? 'linear-gradient(90deg,var(--en),var(--oc),var(--cdA),var(--en))' : 'linear-gradient(90deg,' + TD.accent + ',' + TD.accent2 + ')',
+      priceClass: emp ? 'tk-price-shimmer' : '', priceSize: emp ? '300% 100%' : '100% 100%',
+      perks: TD.perks.map(p => ({ p })),
+      border: emp ? 'transparent' : 'var(--l10)',
+      borderImg: emp ? 'linear-gradient(var(--panel),var(--panel)) padding-box,linear-gradient(120deg,var(--ma),var(--vi),var(--en)) border-box' : 'var(--panel)',
+      ctaBg: emp ? 'linear-gradient(90deg,var(--oc),var(--en))' : 'linear-gradient(90deg,var(--tq),var(--vi))', ctaColor: emp ? '#1A1200' : '#fff', ctaClass: emp ? 'tk-cta-shine' : '',
+      ctaGlow: emp ? '0 0 24px rgba(242,193,78,.45)' : '0 0 24px rgba(120,87,245,.55)',
+      credStrip: emp ? 'linear-gradient(90deg,var(--ma),var(--vi),var(--en))' : 'linear-gradient(90deg,' + TD.accent + ',' + TD.accent2 + ')',
+      ahorro: grupo && TD.base > 0 ? 'Ahorrás ' + fmtP(TD.base - priceOf(TD)) + ' por persona' : ''
+    };
+    const grupoCtl = {
+      on: grupo, indOn: !grupo, indBg: grupo ? 'transparent' : 'var(--panel)', indColor: grupo ? 'var(--t2)' : 'var(--text)', indShadow: grupo ? 'none' : 'inset 0 0 0 1px var(--l14)',
+      grpBg: grupo ? 'linear-gradient(90deg,var(--tq),var(--vi))' : 'transparent', grpColor: grupo ? '#fff' : 'var(--t2)',
+      setInd: () => this.setState({ grupo: false }), setGrp: () => this.setState({ grupo: true }), toggle: () => this.setState(s => ({ grupo: !s.grupo })),
+      badge: '−' + Math.round(this.GRUPO.descuento * 100) + '% por persona', minimo: this.GRUPO.minimo + '+'
+    };
+    const tFaqs = this.TFAQS.map(([q, a], i) => { const open = st.tFaq === i; return { q, a, open, icon: open ? '−' : '+', border: open ? 'rgba(43,196,214,.45)' : 'var(--l08)', toggle: () => this.setState({ tFaq: open ? -1 : i }) }; });
 
     const chatMsgs = st.chatMsgs.map(m => m.who === 'bot'
       ? { text: m.text, just: 'flex-start', bg: 'rgba(63,179,128,.1)', border: 'rgba(63,179,128,.3)', radius: '4px 14px 14px 14px' }
@@ -1437,7 +1539,7 @@ class Component extends DCLogic {
       motivoOpts: ['Consulta general','Quiero exponer','Quiero ser sponsor','Prensa y medios'].map(m => ({ label: m, active: st.fMotivo === m, pick: () => this.setState({ fMotivo: m, motivoOpen: false }) })),
       setNombre: e => this.setState({ fNombre: e.target.value }), setEmail: e => this.setState({ fEmail: e.target.value }), setMensaje: e => this.setState({ fMensaje: e.target.value }),
       errNombre: !!st.errs.nombre, errEmail: !!st.errs.email, errMensaje: !!st.errs.mensaje, formOk: st.formOk, submitForm: this.submitForm,
-      tiers, tierSelName: this.TIERS[st.tier].name, qrRef: this.qrRef,
+      tierTabs, tierVals, grupoCtl, tFaqs, tierSelName: this.TIERS[st.tier].name, qrRef: this.qrRef,
       showCactus: P.asistenteVisible ?? true, chatOpen: st.chatOpen, toggleChat: () => this.setState({ chatOpen: !st.chatOpen }),
       chatMsgs, chatInput: st.chatInput, setChatInput: e => this.setState({ chatInput: e.target.value }), chatKey: e => { if (e.key === 'Enter') this.sendMsg(st.chatInput); }, sendChat: () => this.sendMsg(st.chatInput), sugerencias,
       footNav1: ['inicio', 'sobre', 'expositores', 'agenda', 'noticias'].map(r => ({ label: labels[r], go: () => this.go(r) })),

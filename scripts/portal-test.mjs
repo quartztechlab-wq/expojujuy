@@ -74,7 +74,7 @@ try {
 
   // --- Agendar desde la Agenda (con sesión) y ver Mi Agenda ---
   await page.evaluate(clickText('Agenda', 'nav[aria-label="Navegación principal"] button'));
-  await pause(120);
+  await pause(400);
   const agendar = (i) => `(() => { const b = document.querySelectorAll('button[aria-pressed][aria-label="Agendar actividad"]')[${i}]; b.click(); return b.textContent.trim(); })()`;
   await page.evaluate(agendar(0)); await pause(80);   // 09:30 apertura
   await page.evaluate(agendar(0)); await pause(80);   // 11:00 (el índice 0 ahora es el siguiente no agendado)
@@ -83,7 +83,7 @@ try {
   assert(await page.evaluate(`${q('button[aria-label="Abrir menú de usuario"] span[aria-label="Actividades agendadas"]')}?.textContent === '3'`), 'El badge del header no cuenta las actividades.');
   await shot(page, '05-agenda-agendado');
   await page.evaluate(`${q('button[aria-label="Abrir menú de usuario"]')}.click()`); await pause(80);
-  await page.evaluate(clickText('Mi Agenda', '[role="menuitem"] span')); await pause(150);
+  await page.evaluate(clickText('Mi Agenda', '[role="menuitem"] span')); await pause(400);
   const miAgenda = await page.evaluate(text());
   assert(miAgenda.includes('Mi cronograma') && miAgenda.includes('3 actividades en 1 día'), 'Mi Agenda no lista el cronograma.');
   assert(miAgenda.includes('Se superpone con') && await page.evaluate(`${q('#portal-agenda [role="status"]')} !== null`), 'No se detectó la superposición 11:00/11:30.');
@@ -96,10 +96,11 @@ try {
   await page.evaluate(clickText('Mi Entrada', '[role="tab"]')); await pause(100);
   assert(await page.evaluate(`${text()}.includes('Todavía no tenés tu entrada')`), 'Mi Entrada no muestra el estado vacío.');
   await shot(page, '07-mi-entrada-vacia');
-  await page.evaluate(clickText('Obtener mi entrada')); await pause(120);
+  await page.evaluate(clickText('Obtener mi entrada')); await pause(400);
   assert(await page.evaluate(`${text()}.includes('Tu pase a ExpoJuy 2026') && ${text()}.includes('Valentina Quispe') && ${text()}.includes('Obtener mi QR')`), 'Entradas no muestra el titular ni el CTA con sesión.');
-  await page.evaluate(clickText('Pase Full', '[role="button"][aria-pressed] div')); await pause(80);
-  await page.evaluate(clickText('Obtener mi QR')); await pause(150);
+  await page.evaluate(`(() => { const t = ${q('[role="tab"][aria-controls="tier-1"]')}; if (!t) throw new Error('No existe el tab Full'); t.click(); return true; })()`); await pause(80);
+  assert(await page.evaluate(`${q('[role="tabpanel"]#tier-1')} !== null && ${text()}.includes('Pase Full') && ${text()}.includes('$ 15.000')`), 'El tab Full no mostró su panel de detalle.');
+  await page.evaluate(clickText('Obtener mi QR')); await pause(400);
   const entrada = await page.evaluate(text());
   assert(entrada.toUpperCase().includes('ACTIVA') && entrada.includes('Pase Full') && /Nº\s*\d{6}/.test(entrada), 'Mi Entrada no muestra la entrada activa.');
   for (let i = 0; i < 40 && !(await page.evaluate(`${q('#portal-entrada canvas')}?.dataset.qr === 'ok'`)); i += 1) await pause(250);
@@ -132,11 +133,11 @@ try {
 
   // --- Cerrar sesión y volver a ingresar validando contra el storage ---
   await page.evaluate(`${q('[role="tab"][aria-controls="portal-perfil"]')}.click()`); await pause(100);
-  await page.evaluate(clickText('Cerrar sesión', '#portal-perfil button')); await pause(100);
+  await page.evaluate(clickText('Cerrar sesión', '#portal-perfil button')); await pause(400);
   assert(await page.evaluate(`localStorage.getItem('expojuy2026.portal') === null && ${text()}.includes('Viví la expo que') && ${q('button[aria-label="Abrir menú de usuario"]')} === null`), 'Cerrar sesión no limpió la sesión.');
 
   // --- Sin sesión: Agendar abre el registro y, al completarlo, agenda la actividad ---
-  await page.evaluate(clickText('Agenda', 'nav[aria-label="Navegación principal"] button')); await pause(100);
+  await page.evaluate(clickText('Agenda', 'nav[aria-label="Navegación principal"] button')); await pause(400);
   await page.evaluate(`document.querySelector('button[aria-label="Registrate para agendar esta actividad"]').click()`); await pause(100);
   assert(await page.evaluate(`${q('[role="dialog"]')}?.getAttribute('aria-label') === 'Creá tu cuenta'`), 'Agendar sin sesión no abrió el registro.');
   await page.evaluate(clickText('Ingresar', '[role="tab"]')); await pause(60);
@@ -152,13 +153,13 @@ try {
   await page.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await pause(100);
   await page.evaluate(clickText('Más', '.mobile-bottom-nav button')); await pause(80);
-  await page.evaluate(clickText('Mi portal', '.mobile-more-menu button')); await pause(150);
+  await page.evaluate(clickText('Mi portal', '.mobile-more-menu button')); await pause(400);
   for (const tab of ['agenda', 'entrada', 'perfil']) {
     await page.evaluate(`${q('[role="tab"][aria-controls="portal-' + tab + '"]')}.click()`); await pause(100);
     assert(await page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), `El portal (${tab}) desborda el viewport móvil.`);
     await shot(page, '10-mobile-' + tab);
   }
-  await page.evaluate(clickText('Cerrar sesión', '#portal-perfil button')); await pause(100);
+  await page.evaluate(clickText('Cerrar sesión', '#portal-perfil button')); await pause(400);
   await page.evaluate(clickText('Más', '.mobile-bottom-nav button')); await pause(80);
   await page.evaluate(clickText('Ingresar / Registrarme', '.mobile-more-menu button')); await pause(100);
   assert(await page.evaluate(`${q('[role="dialog"][aria-modal="true"]')} !== null && document.documentElement.scrollWidth <= window.innerWidth`), 'Ingresar desde "Más" no abrió el modal en mobile.');

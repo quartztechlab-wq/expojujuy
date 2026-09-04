@@ -194,10 +194,44 @@ export const FAQS = [
 ];
 
 /** @type {TipoEntrada[]} */
+/**
+ * Tiers de entrada (handoff v4). `base` es el precio por persona en ARS (0 = gratis); el precio
+ * grupal (5+) se calcula en el componente con −20 %. `accent` es un token CSS del tema, nunca un hex
+ * literal (en tema claro los acentos cambian para mantener contraste). En producción llega de `/tiers`.
+ */
 export const TIPOS_ENTRADA = [
-  { name: 'Entrada General', price: 'Gratis', desc: 'Acceso a pabellones, plaza gastronómica y actividades abiertas durante los 4 días. Requiere registro previo online.' },
-  { name: 'Pase Full', price: '$ 15.000', desc: 'Todo lo de General + acceso prioritario al Auditorio, talleres con reserva y descuentos en la plaza gastronómica.' },
-  { name: 'Pase Empresarial', price: '$ 60.000', desc: 'Acreditación business: rondas de negocios internacionales, sala VIP, agenda de reuniones 1:1 y networking con delegaciones.' }
+  {
+    name: 'Entrada General', short: 'General', base: 0, nivel: 'Nivel 1', tag: 'Acceso general', accent: 'var(--tq)', accent2: 'var(--ve)',
+    ideal: 'Ideal para visitantes, familias y estudiantes que quieren recorrer la expo.',
+    desc: 'Acceso a pabellones, plaza gastronómica y actividades abiertas durante los 4 días. Requiere registro previo online.',
+    perks: ['Acceso a los 6 pabellones y al patio de food trucks', 'Charlas y demostraciones abiertas de los 4 días', 'Mapa interactivo y agenda personal en el portal', 'QR digital para ingresar sin filas'],
+    nota: 'Cupos limitados por día. Con el registro previo te aseguramos el ingreso.'
+  },
+  {
+    name: 'Pase Full', short: 'Full', base: 15000, nivel: 'Nivel 2', tag: 'Acceso prioritario', accent: 'var(--vi)', accent2: 'var(--tq)',
+    ideal: 'Ideal para profesionales, emprendedores y curiosos que no se quieren perder nada.',
+    desc: 'Todo lo de General + acceso prioritario al Auditorio, talleres con reserva y descuentos en la plaza gastronómica.',
+    perks: ['Todo lo de la Entrada General', 'Acceso prioritario al Auditorio Principal', 'Talleres y workshops con reserva de lugar', '15 % de descuento en la plaza gastronómica', 'Kit de bienvenida ExpoJuy 2026'],
+    nota: 'Válido los 4 días. Los talleres se reservan desde tu portal.'
+  },
+  {
+    name: 'Pase Empresarial', short: 'Empresarial', base: 60000, nivel: 'Nivel 3', tag: 'Acreditación business', accent: 'var(--en)', accent2: 'var(--oc)',
+    ideal: 'Ideal para empresas, delegaciones y cámaras que vienen a hacer negocios.',
+    desc: 'Acreditación business: rondas de negocios internacionales, sala VIP, agenda de reuniones 1:1 y networking con delegaciones.',
+    perks: ['Todo lo del Pase Full', 'Rondas de negocios internacionales con matchmaking', 'Sala VIP con catering y espacios de reunión', 'Agenda de reuniones 1:1 con expositores', 'Networking con delegaciones y cámaras invitadas', 'Acceso a la cena de vinculación empresarial'],
+    nota: 'Incluye acreditación nominal. Para delegaciones de 5 o más, usá la tarifa grupal.'
+  }
+];
+
+/** Descuento grupal (por persona) y mínimo de personas para aplicarlo. */
+export const GRUPO = Object.freeze({ descuento: 0.2, minimo: 5 });
+
+/** FAQ corta de la sección Entradas (handoff v4). */
+export const FAQ_ENTRADAS = [
+  ['¿La Entrada General es realmente gratis?', 'Sí. Solo pedimos registro previo online para organizar el ingreso por día. Con el registro recibís tu QR en el portal y lo presentás en los accesos.'],
+  ['¿Cómo funciona la tarifa grupal?', 'Para grupos de 5 o más personas (delegaciones, empresas, instituciones educativas) cada pase tiene 20 % de descuento. Se gestiona en un solo pago y cada integrante recibe su propio QR.'],
+  ['¿Puedo cambiar de pase después de comprarlo?', 'Sí, podés subir de categoría desde tu portal hasta 48 h antes de la apertura abonando la diferencia. El QR se actualiza automáticamente.'],
+  ['¿El QR funciona sin conexión?', 'Sí. Tu entrada queda guardada en el portal y en la PWA del evento, así que podés mostrarla aunque no tengas señal dentro del predio.']
 ];
 
 export const SPONSORS = {
@@ -209,5 +243,5 @@ export const SPONSORS = {
 /** Todo junto, para inyectar en el prototipo (`Component`) desde el runtime. */
 export const DATA = Object.freeze({
   FECHA_APERTURA, PREDIO, FECHAS_TEXTO, DIAS, RUBROS, EJES, EJES_IMPRESION, DESCRIPCIONES_RUBRO, EXPOSITORES,
-  DURACION_ACTIVIDAD_MIN, AGENDA, claveActividad, NOTICIAS, SECTORES, SECTOR_POR_LETRA, FAQS, TIPOS_ENTRADA, SPONSORS
+  DURACION_ACTIVIDAD_MIN, AGENDA, claveActividad, NOTICIAS, SECTORES, SECTOR_POR_LETRA, FAQS, TIPOS_ENTRADA, GRUPO, FAQ_ENTRADAS, SPONSORS
 });
