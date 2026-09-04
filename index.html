@@ -60,8 +60,26 @@ main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 .map-sector-selected{position:absolute;top:9px;left:10px;font:700 9px/1 'Ambit';letter-spacing:.12em;text-transform:uppercase;color:#fff}
 @media(max-width:900px){.map-layout{grid-template-columns:1fr!important}}
 @media(max-width:600px){.countdown-wrap{width:100%}#expo-cd{width:100%;gap:7px!important}.fc-unit{width:auto;flex:1;min-width:0}.fc-card{height:46px}.fc-n{font-size:29px}.fc-label{font-size:7px;letter-spacing:.1em;padding:5px 2px 9px}.map-filter-row{flex-wrap:nowrap!important;overflow-x:auto;padding:9px!important}.map-filter-row>span{position:sticky;left:0;z-index:2;background:var(--bg2);padding:8px 7px}.map-canvas{margin:10px!important;padding:8px!important;gap:6px!important}.map-sector-badge{top:5px;right:5px;padding:2px 5px;font-size:8px}.map-sector-selected{display:none}}
+@keyframes kenBurns{from{transform:scale(1) translateY(0)}to{transform:scale(1.07) translateY(-1%)}}
+#hero-media{position:absolute;inset:-8% 0;will-change:transform}
+.hero-img{width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.72;filter:saturate(1.1) brightness(.8);animation:kenBurns 22s ease-in-out infinite alternate;transform-origin:center center}
+.reveal-grid>*{opacity:0;transform:translateY(18px);transition:opacity .42s ease,transform .42s ease}
+.reveal-grid.revealed>*{opacity:1;transform:none}
+.reveal-grid.revealed>*:nth-child(1){transition-delay:.00s}
+.reveal-grid.revealed>*:nth-child(2){transition-delay:.07s}
+.reveal-grid.revealed>*:nth-child(3){transition-delay:.14s}
+.reveal-grid.revealed>*:nth-child(4){transition-delay:.21s}
+.reveal-grid.revealed>*:nth-child(5){transition-delay:.28s}
+.reveal-grid.revealed>*:nth-child(6){transition-delay:.35s}
+.reveal-grid.revealed>*:nth-child(7){transition-delay:.07s}
+.reveal-grid.revealed>*:nth-child(8){transition-delay:.14s}
+.reveal-grid.revealed>*:nth-child(9){transition-delay:.21s}
+.reveal-grid.revealed>*:nth-child(10){transition-delay:.00s}
+.reveal-grid.revealed>*:nth-child(11){transition-delay:.07s}
+.reveal-grid.revealed>*:nth-child(12){transition-delay:.14s}
 body[data-noanim] *{animation:none!important;transition:none!important}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal-grid>*{opacity:1!important;transform:none!important}}
 </style>
 </helmet>
 <div style="min-height:100vh;display:flex;flex-direction:column">
@@ -125,7 +143,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
 <sc-if value="{{isInicio}}" hint-placeholder-val="{{true}}">
 <div style="animation:fadeUp .45s ease both">
   <section aria-label="Portada" style="position:relative;overflow:hidden;min-height:86vh;display:flex;align-items:center">
-    <img src="assets/hero-expo.jpg" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.72;filter:saturate(1.1) brightness(.8)">
+    <div id="hero-media"><img src="assets/hero-expo.jpg" alt="" aria-hidden="true" class="hero-img"></div>
     <div style="position:absolute;inset:0;background:linear-gradient(90deg,var(--bg0) 0%,var(--bg0) 18%,rgba(5,7,13,.82) 38%,rgba(5,7,13,.45) 62%,rgba(5,7,13,.2) 100%)"></div>
     <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,13,.7) 0%,transparent 20%,transparent 72%,var(--bg0) 100%)"></div>
     <div style="position:absolute;left:0;right:0;bottom:0;height:44%;clip-path:polygon(0 100%,0 66%,11% 46%,24% 62%,37% 34%,50% 56%,63% 26%,77% 50%,89% 36%,100% 48%,100% 100%);background:linear-gradient(180deg,rgba(120,87,245,.20),rgba(120,87,245,.02))"></div>
@@ -214,7 +232,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
     <div style="display:flex;flex-direction:column;gap:18px">
       <p style="font:400 16px/1.7 'Ambit';color:var(--t15);margin:0;text-wrap:pretty">Nacida como punto de encuentro entre productores, industrias y compradores internacionales, ExpoJuy creció hasta convertirse en la vidriera productiva más importante de la región: minería y litio, energías renovables, agroindustria, turismo, manufactura y servicios basados en conocimiento.</p>
       <p style="font:400 16px/1.7 'Ambit';color:var(--t15);margin:0;text-wrap:pretty">En 2026, la expo se propone tender un puente entre la tradición productiva jujeña y las tecnologías que están transformando la economía global: inteligencia artificial, energía limpia y talento digital exportable.</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px">
+      <div aria-label="Estadísticas edición anterior" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px">
         <sc-for list="{{edicionAnterior}}" as="c" hint-placeholder-count="3">
           <div style="background:var(--panel);border:1px solid var(--l08);border-radius:14px;padding:18px">
             <div style="font:700 26px 'Ambit';color:var(--tq)">{{c.v}}</div>
@@ -264,7 +282,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
       </sc-for>
     </div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+  <div class="reveal-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
     <sc-for list="{{expoList}}" as="e" hint-placeholder-count="6">
       <div style="background:var(--panel);border:1px solid var(--l08);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px;cursor:pointer" style-hover="border-color:rgba(120,87,245,.55);transform:translateY(-2px)" onClick="{{e.open}}" role="button" aria-label="Ver ficha del expositor">
         <div style="display:flex;align-items:center;gap:14px">
@@ -311,7 +329,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
       <button onClick="{{ej.pick}}" aria-pressed="{{ej.on}}" style="border:1px solid {{ej.border}};background:{{ej.bg}};color:{{ej.color}};font:600 12.5px 'Ambit';padding:7px 14px;border-radius:18px;cursor:pointer">{{ej.label}}</button>
     </sc-for>
   </div>
-  <div style="display:flex;flex-direction:column;gap:12px">
+  <div class="reveal-grid" style="display:flex;flex-direction:column;gap:12px">
     <sc-for list="{{agendaList}}" as="a" hint-placeholder-count="4">
       <div style="background:var(--panel);border:1px solid {{a.cardBorder}};border-radius:16px;padding:20px 24px;display:flex;gap:22px;align-items:center">
         <div style="font:700 19px 'Ambit';color:var(--tq);min-width:64px">{{a.time}}</div>
@@ -464,7 +482,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
   <div style="display:flex;flex-direction:column;gap:40px">
     <div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px"><span style="width:14px;height:14px;background:linear-gradient(135deg,var(--tq),var(--li));clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></span><span style="font:700 15px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--li)">Diamante</span></div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div class="reveal-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
         <sc-for list="{{spDia}}" as="s" hint-placeholder-count="2">
           <div style="border:1px solid rgba(199,164,248,.4);background:linear-gradient(140deg,rgba(120,87,245,.12),rgba(43,196,214,.06));border-radius:16px;padding:38px;text-align:center;font:700 22px 'Ambit'" style-hover="border-color:var(--li);box-shadow:0 0 30px rgba(120,87,245,.25)">{{s}}</div>
         </sc-for>
@@ -472,7 +490,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
     </div>
     <div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px"><span style="width:12px;height:12px;background:var(--oc);border-radius:3px"></span><span style="font:700 14px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--oc)">Oro</span></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+      <div class="reveal-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
         <sc-for list="{{spOro}}" as="s" hint-placeholder-count="4">
           <div style="border:1px solid rgba(224,154,69,.35);border-radius:14px;padding:26px 14px;text-align:center;font:700 16px 'Ambit';color:var(--text)" style-hover="border-color:var(--oc)">{{s}}</div>
         </sc-for>
@@ -480,7 +498,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
     </div>
     <div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px"><span style="width:10px;height:10px;background:var(--t2);border-radius:50%"></span><span style="font:700 13px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--t2)">Plata</span></div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div class="reveal-grid" style="display:flex;gap:12px;flex-wrap:wrap">
         <sc-for list="{{spPlata}}" as="s" hint-placeholder-count="6">
           <div style="border:1px solid var(--l14);border-radius:12px;padding:14px 24px;font:600 14px 'Ambit';color:var(--t2)" style-hover="color:var(--text)">{{s}}</div>
         </sc-for>
@@ -544,10 +562,23 @@ body[data-noanim] *{animation:none!important;transition:none!important}
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:7px">
-        <label for="f-motivo" style="font:600 13px 'Ambit';color:var(--t2)">Motivo</label>
-        <select id="f-motivo" value="{{fMotivo}}" onChange="{{setMotivo}}" style="background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);outline:none">
-          <option>Consulta general</option><option>Quiero exponer</option><option>Quiero ser sponsor</option><option>Prensa y medios</option>
-        </select>
+        <label style="font:600 13px 'Ambit';color:var(--t2)">Motivo</label>
+        <div style="position:relative">
+          <sc-if value="{{motivoOpen}}" hint-placeholder-val="{{false}}">
+            <div onClick="{{closeMotivo}}" style="position:fixed;inset:0;z-index:49"></div>
+          </sc-if>
+          <button onClick="{{toggleMotivo}}" aria-haspopup="listbox" style="width:100%;background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;box-sizing:border-box;outline:none" style-hover="border-color:var(--l20)"><span>{{fMotivo}}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t3);flex-shrink:0;transition:transform .18s ease;transform:{{motivoOpen ? 'rotate(180deg)' : 'none'}}"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <sc-if value="{{motivoOpen}}" hint-placeholder-val="{{false}}">
+            <div role="listbox" style="position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel2);border:1px solid var(--l14);border-radius:12px;overflow:hidden;z-index:50;box-shadow:0 16px 48px rgba(0,0,0,.55);padding:5px;animation:fadeUp .15s ease both">
+              <sc-for list="{{motivoOpts}}" as="m" hint-placeholder-count="4">
+                <button role="option" onClick="{{m.pick}}" style="width:100%;background:{{m.active ? 'rgba(43,196,214,.1)' : 'none'}};border:none;color:{{m.active ? 'var(--tq)' : 'var(--text)'}};font:{{m.active ? '600' : '400'}} 14.5px 'Ambit';padding:11px 14px;border-radius:8px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;box-sizing:border-box" style-hover="background:var(--l06)">
+                  <sc-if value="{{m.active}}" hint-placeholder-val="{{false}}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></sc-if>
+                  {{m.label}}
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:7px">
         <label for="f-msj" style="font:600 13px 'Ambit';color:var(--t2)">Mensaje</label>
@@ -947,7 +978,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
-  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', fMensaje:'', errs:{}, formOk:false, tier:0, statP:0,
+  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', motivoOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, statP:0, statP2:0,
     // Portal de usuario (sesión simulada, ver src/services/auth.js)
     user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
 
@@ -964,41 +995,60 @@ class Component extends DCLogic {
   AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; MAP = DATA.SECTORES; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; SPONSORS = DATA.SPONSORS;
   keyOf = DATA.claveActividad;
 
-  startStats() {
-    if (this._statsStarted) return;
-    this._statsStarted = true;
-    this._statsObserver?.disconnect();
-    const t0 = performance.now(), dur = 1400;
-    const step = (t) => {
+  _runCounter(stateKey, rafKey, startedKey, obsKey, dur = 1400) {
+    if (this[startedKey]) return;
+    this[startedKey] = true;
+    this[obsKey]?.disconnect();
+    const t0 = performance.now();
+    const step = t => {
       const p = Math.min(1, (t - t0) / dur);
-      this.setState({ statP: 1 - Math.pow(1 - p, 3) });
-      if (p < 1) this._raf = requestAnimationFrame(step);
+      this.setState({ [stateKey]: 1 - Math.pow(1 - p, 3) });
+      if (p < 1) this[rafKey] = requestAnimationFrame(step);
     };
-    this._raf = requestAnimationFrame(step);
+    this[rafKey] = requestAnimationFrame(step);
   }
+  startStats()  { this._runCounter('statP',  '_raf',  '_statsStarted',  '_statsObserver'); }
+  startStats2() { this._runCounter('statP2', '_raf2', '_statsStarted2', '_statsObserver2'); }
   syncStatsObserver() {
     if (this._statsStarted) return;
     const section = document.querySelector('[aria-label="Cifras del evento"]');
     if (!section) { this._statsObserver?.disconnect(); this._statsTarget = null; return; }
     if (!('IntersectionObserver' in window)) { this.startStats(); return; }
     if (!this._statsObserver) this._statsObserver = new IntersectionObserver(entries => {
-      if (entries.some(entry => entry.isIntersecting)) this.startStats();
-    }, { threshold: .28 });
+      if (entries.some(e => e.isIntersecting)) this.startStats();
+    }, { threshold: .15 });
     if (this._statsTarget === section) return;
-    this._statsObserver.disconnect();
-    this._statsTarget = section;
-    this._statsObserver.observe(section);
+    this._statsObserver.disconnect(); this._statsTarget = section; this._statsObserver.observe(section);
+  }
+  syncSobreObserver() {
+    if (this._statsStarted2 || this.state.route !== 'sobre') { this._statsObserver2?.disconnect(); return; }
+    const section = document.querySelector('[aria-label="Estadísticas edición anterior"]');
+    if (!section) { this._statsObserver2?.disconnect(); this._sobreTarget = null; return; }
+    if (!('IntersectionObserver' in window)) { this.startStats2(); return; }
+    if (!this._statsObserver2) this._statsObserver2 = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) this.startStats2();
+    }, { threshold: .15 });
+    if (this._sobreTarget === section) return;
+    this._statsObserver2.disconnect(); this._sobreTarget = section; this._statsObserver2.observe(section);
+  }
+  syncRevealObserver() {
+    if (!('IntersectionObserver' in window)) { document.querySelectorAll('.reveal-grid').forEach(el => el.classList.add('revealed')); return; }
+    if (!this._revealObs) this._revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); this._revealObs.unobserve(e.target); } });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.reveal-grid:not(.revealed)').forEach(el => this._revealObs.observe(el));
   }
   componentDidMount() {
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
-    this.syncAnim();
-    this.syncStatsObserver();
+    this.syncAnim(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver();
     setTimeout(() => this.initFlipClock(), 60);
     this._onVisibility = () => { if (!document.hidden) this.updateFlipClock(); };
     document.addEventListener('visibilitychange', this._onVisibility);
+    this._heroParallax = () => { const el = document.getElementById('hero-media'); if (el) el.style.transform = `translateY(${window.scrollY * 0.22}px)`; };
+    window.addEventListener('scroll', this._heroParallax, { passive: true });
   }
-  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncMapa(); this.syncStatsObserver(); this.updateFlipClock(); }
-  componentWillUnmount() { clearInterval(this._tick); cancelAnimationFrame(this._raf); clearTimeout(this._mapT); this._statsObserver?.disconnect(); document.removeEventListener('visibilitychange', this._onVisibility); if (this.mapa) { this.mapa.remove(); this.mapa = null; } }
+  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncMapa(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver(); this.updateFlipClock(); }
+  componentWillUnmount() { clearInterval(this._tick); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); clearTimeout(this._mapT); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); if (this.mapa) { this.mapa.remove(); this.mapa = null; } }
 
   PREDIO_LATLNG = [-24.182539, -65.329985];
 
@@ -1368,7 +1418,7 @@ class Component extends DCLogic {
       goInicio: () => this.go('inicio'), goSobre: () => this.go('sobre'), goExpositores: () => this.go('expositores'), goAgenda: () => this.go('agenda'), goNoticias: () => this.go('noticias'), goMapa: () => this.go('mapa'), goSponsors: () => this.go('sponsors'), goFaq: () => this.go('faq'), goContacto: () => this.go('contacto'), goEntradas: () => this.go('entradas'),
       cdUnits, stats, highlights, socials,
       sponsorsHome: [...this.SPONSORS.dia, ...this.SPONSORS.oro],
-      edicionAnterior: [{ v: '180', l: 'expositores en 2024' }, { v: '38.000', l: 'visitantes en 2024' }, { v: '9', l: 'países participantes' }],
+      edicionAnterior: (p2 => [{ v: fmt(180 * p2), l: 'expositores en 2024' }, { v: fmt(38000 * p2), l: 'visitantes en 2024' }, { v: String(Math.round(9 * p2)) || '0', l: 'países participantes' }])(st.statP2),
       valores,
       q: st.q, setQ: e => this.setState({ q: e.target.value }), rubroChips, expoList, noExpo: expoList.length === 0,
       expoOpen: !!sel, closeExpo: () => this.setState({ expoSel: null }), stopProp: e => e.stopPropagation(),
@@ -1383,7 +1433,9 @@ class Component extends DCLogic {
       spDia: this.SPONSORS.dia, spOro: this.SPONSORS.oro, spPlata: this.SPONSORS.plata,
       faqs,
       fNombre: st.fNombre, fEmail: st.fEmail, fMotivo: st.fMotivo, fMensaje: st.fMensaje,
-      setNombre: e => this.setState({ fNombre: e.target.value }), setEmail: e => this.setState({ fEmail: e.target.value }), setMotivo: e => this.setState({ fMotivo: e.target.value }), setMensaje: e => this.setState({ fMensaje: e.target.value }),
+      motivoOpen: st.motivoOpen, toggleMotivo: () => this.setState({ motivoOpen: !st.motivoOpen }), closeMotivo: () => this.setState({ motivoOpen: false }),
+      motivoOpts: ['Consulta general','Quiero exponer','Quiero ser sponsor','Prensa y medios'].map(m => ({ label: m, active: st.fMotivo === m, pick: () => this.setState({ fMotivo: m, motivoOpen: false }) })),
+      setNombre: e => this.setState({ fNombre: e.target.value }), setEmail: e => this.setState({ fEmail: e.target.value }), setMensaje: e => this.setState({ fMensaje: e.target.value }),
       errNombre: !!st.errs.nombre, errEmail: !!st.errs.email, errMensaje: !!st.errs.mensaje, formOk: st.formOk, submitForm: this.submitForm,
       tiers, tierSelName: this.TIERS[st.tier].name, qrRef: this.qrRef,
       showCactus: P.asistenteVisible ?? true, chatOpen: st.chatOpen, toggleChat: () => this.setState({ chatOpen: !st.chatOpen }),

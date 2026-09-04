@@ -143,7 +143,7 @@ const services = {
       this.state = { ...this.state, ...patch };
       if (this.__render) {
         const keys = Object.keys(patch || {});
-        const isLiveUpdate = keys.length > 0 && keys.every((key) => key === 'now' || key === 'statP');
+        const isLiveUpdate = keys.length > 0 && keys.every((key) => key === 'now' || key === 'statP' || key === 'statP2');
         if (isLiveUpdate && this.__updateLive) this.__updateLive();
         else this.__render();
         if (typeof this.componentDidUpdate === 'function') this.componentDidUpdate();
@@ -375,6 +375,14 @@ const services = {
         Array.from(statsGrid.children).forEach((card, index) => {
           const valueNode = card.firstElementChild;
           if (valueNode && values.stats[index]) valueNode.textContent = values.stats[index].v;
+        });
+      }
+
+      const previousEdition = root.querySelector('[aria-label="Estadísticas edición anterior"]');
+      if (previousEdition) {
+        Array.from(previousEdition.children).forEach((card, index) => {
+          const valueNode = card.firstElementChild;
+          if (valueNode && values.edicionAnterior[index]) valueNode.textContent = values.edicionAnterior[index].v;
         });
       }
     };

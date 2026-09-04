@@ -84,21 +84,21 @@ try {
     throw new Error(`La portada no terminó de renderizar: ${JSON.stringify(diagnostic)}`);
   }
 
-  await evaluate(`window.__expoJuyVideo = document.querySelector('video')`);
+  await evaluate(`window.__expoJuyHero = document.querySelector('section[aria-label="Portada"] img')`);
   await pause(1200);
-  const stableCountdown = await evaluate(`window.__expoJuyVideo === document.querySelector('video') && document.documentElement.contains(window.__expoJuyVideo)`);
+  const stableCountdown = await evaluate(`window.__expoJuyHero === document.querySelector('section[aria-label="Portada"] img') && document.documentElement.contains(window.__expoJuyHero) && document.querySelectorAll('#expo-cd .fc-unit').length === 4`);
   if (!stableCountdown) throw new Error('La cuenta regresiva volvió a reconstruir la página.');
 
   const socialIconsReady = await evaluate(`Array.from(document.querySelectorAll('section[aria-label="Redes sociales"] a')).every((link) => link.href !== location.href + '#' && link.querySelector('svg path')?.getAttribute('d')?.length > 20)`);
   if (!socialIconsReady) throw new Error('Los íconos de redes sociales no se renderizaron.');
 
   await evaluate(`Array.from(document.querySelectorAll('nav button')).find((button) => button.textContent.trim() === 'Sobre').click()`);
-  await pause(100);
+  await pause(250);
   const valueIconsReady = await evaluate(`Array.from(document.querySelectorAll('h3')).find((heading) => heading.textContent.includes('valores que nos mueven'))?.nextElementSibling?.querySelectorAll('svg path').length === 6`);
   if (!valueIconsReady) throw new Error('Los íconos de valores no se renderizaron.');
 
   await evaluate(`Array.from(document.querySelectorAll('nav button')).find((button) => button.textContent.trim() === 'Expositores').click()`);
-  await pause(100);
+  await pause(250);
   const exhibitorsReady = await evaluate(`document.body.innerText.includes('Quiénes exponen') && document.body.innerText.includes('Litio Andino SA')`);
   if (!exhibitorsReady) throw new Error('La navegación a Expositores falló.');
 
@@ -136,5 +136,9 @@ try {
   }
   chrome.kill();
   await pause(300);
-  rmSync(profilePath, { recursive: true, force: true });
+  try {
+    rmSync(profilePath, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+  } catch (error) {
+    console.warn(`No se pudo limpiar el perfil temporal de Chrome: ${error.code || error.message}`);
+  }
 }
