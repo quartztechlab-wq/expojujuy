@@ -1,3 +1,14 @@
+// Logos de sponsors: importados para que Vite los copie a dist/ con hash (el src se resuelve en runtime).
+import logoExar from '../../assets/sponsors/exar.png';
+import logoSeguros from '../../assets/sponsors/seguros-jujuy.png';
+import logoCannava from '../../assets/sponsors/cannava.png';
+import logoKelimpio from '../../assets/sponsors/kelimpio.png';
+import logoSecTurismo from '../../assets/sponsors/secretaria-turismo.png';
+import logoCac from '../../assets/sponsors/cac.png';
+import logoCfi from '../../assets/sponsors/cfi.png';
+import logoMuniSsj from '../../assets/sponsors/municipalidad-ssj.png';
+import logoCamcomext from '../../assets/logo-camcomext.png';
+
 // Mock data centralizada de ExpoJuy 2026.
 // Única fuente de verdad para buscador, mapa, agenda, recomendador, entradas y portal.
 // Cuando exista la API (Spring Boot) estas constantes se reemplazan por fetchs que
@@ -234,10 +245,33 @@ export const FAQ_ENTRADAS = [
   ['¿El QR funciona sin conexión?', 'Sí. Tu entrada queda guardada en el portal y en la PWA del evento, así que podés mostrarla aunque no tengas señal dentro del predio.']
 ];
 
+/**
+ * Sponsors (handoff v5). `h` = alto del logo en px por contexto (spotlight / fila / franja del
+ * Inicio): los logos tienen proporciones muy distintas y se equilibran por alto, no por ancho.
+ * `url: '#'` = pendiente de confirmar (se renderiza sin enlace). Oro y Plata son demostrativos.
+ */
 export const SPONSORS = {
-  dia: ['Andes Litio Corp', 'Banco NOA'],
-  oro: ['TelecomNorte', 'Cauchari Solar', 'Aerolíneas del Norte', 'Grupo Cerro Azul'],
-  plata: ['Café Yungas', 'Quebrada Wines', 'TecnoJuy', 'Hostal del Carmen', 'Impulsa Fintech', 'Radio Visión']
+  diamante: [ // el orden es el orden del spotlight
+    { key: 'exar', name: 'Exar', logo: logoExar, url: 'https://www.exar.com.ar/',
+      blurb: 'Litio para la transición energética, producido en las Salinas Grandes de Jujuy.', h: { spot: 64, row: 34, home: 30 } },
+    { key: 'seguros', name: 'Compañía de Seguros de Jujuy', logo: logoSeguros, url: 'https://www.segurosdejujuy.com.ar/',
+      blurb: 'La aseguradora de la provincia: protección para familias, comercios y empresas jujeñas.', h: { spot: 150, row: 58, home: 54 } },
+    { key: 'cannava', name: 'Cannava', logo: logoCannava, url: 'https://cannava.com.ar/',
+      blurb: 'Cannabis medicinal e industrial desde la primera empresa estatal del país.', h: { spot: 70, row: 34, home: 30 } },
+    { key: 'kelimpio', name: 'KeLimpio', logo: logoKelimpio, url: '#',
+      blurb: 'Higiene y limpieza profesional para hogares, comercios e industrias del NOA.', h: { spot: 112, row: 48, home: 44 } }
+  ],
+  oro: ['TelecomNorte', 'Cauchari Solar', 'Aerolíneas del Norte', 'Grupo Cerro Azul'].map(name => ({ name, url: '#' })),
+  plata: ['Café Yungas', 'Quebrada Wines', 'TecnoJuy', 'Hostal del Carmen', 'Impulsa Fintech', 'Radio Visión', 'Norte Logística', 'Andes Data'].map(name => ({ name, url: '#' })),
+  organiza: [{ name: 'Cámara de Comercio Exterior de Jujuy', logo: logoCamcomext, url: 'https://camcomexjujuy.com.ar/', h: 56 }],
+  acompanan: [
+    { name: 'Secretaría de Turismo, Ambiente y Deportes', logo: logoSecTurismo, url: 'https://www.argentina.gob.ar/turismo', h: 56 },
+    { name: 'Cámara Argentina de Comercio y Servicios', logo: logoCac, url: 'https://www.cac.com.ar/', h: 50 },
+    { name: 'Consejo Federal de Inversiones', logo: logoCfi, url: 'https://cfi.org.ar/', h: 56 },
+    { name: 'Municipalidad de San Salvador de Jujuy', logo: logoMuniSsj, url: 'https://sansalvadordejujuy.gob.ar/', h: 66 }
+  ],
+  /** Métricas del CTA "Tu marca puede estar acá" (demostrativas). */
+  metricas: [{ v: '45.000', l: 'visitantes' }, { v: '200+', l: 'expositores' }, { v: '4 días', l: 'de exposición' }]
 };
 
 /** Todo junto, para inyectar en el prototipo (`Component`) desde el runtime. */

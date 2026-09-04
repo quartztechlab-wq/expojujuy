@@ -76,6 +76,18 @@ main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 @media(max-width:1000px){.tk-layout{grid-template-columns:1fr}.tk-cred{position:static}}
 @media(max-width:600px){.tk-panel{padding:26px 20px!important}.tk-price{font-size:46px!important}}
 @media(max-width:760px){.tk-ctrl{flex-direction:column;align-items:stretch!important}.tk-tabs{overflow-x:auto;max-width:100%}.tk-tab{white-space:nowrap}}
+/* Sponsors v5: spotlight Diamante, filas de logos, chips blancos y franja del Inicio. */
+body:not([data-light]) [data-logo="exar"]{filter:brightness(2.1) saturate(1.15)}
+body:not([data-light]) [data-logo="cannava"]{filter:brightness(1.35) saturate(1.05)}
+.sp-spot{display:grid;grid-template-columns:1.1fr 1fr}
+.sp-spot-logo{animation:fadeUp .45s ease both}
+.sp-row4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.sp-org{display:grid;grid-template-columns:auto 1fr;gap:40px}
+.sp-cta{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:center}
+.sp-chip{display:flex;align-items:center;justify-content:center;background:#FFFFFF;border-radius:14px;padding:14px 22px;height:92px;box-sizing:border-box;min-width:200px;transition:box-shadow .2s ease}
+.sp-home>a,.sp-home>div{display:flex;align-items:center;justify-content:center;min-width:180px;height:84px;padding:14px 26px;box-sizing:border-box;border:1px solid var(--l10);border-radius:14px;background:rgba(255,255,255,.04);transition:border-color .2s ease}
+@media(max-width:1000px){.sp-spot{grid-template-columns:1fr}.sp-spot-text{border-left:none!important;border-top:1px solid var(--l08);padding:32px 28px!important}.sp-row4{grid-template-columns:1fr 1fr}.sp-org,.sp-cta{grid-template-columns:1fr}}
+@media(max-width:600px){.sp-home>a,.sp-home>div{min-width:calc(50% - 9px);padding:12px 16px}.sp-chip{min-width:calc(50% - 6px)}.sp-cta{padding:26px 20px!important}}
 @keyframes kenBurns{from{transform:scale(1) translateY(0)}to{transform:scale(1.07) translateY(-1%)}}
 #hero-media{position:absolute;inset:-8% 0;will-change:transform}
 .hero-img{width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.72;filter:saturate(1.1) brightness(.8);animation:kenBurns 22s ease-in-out infinite alternate;transform-origin:center center}
@@ -211,11 +223,16 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
     </div>
   </section>
   <section aria-label="Sponsors destacados" style="border-top:1px solid var(--l06);background:var(--bg2)">
-    <div style="max-width:1240px;margin:0 auto;padding:56px 48px;display:flex;flex-direction:column;gap:26px">
+    <div style="max-width:1240px;margin:0 auto;padding:56px 48px;display:flex;flex-direction:column;gap:26px" data-m="pad">
       <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--t3);text-transform:uppercase;text-align:center">Nos acompañan</div>
-      <div style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap">
-        <sc-for list="{{sponsorsHome}}" as="sp" hint-placeholder-count="6">
-          <div style="border:1px solid var(--l10);border-radius:12px;padding:14px 26px;font:600 15px 'Ambit';color:var(--t2);letter-spacing:.02em" style-hover="color:var(--text);border-color:rgba(43,196,214,.5)">{{sp}}</div>
+      <div class="sp-home" style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap">
+        <sc-for list="{{sponsorsHome}}" as="sp" hint-placeholder-count="4">
+          <sc-if value="{{sp.hasUrl}}" hint-placeholder-val="{{true}}">
+            <a href="{{sp.url}}" target="_blank" rel="noopener" aria-label="{{sp.name}}" style-hover="border-color:rgba(199,164,248,.5)"><img src="{{sp.logo}}" alt="{{sp.name}}" data-logo="{{sp.key}}" style="max-width:100%;height:{{sp.hHome}};object-fit:contain"></a>
+          </sc-if>
+          <sc-if value="{{sp.noUrl}}" hint-placeholder-val="{{false}}">
+            <div role="img" aria-label="{{sp.name}}" style-hover="border-color:rgba(199,164,248,.5)"><img src="{{sp.logo}}" alt="" data-logo="{{sp.key}}" style="max-width:100%;height:{{sp.hHome}};object-fit:contain"></div>
+          </sc-if>
         </sc-for>
       </div>
       <button onClick="{{goSponsors}}" style="align-self:center;background:none;border:none;cursor:pointer;font:600 14px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">Ver niveles de patrocinio →</button>
@@ -490,42 +507,116 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </sc-if>
 
 <sc-if value="{{isSponsors}}" hint-placeholder-val="{{false}}">
-<div style="animation:fadeUp .45s ease both;max-width:1080px;margin:0 auto;padding:80px 48px">
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:44px">
+<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:80px 48px" data-m="pad">
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:640px;margin-bottom:48px">
     <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Sponsors</div>
-    <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Marcas que impulsan el futuro</h2>
+    <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Empresas que hacen posible ExpoJuy</h2>
+    <p style="font:300 16px/1.55 'Ambit';color:var(--t2);margin:6px 0 0;text-wrap:pretty">Marcas líderes de Jujuy y el país que apuestan a la industria regional.</p>
   </div>
-  <div style="display:flex;flex-direction:column;gap:40px">
-    <div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px"><span style="width:14px;height:14px;background:linear-gradient(135deg,var(--tq),var(--li));clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></span><span style="font:700 15px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--li)">Diamante</span></div>
-      <div class="reveal-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
-        <sc-for list="{{spDia}}" as="s" hint-placeholder-count="2">
-          <div style="border:1px solid rgba(199,164,248,.4);background:linear-gradient(140deg,rgba(120,87,245,.12),rgba(43,196,214,.06));border-radius:16px;padding:38px;text-align:center;font:700 22px 'Ambit'" style-hover="border-color:var(--li);box-shadow:0 0 30px rgba(120,87,245,.25)">{{s}}</div>
+
+  <div style="display:flex;flex-direction:column;gap:52px">
+
+    <div onMouseEnter="{{spotPause}}" onMouseLeave="{{spotResume}}">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        <span style="font:700 13px 'Ambit';letter-spacing:.2em;text-transform:uppercase;color:var(--li)">Diamante</span>
+        <span style="flex:1;height:1px;background:linear-gradient(90deg,rgba(199,164,248,.35),transparent)"></span>
+      </div>
+      <div class="sp-spot" style="border:1px solid rgba(199,164,248,.26);border-radius:20px;overflow:hidden;background:var(--panel2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);margin-bottom:14px">
+        <div style="position:relative;display:flex;align-items:center;justify-content:center;min-height:300px;padding:40px;background:radial-gradient(ellipse at 50% 50%,rgba(120,87,245,.22),transparent 70%),linear-gradient(150deg,rgba(43,196,214,.06),rgba(120,87,245,.05))">
+          <div aria-hidden="true" style="position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 100%);-webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 100%)"></div>
+          <img src="{{spotFile}}" alt="{{spotName}}" data-logo="{{spotKey}}" class="sp-spot-logo" style="position:relative;max-width:82%;height:{{spotH}};object-fit:contain">
+        </div>
+        <div class="sp-spot-text" style="display:flex;flex-direction:column;justify-content:center;gap:12px;padding:44px 46px;border-left:1px solid var(--l08)">
+          <span style="font:600 10.5px 'Ambit';letter-spacing:.2em;text-transform:uppercase;color:var(--li)">Sponsor Diamante</span>
+          <span style="font:700 30px/1.12 'Ambit';letter-spacing:-.015em">{{spotName}}</span>
+          <span style="font:300 16px/1.6 'Ambit';color:var(--t2);text-wrap:pretty">{{spotBlurb}}</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;flex-wrap:wrap">
+            <sc-if value="{{spotHasUrl}}" hint-placeholder-val="{{true}}">
+              <a href="{{spotUrl}}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(90deg,var(--tq),var(--vi));color:#fff;font:700 14px 'Ambit';padding:12px 20px;border-radius:10px;text-decoration:none" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Conocer más →</a>
+            </sc-if>
+            <sc-if value="{{spotNoUrl}}" hint-placeholder-val="{{false}}">
+              <span style="font:600 13px 'Ambit';color:var(--t3);padding:12px 0">Sitio web a confirmar</span>
+            </sc-if>
+            <div style="display:flex;gap:7px" aria-hidden="true">
+              <sc-for list="{{spotDots}}" as="d" hint-placeholder-count="4"><span style="width:{{d.w}};height:6px;border-radius:3px;background:{{d.bg}};transition:width .25s ease,background .25s ease"></span></sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sp-row4" role="group" aria-label="Sponsors Diamante">
+        <sc-for list="{{spDia}}" as="s" hint-placeholder-count="4">
+          <button onClick="{{s.pick}}" onMouseEnter="{{s.pick}}" aria-pressed="{{s.on}}" aria-label="{{s.aria}}" style="background:rgba(255,255,255,.04);border:1px solid {{s.border}};border-radius:14px;min-height:96px;display:flex;align-items:center;justify-content:center;padding:18px 20px;cursor:pointer;transition:border-color .2s ease,background .2s ease" style-hover="background:rgba(255,255,255,.07)"><img src="{{s.logo}}" alt="{{s.name}}" data-logo="{{s.key}}" style="max-width:100%;height:{{s.hRow}};object-fit:contain"></button>
         </sc-for>
       </div>
     </div>
+
     <div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px"><span style="width:12px;height:12px;background:var(--oc);border-radius:3px"></span><span style="font:700 14px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--oc)">Oro</span></div>
-      <div class="reveal-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        <span style="font:700 13px 'Ambit';letter-spacing:.2em;text-transform:uppercase;color:var(--oc)">Oro</span>
+        <span style="flex:1;height:1px;background:linear-gradient(90deg,rgba(224,154,69,.3),transparent)"></span>
+      </div>
+      <div class="sp-row4 reveal-grid">
         <sc-for list="{{spOro}}" as="s" hint-placeholder-count="4">
-          <div style="border:1px solid rgba(224,154,69,.35);border-radius:14px;padding:26px 14px;text-align:center;font:700 16px 'Ambit';color:var(--text)" style-hover="border-color:var(--oc)">{{s}}</div>
+          <sc-if value="{{s.hasUrl}}" hint-placeholder-val="{{false}}">
+            <a href="{{s.url}}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:118px;padding:24px 18px;border:1px solid var(--l10);border-radius:15px;background:rgba(255,255,255,.04);text-decoration:none;transition:border-color .25s ease,transform .25s ease;box-sizing:border-box" style-hover="border-color:var(--oc);transform:translateY(-2px)"><span style="font:700 19px 'Ambit';letter-spacing:-.01em;color:var(--text);text-align:center">{{s.name}}</span></a>
+          </sc-if>
+          <sc-if value="{{s.noUrl}}" hint-placeholder-val="{{true}}">
+            <div style="display:flex;align-items:center;justify-content:center;min-height:118px;padding:24px 18px;border:1px solid var(--l10);border-radius:15px;background:rgba(255,255,255,.04);transition:border-color .25s ease,transform .25s ease;box-sizing:border-box" style-hover="border-color:var(--oc);transform:translateY(-2px)"><span style="font:700 19px 'Ambit';letter-spacing:-.01em;color:var(--text);text-align:center">{{s.name}}</span></div>
+          </sc-if>
         </sc-for>
       </div>
     </div>
+
     <div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px"><span style="width:10px;height:10px;background:var(--t2);border-radius:50%"></span><span style="font:700 13px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--t2)">Plata</span></div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        <span style="font:700 13px 'Ambit';letter-spacing:.2em;text-transform:uppercase;color:var(--t2)">Plata</span>
+        <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--l14),transparent)"></span>
+      </div>
       <div class="reveal-grid" style="display:flex;gap:12px;flex-wrap:wrap">
-        <sc-for list="{{spPlata}}" as="s" hint-placeholder-count="6">
-          <div style="border:1px solid var(--l14);border-radius:12px;padding:14px 24px;font:600 14px 'Ambit';color:var(--t2)" style-hover="color:var(--text)">{{s}}</div>
+        <sc-for list="{{spPlata}}" as="s" hint-placeholder-count="8">
+          <sc-if value="{{s.hasUrl}}" hint-placeholder-val="{{false}}">
+            <a href="{{s.url}}" target="_blank" rel="noopener" style="border:1px solid var(--l12);border-radius:999px;padding:13px 24px;font:600 14px 'Ambit';color:var(--t15);text-decoration:none;transition:color .2s ease,border-color .2s ease" style-hover="color:var(--text);border-color:var(--l25)">{{s.name}}</a>
+          </sc-if>
+          <sc-if value="{{s.noUrl}}" hint-placeholder-val="{{true}}">
+            <div style="border:1px solid var(--l12);border-radius:999px;padding:13px 24px;font:600 14px 'Ambit';color:var(--t15);transition:color .2s ease,border-color .2s ease" style-hover="color:var(--text);border-color:var(--l25)">{{s.name}}</div>
+          </sc-if>
         </sc-for>
       </div>
     </div>
-    <div style="background:linear-gradient(120deg,rgba(43,196,214,.12),rgba(120,87,245,.12));border:1px solid rgba(43,196,214,.35);border-radius:18px;padding:34px 38px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
-      <div>
-        <div style="font:700 22px 'Ambit'">Tu marca puede estar acá</div>
-        <div style="font:300 14.5px 'Ambit';color:var(--t2);margin-top:6px">Paquetes de patrocinio con visibilidad física y digital ante más de 45.000 visitantes.</div>
+
+    <div class="sp-org" style="padding-top:40px;border-top:1px solid var(--l08)">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <span style="font:600 11px 'Ambit';letter-spacing:.24em;text-transform:uppercase;color:var(--t3)">Organiza</span>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <sc-for list="{{spOrg}}" as="o" hint-placeholder-count="1">
+            <a href="{{o.url}}" target="_blank" rel="noopener" aria-label="{{o.name}}" class="sp-chip" style="min-width:260px;padding:18px 26px" style-hover="box-shadow:0 0 0 1px var(--tq)"><img src="{{o.logo}}" alt="{{o.name}}" style="max-width:100%;max-height:{{o.h}};object-fit:contain"></a>
+          </sc-for>
+        </div>
       </div>
-      <button onClick="{{goContacto}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:14px 26px;border-radius:10px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Convertite en sponsor</button>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <span style="font:600 11px 'Ambit';letter-spacing:.24em;text-transform:uppercase;color:var(--t3)">Acompañan</span>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <sc-for list="{{spAcom}}" as="a" hint-placeholder-count="4">
+            <a href="{{a.url}}" target="_blank" rel="noopener" aria-label="{{a.name}}" class="sp-chip" style-hover="box-shadow:0 0 0 1px var(--tq)"><img src="{{a.logo}}" alt="{{a.name}}" style="max-width:100%;height:{{a.h}};object-fit:contain"></a>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div class="sp-cta" style="background:linear-gradient(120deg,rgba(43,196,214,.12),rgba(120,87,245,.12));border:1px solid rgba(43,196,214,.3);border-radius:20px;padding:36px 40px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font:700 24px 'Ambit'">Tu marca puede estar acá</div>
+        <div style="font:300 15px/1.55 'Ambit';color:var(--t2);max-width:520px;text-wrap:pretty">Paquetes con visibilidad física en el predio y digital en el sitio, la app y las comunicaciones del evento.</div>
+        <div style="display:flex;gap:26px;margin-top:12px;flex-wrap:wrap">
+          <sc-for list="{{spMetrics}}" as="m" hint-placeholder-count="3">
+            <div>
+              <div style="font:700 22px 'Ambit';color:var(--tq)">{{m.v}}</div>
+              <div style="font:600 10.5px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--t3);margin-top:3px">{{m.l}}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <button onClick="{{goContacto}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:15px 26px;border-radius:11px;cursor:pointer;width:100%" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Convertite en sponsor</button>
     </div>
   </div>
 </div>
@@ -1044,7 +1135,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
-  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', motivoOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, statP:0, statP2:0,
+  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', motivoOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
     // Portal de usuario (sesión simulada, ver src/services/auth.js)
     user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
 
@@ -1112,9 +1203,16 @@ class Component extends DCLogic {
     document.addEventListener('visibilitychange', this._onVisibility);
     this._heroParallax = () => { const el = document.getElementById('hero-media'); if (el) el.style.transform = `translateY(${window.scrollY * 0.22}px)`; };
     window.addEventListener('scroll', this._heroParallax, { passive: true });
+    // Spotlight Diamante (Sponsors v5): avanza cada 4,5 s solo en la ruta Sponsors, con la pestaña visible,
+    // sin hover sobre el bloque y sin reducción de movimiento (media query o flag reducirAnimaciones).
+    this._spotTimer = setInterval(() => {
+      if (this.state.route !== 'sponsors' || this._spotPaused || document.hidden) return;
+      if (this.props.reducirAnimaciones || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      this.setState(s => ({ spSpot: (s.spSpot + 1) % this.SPONSORS.diamante.length }));
+    }, 4500);
   }
   componentDidUpdate() { this.syncAnim(); this.persist(); this.syncMapa(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver(); this.updateFlipClock(); }
-  componentWillUnmount() { clearInterval(this._tick); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); clearTimeout(this._mapT); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); if (this.mapa) { this.mapa.remove(); this.mapa = null; } }
+  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._spotTimer); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); clearTimeout(this._mapT); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); if (this.mapa) { this.mapa.remove(); this.mapa = null; } }
 
   PREDIO_LATLNG = [-24.182539, -65.329985];
 
@@ -1461,6 +1559,22 @@ class Component extends DCLogic {
       setInd: () => this.setState({ grupo: false }), setGrp: () => this.setState({ grupo: true }), toggle: () => this.setState(s => ({ grupo: !s.grupo })),
       badge: '−' + Math.round(this.GRUPO.descuento * 100) + '% por persona', minimo: this.GRUPO.minimo + '+'
     };
+    // ---- Sponsors v5: spotlight Diamante + filas + Organiza/Acompañan ----
+    const SPOT = this.SPONSORS.diamante; const si = st.spSpot % SPOT.length; const spot = SPOT[si];
+    const hasUrl = u => !!u && u !== '#';
+    const spotVals = {
+      spotPause: () => { this._spotPaused = true; }, spotResume: () => { this._spotPaused = false; },
+      spotFile: spot.logo, spotName: spot.name, spotKey: spot.key, spotBlurb: spot.blurb, spotUrl: spot.url, spotH: spot.h.spot + 'px',
+      spotHasUrl: hasUrl(spot.url), spotNoUrl: !hasUrl(spot.url),
+      spotDots: SPOT.map((_, i) => ({ w: i === si ? '22px' : '6px', bg: i === si ? 'var(--li)' : 'var(--l20)' }))
+    };
+    const spDia = SPOT.map((s, i) => ({ key: s.key, name: s.name, logo: s.logo, on: i === si, border: i === si ? 'var(--li)' : 'var(--l10)', hRow: s.h.row + 'px', aria: 'Ver ' + s.name,
+      pick: () => { this._spotPaused = true; if (this.state.spSpot !== i) this.setState({ spSpot: i }); } }));
+    const sponsorsHome = SPOT.map(s => ({ key: s.key, name: s.name, logo: s.logo, url: s.url, hHome: s.h.home + 'px', hasUrl: hasUrl(s.url), noUrl: !hasUrl(s.url) }));
+    const withUrl = s => ({ ...s, hasUrl: hasUrl(s.url), noUrl: !hasUrl(s.url) });
+    const spOro = this.SPONSORS.oro.map(withUrl), spPlata = this.SPONSORS.plata.map(withUrl);
+    const spOrg = this.SPONSORS.organiza.map(o => ({ ...o, h: o.h + 'px' })), spAcom = this.SPONSORS.acompanan.map(a => ({ ...a, h: a.h + 'px' }));
+
     const tFaqs = this.TFAQS.map(([q, a], i) => { const open = st.tFaq === i; return { q, a, open, icon: open ? '−' : '+', border: open ? 'rgba(43,196,214,.45)' : 'var(--l08)', toggle: () => this.setState({ tFaq: open ? -1 : i }) }; });
 
     const chatMsgs = st.chatMsgs.map(m => m.who === 'bot'
@@ -1519,7 +1633,7 @@ class Component extends DCLogic {
       mobilePrimaryNav, mobileMoreItems, mobileMoreOpen: st.mobileMore, mobileMoreCurrent, toggleMobileMore: () => this.setState({ mobileMore: !st.mobileMore }),
       goInicio: () => this.go('inicio'), goSobre: () => this.go('sobre'), goExpositores: () => this.go('expositores'), goAgenda: () => this.go('agenda'), goNoticias: () => this.go('noticias'), goMapa: () => this.go('mapa'), goSponsors: () => this.go('sponsors'), goFaq: () => this.go('faq'), goContacto: () => this.go('contacto'), goEntradas: () => this.go('entradas'),
       cdUnits, stats, highlights, socials,
-      sponsorsHome: [...this.SPONSORS.dia, ...this.SPONSORS.oro],
+      sponsorsHome,
       edicionAnterior: (p2 => [{ v: fmt(180 * p2), l: 'expositores en 2024' }, { v: fmt(38000 * p2), l: 'visitantes en 2024' }, { v: String(Math.round(9 * p2)) || '0', l: 'países participantes' }])(st.statP2),
       valores,
       q: st.q, setQ: e => this.setState({ q: e.target.value }), rubroChips, expoList, noExpo: expoList.length === 0,
@@ -1532,7 +1646,7 @@ class Component extends DCLogic {
       standTitle: mapSel.name, standSubtitle: mapSel.sub, standCode, standDesc: mapSel.desc,
       standHasExpos: standExpos.length > 0, standExpositores: standExpos, standExpoCount: standExpos.length,
       standColor, standActividades, standActivityCount: standActividades.length, standHasActs: standActividades.length > 0,
-      spDia: this.SPONSORS.dia, spOro: this.SPONSORS.oro, spPlata: this.SPONSORS.plata,
+      ...spotVals, spDia, spOro, spPlata, spOrg, spAcom, spMetrics: this.SPONSORS.metricas,
       faqs,
       fNombre: st.fNombre, fEmail: st.fEmail, fMotivo: st.fMotivo, fMensaje: st.fMensaje,
       motivoOpen: st.motivoOpen, toggleMotivo: () => this.setState({ motivoOpen: !st.motivoOpen }), closeMotivo: () => this.setState({ motivoOpen: false }),
