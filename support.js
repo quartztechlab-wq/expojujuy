@@ -317,6 +317,9 @@ const services = {
       const countdown = root.querySelector('[aria-label="Cuenta regresiva al evento"]');
       if (countdown) {
         Array.from(countdown.children).forEach((card, index) => {
+          // The flip clock owns the contents of `.fc-card` and updates them from
+          // componentDidUpdate. Replacing its text destroys the flap markup.
+          if (card.classList.contains('fc-unit')) return;
           const valueNode = card.firstElementChild;
           if (valueNode && values.cdUnits[index]) valueNode.textContent = values.cdUnits[index].v;
         });
