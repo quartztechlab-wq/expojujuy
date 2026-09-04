@@ -26,7 +26,7 @@ input,select,textarea{font-family:'Ambit',system-ui,sans-serif}
 ::selection{background:rgba(120,87,245,.45)}
 @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 18px rgba(43,196,214,.35)}50%{box-shadow:0 0 34px rgba(120,87,245,.55)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 .countdown-wrap{width:max-content;max-width:100%}
@@ -38,8 +38,12 @@ body[data-noanim] .fc-card{opacity:1}
 .fc-label{width:100%;box-sizing:border-box;padding:5px 4px 10px;text-align:center;font:600 8px/1 'Ambit';letter-spacing:.17em;color:var(--t3);text-transform:uppercase}
 @keyframes fcReveal{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 .fc-card.fc-in{animation:fcReveal .45s cubic-bezier(.2,.8,.2,1) forwards}
-@keyframes viewExit{to{opacity:0;transform:translateY(-10px)}}
-main.view-exit{animation:viewExit .18s ease forwards;pointer-events:none}
+@keyframes viewExit{to{opacity:0;transform:translateY(-7px)}}
+main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
+@keyframes faqAnswerIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.faq-answer{transform-origin:top;animation:faqAnswerIn .26s cubic-bezier(.2,.75,.25,1) both}
+@keyframes mapPanelIn{from{opacity:.3;transform:translateX(10px)}to{opacity:1;transform:none}}
+.map-detail-panel{animation:mapPanelIn .3s cubic-bezier(.2,.75,.25,1) both}
 .leaflet-container{background:var(--bg1);font-family:'Ambit',system-ui,sans-serif;border-radius:16px}
 .leaflet-control-attribution{background:rgba(255,255,255,.88)!important;color:#687078!important;font-size:9px!important;backdrop-filter:blur(7px);border-radius:7px 0 0 0}
 .leaflet-control-attribution a{color:#4c5964!important}
@@ -414,7 +418,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
       </div>
       <div style="padding:0 18px 16px;display:flex;align-items:center;gap:8px;font:400 11px/1.4 'Ambit';color:var(--t3)"><span style="font-size:14px;color:var(--tq)">ⓘ</span>Plano orientativo, sujeto a ajustes antes del evento.</div>
     </div>
-    <div style="background:linear-gradient(160deg,var(--panel),rgba(13,20,40,.88));border:1px solid var(--l12);border-radius:20px;overflow:hidden;position:sticky;top:88px;display:flex;flex-direction:column;box-shadow:0 18px 48px rgba(0,0,0,.25)">
+    <div class="map-detail-panel" style="background:linear-gradient(160deg,var(--panel),rgba(13,20,40,.88));border:1px solid var(--l12);border-radius:20px;overflow:hidden;position:sticky;top:88px;display:flex;flex-direction:column;box-shadow:0 18px 48px rgba(0,0,0,.25)">
       <div style="height:4px;background:linear-gradient(90deg,{{standColor}},transparent);transition:background .3s ease"></div>
       <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -507,7 +511,7 @@ body[data-noanim] *{animation:none!important;transition:none!important}
           <span style="font:400 24px/1 'Ambit';color:var(--tq);flex-shrink:0">{{f.icon}}</span>
         </button>
         <sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
-          <div style="padding:0 24px 20px;font:300 15px/1.65 'Ambit';color:var(--t2);text-wrap:pretty">{{f.a}}</div>
+          <div class="faq-answer" style="padding:0 24px 20px;font:300 15px/1.65 'Ambit';color:var(--t2);text-wrap:pretty">{{f.a}}</div>
         </sc-if>
       </div>
     </sc-for>
@@ -960,18 +964,41 @@ class Component extends DCLogic {
   AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; MAP = DATA.SECTORES; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; SPONSORS = DATA.SPONSORS;
   keyOf = DATA.claveActividad;
 
+  startStats() {
+    if (this._statsStarted) return;
+    this._statsStarted = true;
+    this._statsObserver?.disconnect();
+    const t0 = performance.now(), dur = 1400;
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      this.setState({ statP: 1 - Math.pow(1 - p, 3) });
+      if (p < 1) this._raf = requestAnimationFrame(step);
+    };
+    this._raf = requestAnimationFrame(step);
+  }
+  syncStatsObserver() {
+    if (this._statsStarted) return;
+    const section = document.querySelector('[aria-label="Cifras del evento"]');
+    if (!section) { this._statsObserver?.disconnect(); this._statsTarget = null; return; }
+    if (!('IntersectionObserver' in window)) { this.startStats(); return; }
+    if (!this._statsObserver) this._statsObserver = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) this.startStats();
+    }, { threshold: .28 });
+    if (this._statsTarget === section) return;
+    this._statsObserver.disconnect();
+    this._statsTarget = section;
+    this._statsObserver.observe(section);
+  }
   componentDidMount() {
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
-    const t0 = performance.now(), dur = 1400;
-    const step = (t) => { const p = Math.min(1, (t - t0) / dur); this.setState({ statP: 1 - Math.pow(1 - p, 3) }); if (p < 1) this._raf = requestAnimationFrame(step); };
-    this._raf = requestAnimationFrame(step);
     this.syncAnim();
+    this.syncStatsObserver();
     setTimeout(() => this.initFlipClock(), 60);
     this._onVisibility = () => { if (!document.hidden) this.updateFlipClock(); };
     document.addEventListener('visibilitychange', this._onVisibility);
   }
-  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncMapa(); this.updateFlipClock(); }
-  componentWillUnmount() { clearInterval(this._tick); cancelAnimationFrame(this._raf); clearTimeout(this._mapT); document.removeEventListener('visibilitychange', this._onVisibility); if (this.mapa) { this.mapa.remove(); this.mapa = null; } }
+  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncMapa(); this.syncStatsObserver(); this.updateFlipClock(); }
+  componentWillUnmount() { clearInterval(this._tick); cancelAnimationFrame(this._raf); clearTimeout(this._mapT); this._statsObserver?.disconnect(); document.removeEventListener('visibilitychange', this._onVisibility); if (this.mapa) { this.mapa.remove(); this.mapa = null; } }
 
   PREDIO_LATLNG = [-24.182539, -65.329985];
 

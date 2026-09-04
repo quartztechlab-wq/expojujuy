@@ -18,6 +18,15 @@ const services = {
     x-dc { display: none; }
     .mobile-bottom-nav, .mobile-more-menu { display: none; }
     [style-hover] { transition: border-color .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease, filter .2s ease; }
+    button:not(:disabled) { transition: transform .16s ease, border-color .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease; }
+    button:not(:disabled):active { transform: scale(.975) !important; transition-duration: .08s !important; }
+    @keyframes filterSettle { from { opacity: .78; transform: scale(.985); } to { opacity: 1; transform: none; } }
+    button[aria-pressed] { transition: transform .16s ease, border-color .2s ease, color .2s ease, background .2s ease, opacity .2s ease; animation: filterSettle .18s ease-out both; }
+    main.state-update > div { animation: none !important; }
+    .motion-reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s cubic-bezier(.2,.75,.25,1), transform .55s cubic-bezier(.2,.75,.25,1); transition-delay: var(--motion-delay, 0ms); }
+    .motion-reveal.motion-visible { opacity: 1; transform: translateY(0); }
+    .motion-card { transition: opacity .55s cubic-bezier(.2,.75,.25,1), transform .22s ease, border-color .22s ease, box-shadow .22s ease !important; }
+    @media (hover:hover) { .motion-card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(0,0,0,.22); } }
     :focus-visible { outline: 3px solid color-mix(in srgb, var(--tq) 72%, white); outline-offset: 3px; }
     @media (max-width: 900px) {
       nav > div { height: auto !important; min-height: 64px; padding: 10px 16px !important; flex-wrap: wrap; }
@@ -91,6 +100,8 @@ const services = {
       div[style*="grid-template-columns:repeat(12,1fr)"] > div > div:nth-child(2) { display: none; }
       footer { overflow-wrap: anywhere; }
     }
+    body[data-noanim] .motion-reveal, .motion-reveal.motion-visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .motion-reveal { opacity: 1; transform: none; transition: none; } }
   `;
   document.head.appendChild(bootStyle);
 
@@ -275,6 +286,34 @@ const services = {
       Array.from(node.childNodes).forEach((child) => processNode(child, scope, refs));
     }
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const motionObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('motion-visible');
+        motionObserver.unobserve(entry.target);
+      });
+    }, { threshold: .12, rootMargin: '0px 0px -7% 0px' }) : null;
+
+    component.__syncMotion = function syncMotion(sameRoute) {
+      const cardCandidates = Array.from(root.querySelectorAll('main [style-hover*="translateY"], main [style-hover*="transform:scale(1.02)"], main [role="button"][style*="background:var(--panel)"]'))
+        .filter((node) => node.tagName !== 'BUTTON' && !node.classList.contains('map-sector'));
+      const sections = Array.from(root.querySelectorAll('main section:not([aria-label="Portada"])'))
+        .filter((section) => !cardCandidates.some((card) => section.contains(card)));
+      [...sections, ...cardCandidates].forEach((node) => {
+        if (node.dataset.motionReady) return;
+        node.dataset.motionReady = 'true';
+        node.classList.add('motion-reveal');
+        if (cardCandidates.includes(node)) {
+          node.classList.add('motion-card');
+          const siblingIndex = Array.from(node.parentElement?.children || []).indexOf(node);
+          node.style.setProperty('--motion-delay', `${Math.max(0, siblingIndex % 4) * 55}ms`);
+        }
+        if (sameRoute || !motionObserver || prefersReducedMotion.matches || document.body.hasAttribute('data-noanim')) node.classList.add('motion-visible');
+        else motionObserver.observe(node);
+      });
+    };
+
     let modalReturnKey = null; // control que abrió el modal activo; recupera el foco al cerrarlo
     component.__render = function render() {
       const active = root.contains(document.activeElement) ? document.activeElement : null;
@@ -292,6 +331,11 @@ const services = {
       root.replaceChildren(template.content);
       root.style.display = 'block';
       refs.forEach((callback) => callback());
+      const sameRoute = component.__renderedRoute === component.state.route;
+      const main = root.querySelector('main');
+      if (sameRoute && main) main.classList.add('state-update');
+      component.__renderedRoute = component.state.route;
+      component.__syncMotion(sameRoute);
 
       const modal = root.querySelector('[role="dialog"][aria-modal="true"]');
       if (modal && !previousModal) modalReturnKey = activeInModal ? null : focusKey;
