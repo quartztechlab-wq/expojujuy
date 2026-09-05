@@ -43,14 +43,14 @@ body[data-noanim] .fc-card{opacity:1}
 main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 @keyframes faqAnswerIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .faq-answer{transform-origin:top;animation:faqAnswerIn .26s cubic-bezier(.2,.75,.25,1) both}
-@keyframes mapPanelIn{from{opacity:.3;transform:translateX(10px)}to{opacity:1;transform:none}}
-.map-detail-panel{animation:mapPanelIn .3s cubic-bezier(.2,.75,.25,1) both}
-.map-filter-row{scrollbar-width:none}.map-filter-row::-webkit-scrollbar{display:none}
-.map-sector{isolation:isolate}.map-sector:after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(145deg,rgba(255,255,255,.055),transparent 52%);pointer-events:none;z-index:-1}
-.map-sector-badge{position:absolute;top:9px;right:9px;display:flex;align-items:center;gap:4px;padding:3px 7px;border-radius:20px;background:rgba(3,5,12,.58);border:1px solid rgba(255,255,255,.14);font:600 9px/1 'Ambit';color:rgba(255,255,255,.76);white-space:nowrap}
-.map-sector-selected{position:absolute;top:9px;left:10px;font:700 9px/1 'Ambit';letter-spacing:.12em;text-transform:uppercase;color:#fff}
-@media(max-width:900px){.map-layout{grid-template-columns:1fr!important}}
-@media(max-width:600px){.countdown-wrap{width:100%}#expo-cd{width:100%;gap:7px!important}.fc-unit{width:auto;flex:1;min-width:0}.fc-card{height:46px}.fc-n{font-size:29px}.fc-label{font-size:7px;letter-spacing:.1em;padding:5px 2px 9px}.map-filter-row{flex-wrap:nowrap!important;overflow-x:auto;padding:9px!important}.map-filter-row>span{position:sticky;left:0;z-index:2;background:var(--bg2);padding:8px 7px}.map-canvas{margin:10px!important;padding:8px!important;gap:6px!important}.map-sector-badge{top:5px;right:5px;padding:2px 5px;font-size:8px}.map-sector-selected{display:none}}
+/* Mapa v7: cada sector/stand del plano SVG se levanta al pasar el puntero (style-hover). */
+.mp-hit{cursor:pointer;transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .28s;transform-box:fill-box;transform-origin:center}
+.mp-hit:focus-visible{outline:none;filter:drop-shadow(0 0 8px var(--tq))!important}
+@media(prefers-reduced-motion:reduce){.mp-hit{transition:none}}
+@media(max-width:980px){.mp-grid{grid-template-columns:1fr!important}.mp-panel{position:static!important}}
+@media(max-width:600px){.mp-hint{font-size:9.5px!important;padding:4px 7px!important;left:8px!important;bottom:8px!important;max-width:58%}}
+@media(max-width:700px){.mp-toolbar>div:first-child{max-width:none!important}.mp-rubros{width:100%;overflow-x:auto;flex-wrap:nowrap!important;scrollbar-width:none}.mp-rubros::-webkit-scrollbar{display:none}}
+@media(max-width:600px){.countdown-wrap{width:100%}#expo-cd{width:100%;gap:7px!important}.fc-unit{width:auto;flex:1;min-width:0}.fc-card{height:46px}.fc-n{font-size:29px}.fc-label{font-size:7px;letter-spacing:.1em;padding:5px 2px 9px}}
 /* Entradas v4 (layout A): tabs de tier + panel de detalle + credencial. */
 @keyframes shimmer{from{background-position:0% 50%}to{background-position:300% 50%}}
 @keyframes shine{0%,70%{transform:translateX(-140%) skewX(-18deg)}100%{transform:translateX(240%) skewX(-18deg)}}
@@ -430,75 +430,190 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </sc-if>
 
 <sc-if value="{{isMapa}}" hint-placeholder-val="{{false}}">
-<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:80px 48px">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-bottom:24px;flex-wrap:wrap">
-    <div style="display:flex;flex-direction:column;gap:10px;max-width:760px">
-      <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Plano del predio</div>
-      <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Encontrá tu lugar en la expo</h2>
-      <p style="font:300 15px/1.55 'Ambit';color:var(--t3);margin:2px 0 0">Explorá pabellones, escenarios y servicios. Elegí un sector para conocer sus actividades y expositores.</p>
+<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:80px 48px 96px" data-m="pad">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:28px">
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:640px">
+      <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Plano del predio · Ciudad Cultural</div>
+      <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Recorré la expo antes de llegar</h2>
+      <p style="font:300 15px/1.55 'Ambit';color:var(--t3);margin:4px 0 0;text-wrap:pretty">Tocá un sector o un stand para ver quién expone y qué actividades hay. Plano ilustrativo basado en la distribución 2024, sujeto al diseño final.</p>
     </div>
-    <div style="display:flex;align-items:center;gap:18px;padding:11px 15px;border:1px solid var(--l08);border-radius:12px;background:var(--bg2);white-space:nowrap">
-      <div><span style="font:700 17px 'Ambit'">{{mapSectorCount}}</span><span style="font:400 11px 'Ambit';color:var(--t3);margin-left:5px">sectores</span></div>
-      <span style="width:1px;height:22px;background:var(--l10)"></span>
-      <div><span style="font:700 17px 'Ambit'">{{mapActivityCount}}</span><span style="font:400 11px 'Ambit';color:var(--t3);margin-left:5px">actividades</span></div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap">
+      <sc-for list="{{mapStats}}" as="s" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--l10);padding-left:14px"><div style="font:700 26px/1 'Ambit'">{{s.v}}</div><div style="font:400 12px 'Ambit';color:var(--t3)">{{s.l}}</div></div>
+      </sc-for>
     </div>
   </div>
-  <div class="map-filter-row" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;background:var(--bg2);border:1px solid var(--l08);border-radius:14px;padding:9px 12px">
-    <span style="font:700 11px 'Ambit';letter-spacing:.2em;color:var(--oc);text-transform:uppercase;white-space:nowrap;margin-right:4px">FILTRAR</span>
-    <sc-for list="{{mapaFiltros}}" as="f" hint-placeholder-count="5">
-      <button onClick="{{f.set}}" aria-pressed="{{f.active}}" style="display:flex;align-items:center;gap:7px;background:{{f.active ? 'rgba(43,196,214,.1)' : 'var(--l06)'}};border:1px solid {{f.active ? 'var(--tq)' : 'var(--l12)'}};color:{{f.active ? 'var(--text)' : 'var(--t2)'}};font:{{f.active ? '700' : '600'}} 12px 'Ambit';padding:7px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s,background .15s" style-hover="border-color:var(--tq);color:var(--text)"><span style="width:6px;height:6px;border-radius:50%;background:{{f.color}}"></span>{{f.label}}</button>
-    </sc-for>
+
+  <div class="mp-toolbar" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px">
+    <div style="position:relative;flex:1;min-width:240px;max-width:380px">
+      <div aria-hidden="true" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:14px;height:14px;border:2px solid var(--t3);border-radius:50%;box-sizing:border-box;pointer-events:none"></div>
+      <div aria-hidden="true" style="position:absolute;left:24px;top:50%;width:7px;height:2px;background:var(--t3);transform:rotate(45deg) translateY(4px);pointer-events:none"></div>
+      <input value="{{mapQ}}" onChange="{{setMapQ}}" placeholder="¿Dónde está…? Stand, sector o expositor" aria-label="Buscar en el plano" style="width:100%;box-sizing:border-box;background:var(--panel);border:1px solid var(--l14);color:var(--text);border-radius:11px;padding:12px 14px 12px 40px;font:400 14px 'Ambit';outline:none" style-focus="border-color:var(--tq)">
+      <sc-if value="{{mapQHas}}" hint-placeholder-val="{{false}}">
+        <div style="position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:5;background:var(--panel);border:1px solid var(--l14);border-radius:12px;padding:6px;display:flex;flex-direction:column;gap:2px;box-shadow:0 18px 40px rgba(0,0,0,.35);backdrop-filter:blur(14px)">
+          <sc-for list="{{mapQRes}}" as="r" hint-placeholder-count="2">
+            <button onClick="{{r.pick}}" style="display:flex;align-items:center;gap:10px;background:none;border:none;text-align:left;padding:9px 10px;border-radius:8px;cursor:pointer;color:var(--text)" style-hover="background:var(--bg2)">
+              <span style="width:10px;height:10px;border-radius:3px;background:{{r.color}};flex-shrink:0"></span>
+              <span style="font:600 13.5px 'Ambit'">{{r.name}}</span>
+              <span style="font:400 12px 'Ambit';color:var(--t3);margin-left:auto">{{r.sub}}</span>
+            </button>
+          </sc-for>
+          <sc-if value="{{mapQEmpty}}" hint-placeholder-val="{{false}}"><div style="padding:9px 10px;font:400 13px 'Ambit';color:var(--t3)">Sin resultados. Probá con “D29”, “gastro” o el nombre de una empresa.</div></sc-if>
+        </div>
+      </sc-if>
+    </div>
+    <div class="mp-rubros" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span style="font:600 11px 'Ambit';letter-spacing:.16em;color:var(--t3);text-transform:uppercase;margin-right:4px">Rubro</span>
+      <sc-for list="{{mapRubros}}" as="c" hint-placeholder-count="5">
+        <button onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="background:{{c.bg}};border:1px solid {{c.border}};color:{{c.color}};font:600 12px 'Ambit';padding:7px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:background .2s,border-color .2s,color .2s" style-hover="border-color:var(--tq)">{{c.label}}</button>
+      </sc-for>
+    </div>
   </div>
-  <div class="map-layout" style="display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:20px;align-items:start;margin-top:0">
-    <div style="background:linear-gradient(145deg,var(--bg2),rgba(13,20,40,.72));border:1px solid var(--l09);border-radius:20px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.18)">
-      <div style="min-height:52px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--l08)">
-        <div style="display:flex;align-items:center;gap:9px"><span style="width:8px;height:8px;border-radius:50%;background:var(--ve);box-shadow:0 0 10px rgba(63,179,128,.7)"></span><span style="font:600 12px 'Ambit';color:var(--t2)">Mapa interactivo</span></div>
-        <div style="display:flex;align-items:center;gap:7px;font:600 10px 'Ambit';letter-spacing:.12em;color:var(--t3);text-transform:uppercase"><span style="font-size:15px;color:var(--tq)">↑</span>Norte</div>
+
+  <div class="mp-grid" style="display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;align-items:start" data-m="stack">
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div onPointerDown="{{mzDown}}" onPointerMove="{{mzMove}}" onPointerUp="{{mzUp}}" onPointerCancel="{{mzUp}}" onPointerLeave="{{mzUp}}" onWheel="{{mzWheel}}" style="position:relative;background:var(--bg2);border:1px solid var(--l08);border-radius:20px;overflow:hidden;aspect-ratio:10/7;touch-action:{{mzTouch}};cursor:{{mzCursor}};user-select:none">
+        <div aria-hidden="true" style="position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;opacity:.6"></div>
+        <div style="position:absolute;inset:0;transform:translate({{mzTx}}px,{{mzTy}}px) scale({{mzS}});transform-origin:0 0;transition:{{mzTrans}}">
+        <svg viewBox="{{mapViewBox}}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plano ilustrativo del predio de ExpoJuy 2026 en Ciudad Cultural" style="display:block;overflow:visible">
+          <defs>
+            <pattern id="mpA" width="21" height="30" patternUnits="userSpaceOnUse"><path d="M0 0V30" style="stroke:var(--l14);stroke-width:1" fill="none"/></pattern>
+            <pattern id="mpB" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect x="3" y="3" width="24" height="24" fill="none" style="stroke:var(--l14);stroke-width:1"/></pattern>
+            <pattern id="mpC" width="36" height="16" patternUnits="userSpaceOnUse"><rect x="3" y="3" width="13" height="10" fill="none" style="stroke:var(--l14);stroke-width:1"/><rect x="20" y="3" width="13" height="10" fill="none" style="stroke:var(--l14);stroke-width:1"/></pattern>
+            <pattern id="mpP" width="14" height="30" patternUnits="userSpaceOnUse"><path d="M0 0V30" style="stroke:var(--l10);stroke-width:1"/></pattern>
+            <pattern id="mpT" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="13" cy="13" r="4.5" fill="none" style="stroke:var(--l14);stroke-width:1"/><circle cx="13" cy="13" r="1.2" style="fill:var(--l14)"/></pattern>
+            <pattern id="mpH" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V8" style="stroke:var(--l14);stroke-width:1.5"/></pattern>
+          </defs>
+
+          <!-- Silueta del predio, calle interna y circulación principal -->
+          <path d="M40 40 H850 L880 110 V370 L900 470 L860 560 L780 690 H60 Q40 690 40 670 Z" style="fill:var(--bg1);stroke:var(--l10);stroke-width:1.5;stroke-dasharray:6 5" opacity=".9"/>
+          <path d="M40 585 H720 L790 640" style="stroke:var(--l14);stroke-width:1.2;stroke-dasharray:2 5" fill="none"/>
+          <path d="M40 565 H600" style="stroke:var(--l10);stroke-width:14" fill="none" opacity=".35"/>
+
+          <!-- Estacionamiento -->
+          <g onClick="{{mp.park.pick}}" role="button" aria-label="{{mp.park.aria}}" opacity="{{mp.park.op}}" class="mp-hit" style="filter:{{mp.park.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))">
+            <rect x="{{mp.park.x}}" y="{{mp.park.y}}" width="{{mp.park.w}}" height="{{mp.park.h}}" rx="{{mp.park.rx}}" fill="url(#mpP)" stroke="none"/>
+            <rect x="{{mp.park.x}}" y="{{mp.park.y}}" width="{{mp.park.w}}" height="{{mp.park.h}}" rx="{{mp.park.rx}}" fill="{{mp.park.fill}}" stroke="{{mp.park.stroke}}" stroke-width="{{mp.park.sw}}"/>
+            <text x="945" y="228" text-anchor="middle" transform="rotate(-90 945 228)" style="font:600 11px 'Ambit';fill:var(--t2);letter-spacing:.2em;pointer-events:none">ESTACIONAMIENTO</text>
+          </g>
+          <path d="M885 40 V690" style="stroke:var(--l14);stroke-width:1;stroke-dasharray:8 6" fill="none"/>
+
+          <!-- Institucional (lateral izquierdo) -->
+          <g onClick="{{mp.cce.pick}}" role="button" aria-label="{{mp.cce.aria}}" opacity="{{mp.cce.op}}" class="mp-hit" style="filter:{{mp.cce.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.cce.x}}" y="{{mp.cce.y}}" width="{{mp.cce.w}}" height="{{mp.cce.h}}" rx="{{mp.cce.rx}}" fill="{{mp.cce.fill}}" stroke="{{mp.cce.stroke}}" stroke-width="{{mp.cce.sw}}"/><text x="136" y="86" text-anchor="middle" style="font:700 12px 'Ambit';fill:var(--text);pointer-events:none">Eventos CCE</text><text x="136" y="102" text-anchor="middle" style="font:400 9.5px 'Ambit';fill:var(--t3);pointer-events:none">Auditorio principal</text></g>
+          <g onClick="{{mp.emerg.pick}}" role="button" aria-label="{{mp.emerg.aria}}" opacity="{{mp.emerg.op}}" class="mp-hit" style="filter:{{mp.emerg.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.emerg.x}}" y="{{mp.emerg.y}}" width="{{mp.emerg.w}}" height="{{mp.emerg.h}}" rx="{{mp.emerg.rx}}" fill="{{mp.emerg.fill}}" stroke="{{mp.emerg.stroke}}" stroke-width="{{mp.emerg.sw}}" stroke-dasharray="4 3"/><text x="262" y="86" text-anchor="middle" style="font:700 10.5px 'Ambit';fill:var(--text);pointer-events:none">Emergencia</text><text x="262" y="101" text-anchor="middle" style="font:400 8.5px 'Ambit';fill:var(--t3);pointer-events:none">Salud · Bomberos</text></g>
+          <g onClick="{{mp.fne.pick}}" role="button" aria-label="{{mp.fne.aria}}" opacity="{{mp.fne.op}}" class="mp-hit" style="filter:{{mp.fne.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.fne.x}}" y="{{mp.fne.y}}" width="{{mp.fne.w}}" height="{{mp.fne.h}}" rx="{{mp.fne.rx}}" fill="{{mp.fne.fill}}" stroke="{{mp.fne.stroke}}" stroke-width="{{mp.fne.sw}}"/><text x="136" y="170" text-anchor="middle" style="font:700 12px 'Ambit';fill:var(--text);pointer-events:none">Sala FNE</text><text x="136" y="186" text-anchor="middle" style="font:400 9.5px 'Ambit';fill:var(--t3);pointer-events:none">Conferencias y talleres</text></g>
+          <g onClick="{{mp.min.pick}}" role="button" aria-label="{{mp.min.aria}}" opacity="{{mp.min.op}}" class="mp-hit" style="filter:{{mp.min.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.min.x}}" y="{{mp.min.y}}" width="{{mp.min.w}}" height="{{mp.min.h}}" rx="{{mp.min.rx}}" fill="{{mp.min.fill}}" stroke="{{mp.min.stroke}}" stroke-width="{{mp.min.sw}}"/><text x="136" y="272" text-anchor="middle" style="font:700 12px 'Ambit';fill:var(--text);pointer-events:none">Ministerio de</text><text x="136" y="286" text-anchor="middle" style="font:700 12px 'Ambit';fill:var(--text);pointer-events:none">la Producción</text><text x="136" y="302" text-anchor="middle" style="font:400 9.5px 'Ambit';fill:var(--t3);pointer-events:none">Zona Startups</text></g>
+
+          <!-- Pabellón cubierto: sectores A, B y C -->
+          <rect x="330" y="52" width="440" height="298" rx="8" style="fill:var(--bg2);stroke:var(--l14);stroke-width:1.5"/>
+          <g onClick="{{mp.secA.pick}}" role="button" aria-label="{{mp.secA.aria}}" opacity="{{mp.secA.op}}" class="mp-hit" style="filter:{{mp.secA.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.secA.x}}" y="{{mp.secA.y}}" width="{{mp.secA.w}}" height="{{mp.secA.h}}" rx="{{mp.secA.rx}}" fill="url(#mpA)" stroke="none"/><rect x="{{mp.secA.x}}" y="{{mp.secA.y}}" width="{{mp.secA.w}}" height="{{mp.secA.h}}" rx="{{mp.secA.rx}}" fill="{{mp.secA.fill}}" stroke="{{mp.secA.stroke}}" stroke-width="{{mp.secA.sw}}"/><text x="550" y="85" text-anchor="middle" style="font:600 10.5px 'Ambit';fill:var(--text);pointer-events:none">Sector A · 19 stands cubiertos · Minería y Energía</text></g>
+          <g onClick="{{mp.secB.pick}}" role="button" aria-label="{{mp.secB.aria}}" opacity="{{mp.secB.op}}" class="mp-hit" style="filter:{{mp.secB.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.secB.x}}" y="{{mp.secB.y}}" width="{{mp.secB.w}}" height="{{mp.secB.h}}" rx="{{mp.secB.rx}}" fill="url(#mpB)" stroke="none"/><rect x="{{mp.secB.x}}" y="{{mp.secB.y}}" width="{{mp.secB.w}}" height="{{mp.secB.h}}" rx="{{mp.secB.rx}}" fill="{{mp.secB.fill}}" stroke="{{mp.secB.stroke}}" stroke-width="{{mp.secB.sw}}"/><rect x="440" y="196" width="164" height="50" rx="8" style="fill:var(--panel);pointer-events:none"/><text x="522" y="215" text-anchor="middle" style="font:700 14px 'Ambit';fill:var(--text);pointer-events:none">Sector B</text><text x="522" y="232" text-anchor="middle" style="font:400 9.5px 'Ambit';fill:var(--t3);pointer-events:none">95 stands cubiertos · Multisectorial</text></g>
+          <g onClick="{{mp.secC.pick}}" role="button" aria-label="{{mp.secC.aria}}" opacity="{{mp.secC.op}}" class="mp-hit" style="filter:{{mp.secC.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.secC.x}}" y="{{mp.secC.y}}" width="{{mp.secC.w}}" height="{{mp.secC.h}}" rx="{{mp.secC.rx}}" fill="url(#mpC)" stroke="none"/><rect x="{{mp.secC.x}}" y="{{mp.secC.y}}" width="{{mp.secC.w}}" height="{{mp.secC.h}}" rx="{{mp.secC.rx}}" fill="{{mp.secC.fill}}" stroke="{{mp.secC.stroke}}" stroke-width="{{mp.secC.sw}}"/><text x="732" y="221" text-anchor="middle" transform="rotate(-90 732 221)" style="font:700 11px 'Ambit';fill:var(--text);pointer-events:none">Sector C · Artesanos</text></g>
+          <path d="M420 350 l8 -10 l8 10 Z M600 350 l8 -10 l8 10 Z M700 350 l8 -10 l8 10 Z" style="fill:var(--t3)"/>
+
+          <!-- Stands descubiertos (Sector D) -->
+          <sc-for list="{{mapStands}}" as="s" hint-placeholder-count="12">
+            <g onClick="{{s.pick}}" role="button" aria-label="{{s.aria}}" opacity="{{s.op}}" class="mp-hit" style="filter:{{s.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))">
+              <rect x="{{s.x}}" y="{{s.y}}" width="{{s.w}}" height="{{s.h}}" rx="4" fill="{{s.fill}}" stroke="{{s.stroke}}" stroke-width="{{s.sw}}" stroke-dasharray="{{s.dash}}"/>
+              <text x="{{s.cx}}" y="{{s.cy}}" text-anchor="middle" dominant-baseline="middle" font-size="{{s.fs}}" style="font-weight:700;font-family:'Ambit';fill:var(--text);pointer-events:none">{{s.id}}</text>
+              <sc-if value="{{s.occ}}" hint-placeholder-val="{{false}}"><circle cx="{{s.dx}}" cy="{{s.dy}}" r="3" style="fill:var(--tq);pointer-events:none"/></sc-if>
+            </g>
+          </sc-for>
+
+          <!-- E1 institucional / E2 juegos infantiles -->
+          <g onClick="{{mp.secE1.pick}}" role="button" aria-label="{{mp.secE1.aria}}" opacity="{{mp.secE1.op}}" class="mp-hit" style="filter:{{mp.secE1.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.secE1.x}}" y="{{mp.secE1.y}}" width="{{mp.secE1.w}}" height="{{mp.secE1.h}}" rx="{{mp.secE1.rx}}" fill="{{mp.secE1.fill}}" stroke="{{mp.secE1.stroke}}" stroke-width="{{mp.secE1.sw}}"/><text x="791" y="408" text-anchor="middle" style="font:700 10.5px 'Ambit';fill:var(--text);pointer-events:none">E1 · Institucional</text><text x="791" y="423" text-anchor="middle" style="font:400 8.5px 'Ambit';fill:var(--t3);pointer-events:none">Bomberos · Policía</text><text x="791" y="435" text-anchor="middle" style="font:400 8.5px 'Ambit';fill:var(--t3);pointer-events:none">Ejército · Educación vial</text></g>
+          <g onClick="{{mp.secE2.pick}}" role="button" aria-label="{{mp.secE2.aria}}" opacity="{{mp.secE2.op}}" class="mp-hit" style="filter:{{mp.secE2.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.secE2.x}}" y="{{mp.secE2.y}}" width="{{mp.secE2.w}}" height="{{mp.secE2.h}}" rx="{{mp.secE2.rx}}" fill="{{mp.secE2.fill}}" stroke="{{mp.secE2.stroke}}" stroke-width="{{mp.secE2.sw}}"/><circle cx="797" cy="541" r="40" fill="none" style="stroke:var(--l14);stroke-width:1;stroke-dasharray:3 4;pointer-events:none"/><text x="797" y="538" text-anchor="middle" style="font:700 10.5px 'Ambit';fill:var(--text);pointer-events:none">E2 · Juegos</text><text x="797" y="552" text-anchor="middle" style="font:400 9.5px 'Ambit';fill:var(--t3);pointer-events:none">infantiles</text></g>
+
+          <!-- Escenario y público -->
+          <g onClick="{{mp.esc.pick}}" role="button" aria-label="{{mp.esc.aria}}" opacity="{{mp.esc.op}}" class="mp-hit" style="filter:{{mp.esc.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.esc.x}}" y="{{mp.esc.y}}" width="{{mp.esc.w}}" height="{{mp.esc.h}}" rx="{{mp.esc.rx}}" fill="{{mp.esc.fill}}" stroke="{{mp.esc.stroke}}" stroke-width="{{mp.esc.sw}}"/><text x="641" y="545" text-anchor="middle" style="font:700 8.5px 'Ambit';fill:var(--text);pointer-events:none;letter-spacing:.1em">ESCE</text><text x="641" y="556" text-anchor="middle" style="font:700 8.5px 'Ambit';fill:var(--text);pointer-events:none;letter-spacing:.1em">NARIO</text></g>
+          <rect x="560" y="530" width="44" height="40" fill="url(#mpH)" opacity=".7" style="pointer-events:none"/>
+
+          <!-- Sanitarios -->
+          <g onClick="{{mp.san.pick}}" role="button" aria-label="{{mp.san.aria}}" opacity="{{mp.san.op}}" class="mp-hit" style="filter:{{mp.san.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.san.x}}" y="{{mp.san.y}}" width="{{mp.san.w}}" height="{{mp.san.h}}" rx="{{mp.san.rx}}" fill="{{mp.san.fill}}" stroke="{{mp.san.stroke}}" stroke-width="{{mp.san.sw}}"/><text x="680" y="619" text-anchor="middle" style="font:700 10px 'Ambit';fill:var(--text);pointer-events:none">WC</text></g>
+
+          <!-- Patio de comidas (Sector F) -->
+          <g onClick="{{mp.gastro.pick}}" role="button" aria-label="{{mp.gastro.aria}}" opacity="{{mp.gastro.op}}" class="mp-hit" style="filter:{{mp.gastro.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))">
+            <rect x="{{mp.gastro.x}}" y="{{mp.gastro.y}}" width="{{mp.gastro.w}}" height="{{mp.gastro.h}}" rx="{{mp.gastro.rx}}" fill="url(#mpT)" stroke="none"/><rect x="{{mp.gastro.x}}" y="{{mp.gastro.y}}" width="{{mp.gastro.w}}" height="{{mp.gastro.h}}" rx="{{mp.gastro.rx}}" fill="{{mp.gastro.fill}}" stroke="{{mp.gastro.stroke}}" stroke-width="{{mp.gastro.sw}}"/>
+            <rect x="380" y="605" width="150" height="30" rx="6" style="fill:var(--panel);pointer-events:none"/><text x="455" y="618" text-anchor="middle" style="font:700 11px 'Ambit';fill:var(--text);pointer-events:none">Patio de comidas</text><text x="455" y="630" text-anchor="middle" style="font:400 8.5px 'Ambit';fill:var(--t3);pointer-events:none">Sector F · 12 stands gastronómicos</text>
+            <sc-for list="{{mapF}}" as="f" hint-placeholder-count="12"><rect x="{{f.x}}" y="{{f.y}}" width="{{f.w}}" height="{{f.h}}" rx="3" fill="{{mp.gastro.fill}}" stroke="{{mp.gastro.stroke}}" stroke-width="1"/><text x="{{f.cx}}" y="{{f.cy}}" text-anchor="middle" dominant-baseline="middle" style="font:600 7.5px 'Ambit';fill:var(--t2);pointer-events:none">{{f.id}}</text></sc-for>
+          </g>
+
+          <!-- Acceso principal -->
+          <g onClick="{{mp.acc.pick}}" role="button" aria-label="{{mp.acc.aria}}" opacity="{{mp.acc.op}}" class="mp-hit" style="filter:{{mp.acc.glow}}" style-hover="transform:translateY(-5px);filter:drop-shadow(0 10px 12px rgba(0,0,0,.5))"><rect x="{{mp.acc.x}}" y="{{mp.acc.y}}" width="{{mp.acc.w}}" height="{{mp.acc.h}}" rx="{{mp.acc.rx}}" fill="{{mp.acc.fill}}" stroke="{{mp.acc.stroke}}" stroke-width="{{mp.acc.sw}}"/><path d="M52 565 H98 M90 558 l8 7 l-8 7" fill="none" style="stroke:var(--tq);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none"/><text x="84" y="596" text-anchor="middle" style="font:700 9.5px 'Ambit';fill:var(--tq);letter-spacing:.2em;pointer-events:none">ACCESO</text></g>
+
+          <!-- Salidas de emergencia -->
+          <g style="pointer-events:none"><path d="M300 62 l10 0 M745 40 l0 12 M40 200 l14 0" style="stroke:var(--ma);stroke-width:2.5"/><rect x="300" y="52" width="10" height="20" style="fill:var(--ma)" opacity=".5"/><rect x="40" y="190" width="6" height="20" style="fill:var(--ma)" opacity=".5"/></g>
+
+          <!-- Rosa de los vientos -->
+          <g transform="translate(70 650)" style="pointer-events:none"><circle r="14" fill="none" style="stroke:var(--l14)"/><path d="M0 -10 L4 4 L0 1 L-4 4 Z" style="fill:var(--tq)"/><text y="26" text-anchor="middle" style="font:600 8px 'Ambit';fill:var(--t3);letter-spacing:.2em">N</text></g>
+        </svg>
+        </div>
+        <div style="position:absolute;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px">
+          <button onClick="{{mzIn}}" aria-label="Acercar" style="width:36px;height:36px;border-radius:9px;background:var(--panel);border:1px solid var(--l14);color:var(--text);font:600 18px 'Ambit';cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq)">+</button>
+          <button onClick="{{mzOut}}" aria-label="Alejar" style="width:36px;height:36px;border-radius:9px;background:var(--panel);border:1px solid var(--l14);color:var(--text);font:600 18px 'Ambit';cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq)">−</button>
+          <button onClick="{{mzReset}}" aria-label="Restablecer la vista del plano" style="width:36px;height:36px;border-radius:9px;background:var(--panel);border:1px solid var(--l14);color:var(--t2);font:600 11px 'Ambit';cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq)">1:1</button>
+        </div>
+        <div class="mp-hint" style="position:absolute;left:12px;bottom:12px;font:400 11px 'Ambit';color:var(--t3);background:var(--panel);border:1px solid var(--l08);border-radius:8px;padding:5px 9px;pointer-events:none">{{mzHint}}</div>
       </div>
-      <div class="map-canvas" style="margin:18px;background-color:rgba(5,7,13,.56);background-image:linear-gradient(var(--l06) 1px,transparent 1px),linear-gradient(90deg,var(--l06) 1px,transparent 1px);background-size:32px 32px;border:1px solid var(--l07);border-radius:15px;padding:12px;display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:64px;gap:10px">
-        <sc-for list="{{mapBlocks}}" as="b" hint-placeholder-count="10">
-          <div class="map-sector" onClick="{{b.select}}" role="button" aria-label="Ver {{b.name}}" aria-current="{{b.current}}" style="position:relative;grid-area:{{b.area}};background:{{b.bg}};border:{{b.border}};border-radius:12px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;overflow:hidden;min-width:0;box-shadow:{{b.shadow}};opacity:{{b.opacity}};transition:filter .18s ease,transform .18s ease,box-shadow .18s ease,opacity .22s ease" style-hover="filter:brightness(1.3);transform:translateY(-2px)">
-            <sc-if value="{{b.selected}}" hint-placeholder-val="{{false}}"><span class="map-sector-selected">✓ Seleccionado</span></sc-if>
-            <sc-if value="{{b.hasAct}}" hint-placeholder-val="{{false}}"><span class="map-sector-badge"><span style="color:{{b.accent}}">●</span>{{b.actBadge}}</span></sc-if>
-            <div style="font:700 12.5px/1.15 'Ambit';overflow:hidden;text-overflow:ellipsis;color:{{b.labelColor}}">{{b.name}}</div>
-            <div style="font:400 10px/1.2 'Ambit';color:{{b.subColor}};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{b.sub}}</div>
-          </div>
+      <div style="display:flex;gap:8px 16px;flex-wrap:wrap;padding:0 4px" aria-label="Leyenda del plano">
+        <sc-for list="{{mapLegend}}" as="l" hint-placeholder-count="8">
+          <div style="display:flex;align-items:center;gap:7px;font:400 12.5px 'Ambit';color:var(--t2)"><span style="width:12px;height:12px;border-radius:3px;background:{{l.bg}};border:1.5px solid {{l.border}};box-sizing:border-box"></span>{{l.label}}</div>
         </sc-for>
+        <div style="display:flex;align-items:center;gap:7px;font:400 12.5px 'Ambit';color:var(--t2)"><span style="width:8px;height:8px;border-radius:50%;background:var(--tq)"></span>Stand ocupado</div>
       </div>
-      <div style="padding:0 18px 16px;display:flex;align-items:center;gap:8px;font:400 11px/1.4 'Ambit';color:var(--t3)"><span style="font-size:14px;color:var(--tq)">ⓘ</span>Plano orientativo, sujeto a ajustes antes del evento.</div>
     </div>
-    <div class="map-detail-panel" style="background:linear-gradient(160deg,var(--panel),rgba(13,20,40,.88));border:1px solid var(--l12);border-radius:20px;overflow:hidden;position:sticky;top:88px;display:flex;flex-direction:column;box-shadow:0 18px 48px rgba(0,0,0,.25)">
-      <div style="height:4px;background:linear-gradient(90deg,{{standColor}},transparent);transition:background .3s ease"></div>
-      <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-          <div style="display:flex;align-items:center;gap:8px;font:600 10px 'Ambit';letter-spacing:.16em;color:{{standColor}};text-transform:uppercase"><span style="width:8px;height:8px;border-radius:50%;background:{{standColor}};box-shadow:0 0 10px {{standColor}}"></span>Sector seleccionado</div>
-          <span style="font:600 10px 'Ambit';color:var(--t3);border:1px solid var(--l10);border-radius:7px;padding:4px 7px">{{standCode}}</span>
-        </div>
-        <div><div style="font:700 23px/1.18 'Ambit';letter-spacing:-.01em">{{standTitle}}</div><div style="font:500 12px 'Ambit';color:{{standColor}};margin-top:6px">{{standSubtitle}}</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <span style="font:600 10.5px 'Ambit';color:var(--t2);padding:6px 9px;border-radius:8px;background:var(--l06);border:1px solid var(--l08)">{{standActivityCount}} actividades</span>
-          <span style="font:600 10.5px 'Ambit';color:var(--t2);padding:6px 9px;border-radius:8px;background:var(--l06);border:1px solid var(--l08)">{{standExpoCount}} expositores</span>
-        </div>
-        <div style="font:400 13.5px/1.65 'Ambit';color:var(--t2);text-wrap:pretty">{{standDesc}}</div>
-        <sc-if value="{{standHasActs}}" hint-placeholder-val="{{false}}">
-          <div style="border-top:1px solid var(--l08);padding-top:15px;display:flex;flex-direction:column;gap:9px">
-            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 10px 'Ambit';color:var(--t3);letter-spacing:.12em;text-transform:uppercase">Próximas actividades</span><button onClick="{{goAgenda}}" style="border:0;background:none;color:var(--tq);font:600 11px 'Ambit';cursor:pointer;padding:2px">Ver agenda →</button></div>
-            <sc-for list="{{standActividades}}" as="act" hint-placeholder-count="2">
-              <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;padding:10px;background:var(--l06);border:1px solid var(--l08);border-left:2px solid {{act.color}};border-radius:9px">
-                <div><div style="font:700 11px 'Ambit';color:{{act.color}}">{{act.hora}}</div><div style="font:600 8.5px 'Ambit';color:var(--t3);margin-top:3px">{{act.dia}}</div></div>
-                <span style="font:500 11.5px/1.4 'Ambit';color:var(--t15)">{{act.titulo}}</span>
-              </div>
-            </sc-for>
-          </div>
-        </sc-if>
-        <sc-if value="{{standHasExpos}}" hint-placeholder-val="{{false}}">
-          <div style="border-top:1px solid var(--l08);padding-top:15px;display:flex;flex-direction:column;gap:9px">
-            <div style="font:600 10px 'Ambit';color:var(--t3);letter-spacing:.12em;text-transform:uppercase">Expositores destacados</div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{standExpositores}}" as="expo" hint-placeholder-count="3"><span style="font:500 10.5px 'Ambit';color:var(--li);background:rgba(199,164,248,.08);border:1px solid rgba(199,164,248,.18);padding:6px 8px;border-radius:7px">{{expo}}</span></sc-for></div>
-          </div>
-        </sc-if>
-        <button onClick="{{goExpositores}}" style="background:linear-gradient(90deg,rgba(43,196,214,.14),rgba(120,87,245,.14));border:1px solid rgba(43,196,214,.35);color:var(--text);font:600 12.5px 'Ambit';padding:11px;border-radius:9px;cursor:pointer;margin-top:1px" style-hover="border-color:var(--tq);box-shadow:0 0 18px rgba(43,196,214,.12)">Explorar todos los expositores</button>
+
+    <div key="{{selKey}}" class="mp-panel" style="background:var(--panel);border:1px solid {{selBorder}};border-radius:18px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;position:sticky;top:88px;animation:fadeUp .35s ease both;transition:border-color .3s">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <div style="font:600 11px 'Ambit';letter-spacing:.2em;color:var(--tq);text-transform:uppercase">{{selKicker}}</div>
+        <span style="font:600 11px 'Ambit';padding:4px 10px;border-radius:20px;white-space:nowrap;background:{{selPillBg}};color:{{selPillColor}};border:1px solid {{selPillBorder}}">{{selPill}}</span>
       </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font:700 24px/1.15 'Ambit';letter-spacing:-.01em">{{selTitle}}</div>
+        <div style="font:400 13px 'Ambit';color:var(--t3)">{{selMeta}}</div>
+      </div>
+      <div style="font:400 14px/1.6 'Ambit';color:var(--t2);text-wrap:pretty">{{selDescM}}</div>
+
+      <sc-if value="{{selHasExpo}}" hint-placeholder-val="{{false}}">
+        <div style="border-top:1px solid var(--l08);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Expositor</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:46px;height:46px;border-radius:12px;background:{{selExpoGrad}};display:flex;align-items:center;justify-content:center;font:700 15px 'Ambit';color:#fff;flex-shrink:0">{{selExpoIni}}</div>
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div style="font:700 15.5px 'Ambit'">{{selExpoName}}</div><div style="font:400 13px 'Ambit';color:var(--t3)">{{selExpoRubro}}</div></div>
+          </div>
+          <button onClick="{{selExpoOpen}}" style="align-self:flex-start;background:none;border:1px solid var(--l20);color:var(--text);font:600 13px 'Ambit';padding:9px 14px;border-radius:9px;cursor:pointer" style-hover="border-color:var(--tq);color:var(--tq)">Ver perfil del expositor</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{selHasExposList}}" hint-placeholder-val="{{false}}">
+        <div style="border-top:1px solid var(--l08);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Expositores confirmados</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{selExposList}}" as="e" hint-placeholder-count="3"><button onClick="{{e.open}}" style="background:var(--bg2);border:1px solid var(--l10);color:var(--text);font:600 12px 'Ambit';padding:6px 10px;border-radius:20px;cursor:pointer" style-hover="border-color:var(--tq);color:var(--tq)">{{e.name}}</button></sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{selHasEvents}}" hint-placeholder-val="{{false}}">
+        <div style="border-top:1px solid var(--l08);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Actividades en este espacio</div>
+          <sc-for list="{{selEvents}}" as="ev" hint-placeholder-count="2">
+            <div style="display:grid;grid-template-columns:54px minmax(0,1fr);gap:10px;align-items:start">
+              <div style="display:flex;flex-direction:column;gap:1px"><div style="font:700 12.5px 'Ambit';color:{{ev.color}}">{{ev.day}}</div><div style="font:400 12px 'Ambit';color:var(--t3)">{{ev.time}}</div></div>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><div style="font:600 13.5px/1.3 'Ambit'">{{ev.title}}</div><div style="font:400 12px 'Ambit';color:var(--t3)">{{ev.who}}</div></div>
+            </div>
+          </sc-for>
+          <button onClick="{{goAgenda}}" style="align-self:flex-start;background:none;border:none;padding:0;cursor:pointer;font:600 13px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">Ver agenda completa →</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{selAvail}}" hint-placeholder-val="{{false}}">
+        <div style="border-top:1px solid var(--l08);padding-top:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="font:400 13.5px/1.55 'Ambit';color:var(--t2)">Este espacio está disponible para la edición 2026. Reservalo antes de que se complete el sector.</div>
+          <button onClick="{{selConsultar}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 14px 'Ambit';padding:12px;border-radius:10px;cursor:pointer" style-hover="filter:brightness(1.1)">Consultar por este stand</button>
+        </div>
+      </sc-if>
+      <button onClick="{{goExpositores}}" style="background:none;border:1px solid var(--l20);color:var(--text);font:600 13.5px 'Ambit';padding:11px;border-radius:9px;cursor:pointer" style-hover="border-color:var(--tq);color:var(--tq)">Ver todos los expositores</button>
     </div>
   </div>
 </div>
@@ -1182,7 +1297,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
-  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', areasOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
+  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'secB', mapQ:'', mapRubro:'Todos', mz:{s:1,tx:0,ty:0}, chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', areasOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
     // Portal de usuario (sesión simulada, ver src/services/auth.js)
     user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
 
@@ -1196,7 +1311,9 @@ class Component extends DCLogic {
 
   // Mock data centralizada (src/data/evento.js), inyectada por el runtime como `DATA`.
   DIAS = DATA.DIAS; RUBROS = DATA.RUBROS; EJES = DATA.EJES; EXPOS = DATA.EXPOSITORES; DESCS = DATA.DESCRIPCIONES_RUBRO;
-  AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; MAP = DATA.SECTORES; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; GRUPO = DATA.GRUPO; TFAQS = DATA.FAQ_ENTRADAS; SPONSORS = DATA.SPONSORS;
+  AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; GRUPO = DATA.GRUPO; TFAQS = DATA.FAQ_ENTRADAS; SPONSORS = DATA.SPONSORS;
+  // Plano del predio (src/data/predio.js): sectores, stands D y F, métricas y leyenda.
+  MAP = DATA.SECTORES; STANDS = DATA.STANDS; FSTANDS = DATA.STANDS_GASTRO; PLANO = DATA.PLANO; METRICAS_PREDIO = DATA.METRICAS_PREDIO; LEYENDA = DATA.LEYENDA; COLOR_STAND = DATA.COLOR_STAND;
   keyOf = DATA.claveActividad;
 
   _runCounter(stateKey, rafKey, startedKey, obsKey, dur = 1400) {
@@ -1243,6 +1360,9 @@ class Component extends DCLogic {
     document.querySelectorAll('.reveal-grid:not(.revealed)').forEach(el => this._revealObs.observe(el));
   }
   componentDidMount() {
+    // Ruta inicial desde el hash de la URL (#mapa, #contacto…).
+    const hash = (location.hash || '').replace('#', '');
+    if (hash && hash !== 'inicio' && this.RUTAS_HASH.includes(hash)) this.setState({ route: hash });
     this._tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
     this.syncAnim(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver();
     setTimeout(() => this.initFlipClock(), 60);
@@ -1319,18 +1439,26 @@ class Component extends DCLogic {
     this._cdV = [...v];
   }
 
+  /** Rutas navegables por hash (#mapa, #contacto…). El portal queda afuera: exige sesión. */
+  RUTAS_HASH = ['inicio', 'sobre', 'expositores', 'agenda', 'noticias', 'mapa', 'sponsors', 'faq', 'contacto', 'entradas'];
+  /** Deja la ruta en la URL sin ensuciar el historial, para poder compartir y recargar la sección. */
+  syncHash(r) {
+    if (!window.history || !history.replaceState) return;
+    const url = this.RUTAS_HASH.includes(r) && r !== 'inicio' ? '#' + r : location.pathname + location.search;
+    history.replaceState(null, '', url);
+  }
   go = (r) => {
+    const ir = (instant) => {
+      this.setState({ route: r, expoSel: null, mobileMore: false, userMenu: false });
+      this.syncHash(r);
+      window.scrollTo(instant ? { top: 0, behavior: 'instant' } : { top: 0 });
+    };
     const main = document.querySelector('main');
     if (main && !document.body.hasAttribute('data-noanim')) {
       main.classList.add('view-exit');
-      setTimeout(() => {
-        main.classList.remove('view-exit');
-        this.setState({ route: r, expoSel: null, mobileMore: false, userMenu: false });
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }, 180);
+      setTimeout(() => { main.classList.remove('view-exit'); ir(true); }, 180);
     } else {
-      this.setState({ route: r, expoSel: null, mobileMore: false, userMenu: false });
-      window.scrollTo({ top: 0 });
+      ir(false);
     }
   };
   goPortal = (tab) => { this.setState({ portalTab: tab || 'agenda', pSaved: false, pdfErr: '' }); this.go('portal'); };
@@ -1431,10 +1559,10 @@ class Component extends DCLogic {
     const s = q.toLowerCase();
     if (/(entrada|precio|costo|cuesta|gratis)/.test(s)) return 'La entrada general es gratuita con registro previo. También hay Pase Full ($15.000) y Pase Empresarial ($60.000) para rondas de negocios. Podés gestionar tu QR desde la sección Entradas.';
     if (/(agenda|actividad|charla|viernes|sábado|sabado|domingo|jueves|hackathon)/.test(s)) return 'La agenda tiene 4 días y 4 ejes: Innovación, Producción, Vinculación y Economía del Conocimiento. Destacados: rondas de negocios (jueves), Demo Day Startups (viernes) y la final del Hackathon (domingo). Mirá la sección Agenda para filtrar por día.';
-    if (/(stand|expositor|dónde|donde|ubicación|ubicacion|encuentro)/.test(s)) return 'Podés buscar expositores por nombre o rubro en la sección Expositores, y ubicar cada stand en el Mapa del predio: Pabellón A (minería y energía), B (tecnología) y C (agroindustria).';
+    if (/(stand|expositor|dónde|donde|ubicación|ubicacion|encuentro)/.test(s)) return 'Podés buscar expositores por nombre o rubro en la sección Expositores, o escribir el código del stand (por ejemplo “D29”) en el buscador del Mapa: el plano te lo marca y te dice quién expone ahí.';
     if (/(horario|hora|abre|cierra|día|dia)/.test(s)) return 'ExpoJuy 2026 abre del 24 al 27 de septiembre, de 9 a 21 h. La plaza gastronómica extiende horario los días de eventos nocturnos.';
     if (/(llegar|estacionamiento|transporte|colectivo|auto)/.test(s)) return 'El predio está en Ciudad Cultural, San Salvador de Jujuy. Habrá estacionamiento gratuito y refuerzo de transporte urbano los 4 días.';
-    if (/(comer|comida|gastro|restaurant)/.test(s)) return 'La Plaza Gastronómica reúne sabores jujeños: tamales, humita, café de Yungas y vinos de la Quebrada. Está entre los pabellones C y de servicios — miralo en el Mapa.';
+    if (/(comer|comida|gastro|restaurant)/.test(s)) return 'El patio de comidas (Sector F) reúne sabores jujeños: tamales, humita, café de Yungas y vinos de la Quebrada. Está sobre la plaza central, frente al escenario — miralo en el Mapa.';
     return 'Puedo ayudarte con la agenda, los expositores, las entradas, el mapa del predio y cómo llegar. ¿Sobre qué querés saber más?';
   }
   sendMsg(text) {
@@ -1450,6 +1578,154 @@ class Component extends DCLogic {
     this.setState({ errs, formOk: ok });
     if (ok) this.setState({ fNombre: '', fEmail: '', fMensaje: '' });
   };
+
+  // ---- Mapa v7: plano SVG del predio (ver design_handoff_expojuy_v7/MAPA-V7.md) ----
+
+  /** "D-29" → "D29" (id del stand en el plano). Devuelve null para los stands cubiertos. */
+  standCode(stand) { return stand[0] === 'D' ? stand.replace('-', '').replace(/^D0/, 'D') : null; }
+
+  mzSet(fn) { this.setState(s => ({ mz: fn(s.mz) })); }
+  /** Mantiene el plano dentro del marco: nunca se ve el vacío alrededor del lienzo. */
+  mzClamp(m) {
+    const s = Math.min(4, Math.max(1, m.s));
+    const el = this._mzEl, W = el ? el.clientWidth : 1000, H = el ? el.clientHeight : 700;
+    return { s, tx: Math.min(0, Math.max(W - W * s, m.tx)), ty: Math.min(0, Math.max(H - H * s, m.ty)) };
+  }
+  /** Escala por `f` tomando (px,py) del lienzo como centro fijo. */
+  mzZoomAt(f, px, py) {
+    this.mzSet(m => {
+      const s = Math.min(4, Math.max(1, m.s * f)), k = s / m.s;
+      return this.mzClamp({ s, tx: px - (px - m.tx) * k, ty: py - (py - m.ty) * k });
+    });
+  }
+
+  mapVals(st, expoAll, grad) {
+    const C = this.COLOR_STAND;
+    // Ocupación de stands descubiertos: expositor por código de stand ("D29").
+    const byStand = {};
+    expoAll.forEach(e => { const c = this.standCode(e.stand); if (c) byStand[c] = e; });
+
+    const rub = st.mapRubro, filtering = rub !== 'Todos';
+    const matchTags = tags => !filtering || (tags || []).includes(rub);
+    const openExpo = e => this.setState({ expoSel: e });
+    // `_mzDragged`: un arrastre del plano no debe seleccionar el elemento que quedó debajo.
+    const pick = id => () => { if (this._mzDragged) return; this.setState({ stand: id, mapQ: '' }); };
+
+    const mp = {};
+    this.MAP.forEach(b => {
+      const on = st.stand === b.id, hit = matchTags(b.tags);
+      mp[b.id] = {
+        ...b.shape, pick: pick(b.id), aria: b.name + ' · ' + b.sub,
+        fill: `rgba(${b.c},${on ? '.38' : hit && filtering ? '.3' : '.14'})`,
+        stroke: on ? `rgb(${b.c})` : `rgba(${b.c},${hit && filtering ? .9 : .5})`,
+        sw: on ? 2.5 : 1.2, glow: on ? `drop-shadow(0 0 10px rgba(${b.c},.65))` : 'none',
+        op: filtering && !hit ? .28 : 1
+      };
+    });
+
+    const mapStands = this.STANDS.map(s => {
+      const ex = byStand[s.id], on = st.stand === s.id, hit = ex ? matchTags([ex.rubro]) : !filtering;
+      return {
+        id: s.id, x: s.x, y: s.y, w: s.w, h: s.h, cx: s.x + s.w / 2, cy: s.y + s.h / 2,
+        fs: s.w < 36 ? 8 : 10, dx: s.x + s.w - 6, dy: s.y + 6, occ: !!ex, pick: pick(s.id),
+        aria: 'Stand ' + s.id + (ex ? ' · ' + ex.name : ' · disponible'),
+        fill: ex ? `rgba(${C},${on ? '.5' : '.26'})` : on ? `rgba(${C},.22)` : 'var(--bg2)',
+        stroke: on || ex ? `rgb(${C})` : `rgba(${C},.55)`, sw: on ? 2.5 : 1.2,
+        dash: ex || on ? 'none' : '3 2.5',
+        glow: on ? `drop-shadow(0 0 10px rgba(${C},.7))` : 'none', op: filtering && !hit ? .28 : 1
+      };
+    });
+    const mapF = this.FSTANDS.map(f => ({ ...f, cx: f.x + f.w / 2, cy: f.y + f.h / 2 }));
+
+    const rubros = ['Todos', ...Object.keys(this.RUBROS), 'Gastronómico'];
+    const mapRubros = rubros.map(r => { const on = rub === r; return { label: r, on, pick: () => this.setState({ mapRubro: r }), bg: on ? 'linear-gradient(90deg,var(--tq),var(--vi))' : 'var(--bg2)', border: on ? 'transparent' : 'var(--l12)', color: on ? '#fff' : 'var(--t2)' }; });
+    const mapLegend = [{ label: 'Sector D · Descubiertos', bg: `rgba(${C},.2)`, border: `rgb(${C})` },
+      ...this.LEYENDA.map(id => { const b = this.MAP.find(x => x.id === id); return { label: b.legend, bg: `rgba(${b.c},.22)`, border: `rgb(${b.c})` }; })];
+
+    // ---- Buscador "¿Dónde está…?": stands D, expositores de sectores cubiertos y sectores ----
+    const q = st.mapQ.trim().toLowerCase(), qn = q.replace(/[-\s]/g, '');
+    let mapQRes = [];
+    if (q) {
+      const rs = [];
+      this.STANDS.forEach(s => {
+        const ex = byStand[s.id], id = s.id.toLowerCase();
+        if (id.includes(qn) || ('d' + qn) === id || (ex && ex.name.toLowerCase().includes(q))) rs.push({ name: 'Stand ' + s.id, sub: ex ? ex.name : 'Disponible', color: `rgb(${C})`, id: s.id });
+      });
+      expoAll.forEach(e => {
+        if (this.standCode(e.stand)) return;
+        const sec = this.MAP.find(b => b.letter === e.stand[0]);
+        if (sec && (e.name.toLowerCase().includes(q) || e.rubro.toLowerCase().includes(q))) rs.push({ name: e.name, sub: 'Sector ' + sec.letter, color: `rgb(${sec.c})`, id: sec.id });
+      });
+      this.MAP.forEach(b => { if ((b.name + ' ' + b.sub + ' ' + b.kicker).toLowerCase().includes(q)) rs.push({ name: b.name, sub: b.sub, color: `rgb(${b.c})`, id: b.id }); });
+      mapQRes = rs.slice(0, 6).map(r => ({ ...r, pick: () => this.setState({ stand: r.id, mapQ: '' }) }));
+    }
+
+    // ---- Panel de detalle: stand descubierto o sector ----
+    const stand = this.STANDS.find(s => s.id === st.stand);
+    const block = this.MAP.find(b => b.id === st.stand) || this.MAP.find(b => b.id === 'secB');
+    const ex = stand ? byStand[stand.id] : null;
+    const evs = block.loc && !stand ? this.AGENDA.filter(a => a.lugar === block.loc).map(a => ({ day: this.DIAS[a.dia].corto, time: a.hora + ' h', title: a.titulo, who: a.disertante, color: this.EJES[a.eje] || 'var(--tq)' })) : [];
+    const sectorExpos = !stand && block.letter ? expoAll.filter(e => e.stand[0] === block.letter).map(e => ({ name: e.name, open: () => openExpo(e) })) : [];
+    const c = stand ? C : block.c;
+    const avail = !!stand && !ex;
+    const mz = st.mz;
+
+    return {
+      mp, mapStands, mapF, mapRubros, mapLegend, mapStats: this.METRICAS_PREDIO, mapViewBox: this.PLANO.viewBox,
+      mapQ: st.mapQ, setMapQ: e => this.setState({ mapQ: e.target.value }), mapQHas: !!q, mapQRes, mapQEmpty: !mapQRes.length,
+      selKey: st.stand, selBorder: `rgba(${c},.55)`,
+      selKicker: stand ? 'Stand descubierto' : block.kicker,
+      selTitle: stand ? 'Stand ' + stand.id : block.name,
+      selMeta: stand ? stand.m2 + ' m² · Sector D · Aire libre' : block.sub,
+      selDescM: stand ? (ex ? this.DESCS[ex.rubro] : 'Stand descubierto de ' + stand.m2 + ' m² sobre la plaza central del predio, con conexión eléctrica y acceso vehicular para montaje.') : block.desc,
+      selPill: stand ? (ex ? 'Ocupado' : 'Disponible') : (evs.length ? evs.length + ' actividades' : 'Sector'),
+      selPillBg: avail ? 'rgba(63,179,128,.14)' : `rgba(${c},.14)`, selPillColor: avail ? 'rgb(63,179,128)' : `rgb(${c})`, selPillBorder: avail ? 'rgba(63,179,128,.45)' : `rgba(${c},.4)`,
+      selHasExpo: !!ex, selExpoName: ex ? ex.name : '', selExpoRubro: ex ? ex.rubro : '', selExpoIni: ex ? ex.name.split(' ').slice(0, 2).map(w => w[0]).join('') : '', selExpoGrad: ex ? grad(`rgb(${C})`) : '', selExpoOpen: () => { if (ex) openExpo(ex); },
+      selHasExposList: sectorExpos.length > 0, selExposList: sectorExpos,
+      selHasEvents: evs.length > 0, selEvents: evs,
+      selAvail: avail,
+      selConsultar: () => {
+        if (!stand) return;
+        this.setState({ fMotivo: 'Quiero exponer', fMensaje: `Hola, quiero consultar por el stand ${stand.id} (${stand.m2} m²).` });
+        this.go('contacto');
+      },
+      // ---- Zoom y arrastre del lienzo ----
+      mzS: mz.s, mzTx: mz.tx, mzTy: mz.ty, mzTouch: mz.s > 1 ? 'none' : 'pan-y', mzCursor: mz.s > 1 ? 'grab' : 'default',
+      mzTrans: this._mzLive ? 'none' : 'transform .25s ease',
+      mzHint: mz.s > 1 ? 'Arrastrá para moverte · ' + Math.round(mz.s * 100) + '%' : 'Ctrl + rueda o pinza para acercar',
+      mzIn: e => { this._mzLive = false; const el = this._mzEl = e.currentTarget.parentElement.parentElement; this.mzZoomAt(1.4, el.clientWidth / 2, el.clientHeight / 2); },
+      mzOut: e => { this._mzLive = false; const el = this._mzEl = e.currentTarget.parentElement.parentElement; this.mzZoomAt(1 / 1.4, el.clientWidth / 2, el.clientHeight / 2); },
+      mzReset: () => { this._mzLive = false; this.setState({ mz: { s: 1, tx: 0, ty: 0 } }); },
+      mzDown: e => {
+        this._mzEl = e.currentTarget; this._ptrs = this._ptrs || {};
+        this._ptrs[e.pointerId] = { x: e.clientX, y: e.clientY }; this._mzDragged = false;
+        if (Object.keys(this._ptrs).length === 1 && mz.s > 1) this._drag = { x: e.clientX, y: e.clientY, tx: mz.tx, ty: mz.ty };
+      },
+      mzMove: e => {
+        if (!this._ptrs || !this._ptrs[e.pointerId]) return;
+        const ids = Object.keys(this._ptrs);
+        if (ids.length === 2) { // pinza: el factor es la razón de distancias y el centro, el punto medio
+          const prev = { ...this._ptrs }; this._ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
+          const a = this._ptrs[ids[0]], b = this._ptrs[ids[1]], pa = prev[ids[0]], pb = prev[ids[1]];
+          const d = Math.hypot(a.x - b.x, a.y - b.y), pd = Math.hypot(pa.x - pb.x, pa.y - pb.y);
+          if (pd > 0) { const r = e.currentTarget.getBoundingClientRect(); this._mzLive = true; this._mzDragged = true; this.mzZoomAt(d / pd, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top); }
+          return;
+        }
+        this._ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
+        if (!this._drag) return;
+        const dx = e.clientX - this._drag.x, dy = e.clientY - this._drag.y;
+        if (Math.abs(dx) + Math.abs(dy) > 4) this._mzDragged = true;
+        this._mzLive = true;
+        this.mzSet(m => this.mzClamp({ s: m.s, tx: this._drag.tx + dx, ty: this._drag.ty + dy }));
+      },
+      mzUp: e => {
+        if (this._ptrs) delete this._ptrs[e.pointerId];
+        if (!this._ptrs || !Object.keys(this._ptrs).length) { this._drag = null; setTimeout(() => { this._mzDragged = false; }, 0); }
+      },
+      // El scroll de la página solo se intercepta con Ctrl/⌘ apretado.
+      mzWheel: e => { if (!(e.ctrlKey || e.metaKey)) return; e.preventDefault(); this._mzEl = e.currentTarget; const r = e.currentTarget.getBoundingClientRect(); this._mzLive = false; this.mzZoomAt(e.deltaY < 0 ? 1.18 : 1 / 1.18, e.clientX - r.left, e.clientY - r.top); }
+    };
+  }
 
   renderVals() {
     const st = this.state, P = this.props;
@@ -1519,33 +1795,6 @@ class Component extends DCLogic {
     const feedBgs = ['linear-gradient(140deg,var(--oc),var(--ma))', 'linear-gradient(140deg,var(--tq),var(--vi))', 'linear-gradient(140deg,var(--ve),var(--tq))', 'linear-gradient(140deg,var(--vi),var(--ma))'];
     const feedCaps = ['Así se vivió la edición 2024', 'Montaje del Pabellón B en timelapse', 'Cardón ya tiene su stand', 'Los 7 colores, en modo digital'];
     const feed = feedBgs.map((bg, i) => ({ bg, cap: feedCaps[i] }));
-
-    const mapSel = this.MAP.find(b => b.id === st.stand) || this.MAP[2];
-    const sectorActs = {};
-    this.AGENDA.forEach(a => { const s = this.MAP.find(m => a.lugar === m.name); if (s) sectorActs[s.id] = (sectorActs[s.id] || 0) + 1; });
-    const mapActivityCount = Object.values(sectorActs).reduce((total, count) => total + count, 0);
-    const MAPA_CATS = { acc:'pabellones', pabA:'pabellones', pabB:'pabellones', pabC:'pabellones', start:'pabellones', aud:'charlas', sala:'charlas', gastro:'gastro', serv:'servicios', inst:'servicios' };
-    const mapaFiltros = [
-      { id:'todo', label:'Todo', color:'var(--tq)' },
-      { id:'pabellones', label:'Pabellones y stands', color:'var(--vi)' },
-      { id:'charlas', label:'Charlas y talleres', color:'var(--li)' },
-      { id:'gastro', label:'Gastronomía', color:'var(--te)' },
-      { id:'servicios', label:'Servicios e institucional', color:'var(--t3)' }
-    ].map(f => ({ ...f, active: st.mapaFiltro === f.id, set: () => {
-      const first = f.id === 'todo' ? null : this.MAP.find(b => MAPA_CATS[b.id] === f.id);
-      this.setState({ mapaFiltro: f.id, ...(first ? { stand: first.id } : {}) });
-    } }));
-    const mapBlocks = this.MAP.map(b => {
-      const on = b.id === st.stand;
-      const n = sectorActs[b.id] || 0;
-      const dimmed = st.mapaFiltro !== 'todo' && MAPA_CATS[b.id] !== st.mapaFiltro;
-      return { ...b, bg: `rgba(${b.c},${on ? '.34' : dimmed ? '.04' : '.14'})`, border: on ? `2px solid rgb(${b.c})` : dimmed ? `1px solid rgba(${b.c},.12)` : `1px solid rgba(${b.c},.45)`, shadow: on ? `0 0 28px rgba(${b.c},.42),inset 0 0 22px rgba(${b.c},.12)` : 'none', selected: on, current: on ? 'true' : 'false', accent: `rgb(${b.c})`, hasAct: n > 0 && !dimmed, actBadge: n === 1 ? '1 actividad' : n > 1 ? `${n} actividades` : '', opacity: dimmed ? '.28' : '1', labelColor: dimmed ? 'var(--t4)' : 'var(--text)', subColor: dimmed ? 'var(--t4)' : 'var(--mapsub)', select: () => this.setState({ stand: b.id, mapaFiltro: 'todo' }) };
-    });
-    const sectorLetter = Object.keys(this.SECTORMAP).find(k => this.SECTORMAP[k] === mapSel.id);
-    const standExpos = sectorLetter ? expoAll.filter(e => e.stand.startsWith(sectorLetter)).map(e => e.name) : [];
-    const standColor = `rgb(${mapSel.c})`;
-    const standCode = mapSel.id.startsWith('pab') ? mapSel.id.slice(3).toUpperCase() : mapSel.id.toUpperCase();
-    const standActividades = this.AGENDA.filter(a => a.lugar === mapSel.name).map(a => ({ hora: a.hora, dia: this.DIAS[a.dia].corto, titulo: a.titulo, color: this.EJES[a.eje] || 'var(--t3)' }));
 
     const faqs = this.FAQS.map(([q, a], i) => { const open = st.faqOpen === i; return { q, a, open, icon: open ? '−' : '+', border: open ? 'rgba(43,196,214,.45)' : 'var(--l08)', toggle: () => this.setState({ faqOpen: open ? -1 : i }) }; });
 
@@ -1696,13 +1945,10 @@ class Component extends DCLogic {
       q: st.q, setQ: e => this.setState({ q: e.target.value }), rubroChips, expoList, noExpo: expoList.length === 0,
       expoOpen: !!sel, closeExpo: () => this.setState({ expoSel: null }), stopProp: e => e.stopPropagation(),
       selName: sel ? sel.name : '', selRubro: sel ? sel.rubro : '', selStand: sel ? sel.stand : '', selIni: sel ? sel.name.split(' ').slice(0, 2).map(w => w[0]).join('') : '', selGrad: sel ? grad(this.RUBROS[sel.rubro]) : '', selDesc: sel ? this.DESCS[sel.rubro] : '',
-      selVerMapa: () => { if (sel) { this.setState({ stand: this.SECTORMAP[sel.stand[0]] || 'pabB' }); this.go('mapa'); } },
+      selVerMapa: () => { if (sel) { this.setState({ stand: this.standCode(sel.stand) || this.SECTORMAP[sel.stand[0]] || 'secB', mapRubro: 'Todos', mapQ: '' }); this.go('mapa'); } },
       dayTabs, ejeChips, interesChips, agendaList,
       notiFeat: this.NOTIS[0], notiRest: this.NOTIS.slice(1), feed,
-      mapaFiltros, mapBlocks, mapSectorCount: this.MAP.length, mapActivityCount,
-      standTitle: mapSel.name, standSubtitle: mapSel.sub, standCode, standDesc: mapSel.desc,
-      standHasExpos: standExpos.length > 0, standExpositores: standExpos, standExpoCount: standExpos.length,
-      standColor, standActividades, standActivityCount: standActividades.length, standHasActs: standActividades.length > 0,
+      ...this.mapVals(st, expoAll, grad),
       ...spotVals, spDia, spOro, spPlata, spOrg, spAcom, spMetrics: this.SPONSORS.metricas,
       faqs,
       fNombre: st.fNombre, fEmail: st.fEmail, fMotivo: st.fMotivo, fMensaje: st.fMensaje,

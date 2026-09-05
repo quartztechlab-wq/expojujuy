@@ -59,9 +59,6 @@ const services = {
       div[style*="grid-template-columns:repeat(4,1fr)"], div[style*="grid-template-columns:repeat(3,1fr)"], div[style*="grid-template-columns:repeat(2,1fr)"], div[style*="grid-template-columns:1fr 1fr"], div[style*="grid-template-columns:1.1fr .9fr"], div[style*="grid-template-columns:1.2fr .8fr"], div[style*="grid-template-columns:2fr 1fr"], div[style*="grid-template-columns:1fr 320px"], div[style*="grid-template-columns:1fr 380px"] { grid-template-columns: 1fr !important; }
       /* Cifras y sponsors Oro se ven mejor a dos columnas */
       section[aria-label="Cifras del evento"] > div, div[style*="grid-template-columns:repeat(4,1fr);gap:14px"] { grid-template-columns: 1fr 1fr !important; }
-      /* Plano del predio: celdas más bajas y padding reducido para que las 12 columnas entren */
-      div[style*="grid-template-columns:repeat(12,1fr)"] { grid-auto-rows: 46px !important; padding: 12px !important; gap: 6px !important; }
-      div[style*="grid-template-columns:repeat(12,1fr)"] > div { padding: 6px 7px !important; }
       div[style*="position:sticky;top:88px"] { position: static !important; }
       div[style*="padding:44px 48px"], div[style*="padding:56px 48px"], div[style*="padding:72px 48px"], div[style*="padding:96px 48px"], div[style*="padding:80px 48px"], section[style*="padding:96px 48px"], section[style*="padding:72px 48px"] { padding-left: 20px !important; padding-right: 20px !important; }
       /* Cardón: queda por encima de la barra inferior, no encima de ella */
@@ -93,11 +90,6 @@ const services = {
       section[aria-label="Cifras del evento"] div[style*="font:700 38px/1 'Ambit'"] { font-size: 30px !important; }
       /* Footer a una columna: el email de contacto no se puede partir y a dos columnas fuerza 375px de ancho. */
       footer > div { grid-template-columns: 1fr !important; gap: 28px !important; }
-      /* Plano del predio: en 320px las celdas son muy angostas; nombre más chico, sin subtítulo y sin partir palabras. */
-      div[style*="grid-template-columns:repeat(12,1fr)"] { grid-auto-rows: 44px !important; padding: 10px !important; gap: 5px !important; }
-      div[style*="grid-template-columns:repeat(12,1fr)"] > div { padding: 4px 5px !important; overflow-wrap: normal; border-radius: 9px !important; }
-      div[style*="grid-template-columns:repeat(12,1fr)"] > div > div:first-child { font-size: 10.5px !important; line-height: 1.1 !important; }
-      div[style*="grid-template-columns:repeat(12,1fr)"] > div > div:nth-child(2) { display: none; }
       footer { overflow-wrap: anywhere; }
     }
     body[data-noanim] .motion-reveal, .motion-reveal.motion-visible { opacity: 1; transform: none; }
@@ -279,7 +271,7 @@ const services = {
         node.addEventListener('keydown', (event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            node.click();
+            node.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
           }
         });
       }
@@ -297,7 +289,7 @@ const services = {
 
     component.__syncMotion = function syncMotion(sameRoute) {
       const cardCandidates = Array.from(root.querySelectorAll('main [style-hover*="translateY"], main [style-hover*="transform:scale(1.02)"], main [role="button"][style*="background:var(--panel)"]'))
-        .filter((node) => node.tagName !== 'BUTTON' && !node.classList.contains('map-sector'));
+        .filter((node) => node.tagName !== 'BUTTON' && !(node instanceof SVGElement));
       const sections = Array.from(root.querySelectorAll('main section:not([aria-label="Portada"])'))
         .filter((section) => !cardCandidates.some((card) => section.contains(card)));
       [...sections, ...cardCandidates].forEach((node) => {
