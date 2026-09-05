@@ -9,6 +9,9 @@ import logoCfi from '../../assets/sponsors/cfi.png';
 import logoMuniSsj from '../../assets/sponsors/municipalidad-ssj.png';
 import logoCamcomext from '../../assets/logo-camcomext.png';
 
+// Plano del predio: sectores, stands y coordenadas del SVG (ver src/data/predio.js).
+import { PLANO, SECTORES, SECTOR_POR_LETRA, COLOR_STAND, STANDS, STANDS_GASTRO, METRICAS_PREDIO, LEYENDA } from './predio.js';
+
 // Mock data centralizada de ExpoJuy 2026.
 // Única fuente de verdad para buscador, mapa, agenda, recomendador, entradas y portal.
 // Cuando exista la API (Spring Boot) estas constantes se reemplazan por fetchs que
@@ -21,7 +24,7 @@ import logoCamcomext from '../../assets/logo-camcomext.png';
  * @typedef {Object} Expositor
  * @property {string} nombre
  * @property {Rubro} rubro
- * @property {string} stand   Código de stand: letra de pabellón + número (ej. "A-04").
+ * @property {string} stand   Código de stand: letra de sector + número ("B-02" cubierto, "D-29" descubierto).
  */
 
 /**
@@ -50,15 +53,7 @@ import logoCamcomext from '../../assets/logo-camcomext.png';
  * @property {string} color    Token CSS del color de la etiqueta.
  */
 
-/**
- * @typedef {Object} Sector
- * @property {string} id
- * @property {string} name
- * @property {string} sub
- * @property {string} area     Posición en la grilla CSS del plano (grid-area).
- * @property {string} c        Color base en "r,g,b" para rgba().
- * @property {string} desc
- */
+/** El plano del predio (sectores, stands y coordenadas) vive en `src/data/predio.js`. */
 
 /**
  * @typedef {Object} TipoEntrada
@@ -116,17 +111,17 @@ export const DESCRIPCIONES_RUBRO = {
 
 /** @type {Expositor[]} */
 export const EXPOSITORES = [
-  { nombre: 'Litio Andino SA', rubro: 'Minería', stand: 'A-04' },
-  { nombre: 'SolNorte Energía', rubro: 'Energía', stand: 'A-11' },
+  { nombre: 'Litio Andino SA', rubro: 'Minería', stand: 'D-29' },
+  { nombre: 'SolNorte Energía', rubro: 'Energía', stand: 'D-28' },
   { nombre: 'Quantum Software Jujuy', rubro: 'Tecnología', stand: 'B-02' },
-  { nombre: 'Tabacal Agroindustria', rubro: 'Agroindustria', stand: 'C-07' },
-  { nombre: 'Altos Andes Turismo', rubro: 'Turismo', stand: 'B-15' },
-  { nombre: 'NOA Export Group', rubro: 'Comercio Exterior', stand: 'A-09' },
+  { nombre: 'Tabacal Agroindustria', rubro: 'Agroindustria', stand: 'D-02' },
+  { nombre: 'Altos Andes Turismo', rubro: 'Turismo', stand: 'D-14' },
+  { nombre: 'NOA Export Group', rubro: 'Comercio Exterior', stand: 'D-20' },
   { nombre: 'Data Puna', rubro: 'Economía del Conocimiento', stand: 'B-05' },
-  { nombre: 'Cerámica Humahuaca', rubro: 'Manufactura', stand: 'C-12' },
+  { nombre: 'Cerámica Humahuaca', rubro: 'Manufactura', stand: 'D-26' },
   { nombre: 'Verde Litio Tech', rubro: 'Minería', stand: 'A-06' },
   { nombre: 'Andes Cloud', rubro: 'Tecnología', stand: 'B-08' },
-  { nombre: 'Quinua del Sol', rubro: 'Agroindustria', stand: 'C-03' },
+  { nombre: 'Quinua del Sol', rubro: 'Agroindustria', stand: 'D-08' },
   { nombre: 'Jujuy Fintech Hub', rubro: 'Economía del Conocimiento', stand: 'B-11' }
 ];
 
@@ -176,23 +171,6 @@ export const NOTICIAS = [
   { tag: 'Innovación', date: '07 AGO 2026', title: 'La Zona Startups duplica su superficie', color: 'var(--ma)' },
   { tag: 'Entradas', date: '01 AGO 2026', title: 'La inscripción general será gratuita con registro previo', color: 'var(--oc)' }
 ];
-
-/** @type {Sector[]} */
-export const SECTORES = [
-  { id: 'acc', name: 'Acceso y acreditación', sub: 'Ingreso principal', area: '1 / 1 / 2 / 4', c: '152,160,184', desc: 'Ingreso principal al predio. Acreditación con QR, informes y punto de encuentro. Abre 30 minutos antes de cada jornada.' },
-  { id: 'pabA', name: 'Pabellón A', sub: 'Minería y Energía', area: '2 / 1 / 4 / 6', c: '224,154,69', desc: 'El corazón productivo de la expo: empresas de litio, minería y energías renovables del NOA, con maquetas, demos y espacios de proveeduría.' },
-  { id: 'pabB', name: 'Pabellón B', sub: 'Tecnología y Conocimiento', area: '1 / 6 / 4 / 10', c: '120,87,245', desc: 'Software, servicios cloud, fintech y el polo de economía del conocimiento jujeño. Acá también se realizan las rondas de negocios internacionales.' },
-  { id: 'aud', name: 'Auditorio Principal', sub: 'Charlas y paneles', area: '1 / 10 / 3 / 13', c: '43,196,214', desc: 'Escenario principal: apertura oficial, paneles, keynotes y la premiación del Hackathon. Capacidad para 600 personas, con intérprete de LSA.' },
-  { id: 'sala', name: 'Sala de Conferencias', sub: 'Talleres', area: '3 / 10 / 4 / 13', c: '199,164,248', desc: 'Talleres prácticos y charlas técnicas en formato reducido. Requiere reserva de lugar desde la agenda.' },
-  { id: 'pabC', name: 'Pabellón C', sub: 'Agroindustria y Manufactura', area: '4 / 1 / 6 / 5', c: '63,179,128', desc: 'Productores y manufactura regional: agroindustria, alimentos, cerámica y diseño con identidad jujeña. Feria de productores el domingo.' },
-  { id: 'start', name: 'Zona Startups', sub: 'Emprendimientos', area: '4 / 5 / 6 / 8', c: '212,84,143', desc: 'El espacio más joven de la expo: startups del NOA, Demo Day, mentorías y el Hackathon ExpoJuy con equipos universitarios.' },
-  { id: 'gastro', name: 'Plaza Gastronómica', sub: 'Sabores jujeños', area: '4 / 8 / 6 / 11', c: '192,96,56', desc: 'Cocina jujeña y regional: tamales, humita, café de Yungas y vinos de la Quebrada. Sede del After Expo del viernes.' },
-  { id: 'serv', name: 'Servicios', sub: 'Sanitarios · Enfermería', area: '4 / 11 / 5 / 13', c: '106,115,144', desc: 'Sanitarios accesibles, enfermería, lactario y guardarropa.' },
-  { id: 'inst', name: 'Espacio CCEJ', sub: 'Institucional', area: '5 / 11 / 6 / 13', c: '43,196,214', desc: 'Stand institucional de la Cámara de Comercio Exterior de Jujuy: información sobre cómo exportar y programas de vinculación.' }
-];
-
-/** Letra de stand → id de sector del plano. */
-export const SECTOR_POR_LETRA = { A: 'pabA', B: 'pabB', C: 'pabC' };
 
 /** @type {Faq[]} */
 export const FAQS = [
@@ -277,5 +255,6 @@ export const SPONSORS = {
 /** Todo junto, para inyectar en el prototipo (`Component`) desde el runtime. */
 export const DATA = Object.freeze({
   FECHA_APERTURA, PREDIO, FECHAS_TEXTO, DIAS, RUBROS, EJES, EJES_IMPRESION, DESCRIPCIONES_RUBRO, EXPOSITORES,
-  DURACION_ACTIVIDAD_MIN, AGENDA, claveActividad, NOTICIAS, SECTORES, SECTOR_POR_LETRA, FAQS, TIPOS_ENTRADA, GRUPO, FAQ_ENTRADAS, SPONSORS
+  DURACION_ACTIVIDAD_MIN, AGENDA, claveActividad, NOTICIAS, FAQS, TIPOS_ENTRADA, GRUPO, FAQ_ENTRADAS, SPONSORS,
+  PLANO, SECTORES, SECTOR_POR_LETRA, COLOR_STAND, STANDS, STANDS_GASTRO, METRICAS_PREDIO, LEYENDA
 });
