@@ -263,12 +263,3 @@ npm test              # los tres
 ```
 
 `SHOTS_DIR=<carpeta> npm run test:portal` guarda además capturas de cada paso y el PDF generado.
-
-## Despliegue
-
-El sitio se publica como estático detrás de Caddy, en un VPS compartido con otros proyectos del equipo (Turismo, Sociedad de Tiro). Este repo no publica puertos propios: lo alcanza el Caddy de borde por una red Docker externa.
-
-- `Dockerfile` — build de dos etapas: `node:22-alpine` corre `npm ci && npm run build` (genera `dist/`); la imagen final es `caddy:2-alpine` sirviendo ese `dist/` en el puerto 80 interno, con `HEALTHCHECK` propio.
-- `deploy/Caddyfile.static` — Caddy interno del contenedor: cachea `/assets/*` (nombres con hash de Vite) por un año de forma inmutable, e `index.html` sin cache para que cada deploy se vea al instante.
-- `deploy/docker-compose.yml` — levanta el servicio `web` (imagen `expojuy-web`) en la red externa `edge`, sin publicar puertos al host; límites de `128m` de RAM y `0.5` CPU por tratarse de un sitio estático. Se opera desde `/opt/expojuy/deploy` en el VPS.
-- `deploy/caddy/expojuy.caddy` — snippet importado por el Caddy de borde (`turismo-caddy`) para `expojujuy.quartztechlabs.com`: cabeceras de seguridad, Content-Security-Policy (con `unsafe-eval` obligatorio: `support.js` compila los bindings `{{...}}` con `Function()`, sin esto la pantalla queda en negro) y proxy reverso a `expojuy-web:80`. DNS en Cloudflare con proxy activo (nube naranja); el origen usa `tls internal` mientras el registro esté proxied.
