@@ -19,7 +19,9 @@ const services = {
     .mobile-bottom-nav, .mobile-more-menu { display: none; }
     [style-hover] { transition: border-color .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease, filter .2s ease; }
     button:not(:disabled) { transition: transform .16s ease, border-color .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease; }
-    button:not(:disabled):active { transform: scale(.975) !important; transition-duration: .08s !important; }
+    /* v9.1: el "apretón" no debe pisar botones que se posicionan con transform inline (flechas del
+       carrusel/lightbox, etc.): el !important reemplazaba el translate y el botón se corría de abajo del puntero. */
+    button:not(:disabled):not([style*="transform"]):active { transform: scale(.975) !important; transition-duration: .08s !important; }
     @keyframes filterSettle { from { opacity: .78; transform: scale(.985); } to { opacity: 1; transform: none; } }
     button[aria-pressed] { transition: transform .16s ease, border-color .2s ease, color .2s ease, background .2s ease, opacity .2s ease; animation: filterSettle .18s ease-out both; }
     main.state-update > div { animation: none !important; }
