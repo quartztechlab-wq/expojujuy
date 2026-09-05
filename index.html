@@ -19,6 +19,10 @@
 @font-face{font-family:'Ambit';src:url('assets/fonts/Ambit-Bold.otf');font-weight:700}
 :root{--bg0:#05070D;--bg1:#0A1428;--bg2:rgba(7,11,22,.55);--panel:rgba(13,20,40,.78);--panel2:rgba(11,16,31,.7);--pagebg:url(assets/bg-mountains.jpg);--pageveil:linear-gradient(180deg,rgba(5,7,13,.55),rgba(5,7,13,.72));--navbg:rgba(5,7,13,.85);--footbg:#04060B;--text:#EEF0F8;--t15:#B7BDD1;--t2:#98A0B8;--t3:#6A7390;--t4:#4E5670;--navon:#FFFFFF;--tq:#2BC4D6;--vi:#7857F5;--li:#C7A4F8;--ve:#3FB380;--oc:#E09A45;--ma:#D4548F;--te:#C06038;--en:#F2C14E;--verdet:#8FD9B8;--grid:rgba(255,255,255,.04);--mapsub:rgba(255,255,255,.55);--l06:rgba(255,255,255,.06);--l07:rgba(255,255,255,.07);--l08:rgba(255,255,255,.08);--l09:rgba(255,255,255,.09);--l10:rgba(255,255,255,.1);--l12:rgba(255,255,255,.12);--l14:rgba(255,255,255,.14);--l16:rgba(255,255,255,.16);--l18:rgba(255,255,255,.18);--l20:rgba(255,255,255,.2);--l22:rgba(255,255,255,.22);--l25:rgba(255,255,255,.25);--l28:rgba(255,255,255,.28);--glass:rgba(13,20,40,.75);--glass2:rgba(13,20,40,.5);--overlay:rgba(3,4,9,.72);--cdA:#FFFFFF;--tagbg:#2BC4D6;--tagfg:#05070D;--tick1:#141033;--tick2:#0A1428;--feat1:#1A1040;--feat2:#0A1428;--feat3:#07301F;--fadec:rgba(5,7,13,.92);--vid1:#0A1428;--vid2:#1A1040}
 body{margin:0;background:var(--bg0);color:var(--text);font-family:'Ambit',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+/* El runtime reconstruye todo el DOM en cada setState. El scroll anchoring de Chrome pierde su nodo
+   ancla y "corrige" el scroll varias decenas de px al enfocar el modal recién montado: al abrir el
+   lightbox de la galería la página saltaba y las fotos quedaban bajo la navbar flotante. */
+html{overflow-anchor:none}
 /* Fondo fotográfico global (handoff v4): capa fija detrás de todo el sitio. Se usa un pseudo-elemento
    position:fixed en lugar de background-attachment:fixed porque iOS lo ignora. */
 body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--pageveil),var(--pagebg) center top/cover no-repeat var(--bg0)}
