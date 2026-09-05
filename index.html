@@ -1839,7 +1839,9 @@ class Component extends DCLogic {
       if (off < -N / 2) off += N;
       const a = Math.abs(off), vis = a <= 2, centro = a === 0;
       const sc = centro ? 1 : a === 1 ? .78 : .62;
-      return { ...g, center: centro, tf: `translate(calc(-50% + ${off * 62}%), -50%) scale(${sc})`,
+      // Porcentajes planos (sin calc) para que ningún motor descarte la declaración: sin transform la foto
+      // queda con su esquina superior izquierda en el centro del escenario.
+      return { ...g, center: centro, tf: `translate(${-50 + off * 62}%, -50%) scale(${sc})`,
         op: vis ? (centro ? 1 : a === 1 ? .55 : .3) : 0, z: 10 - a,
         filter: centro ? 'none' : `brightness(${a === 1 ? .7 : .5}) saturate(.7)`,
         pe: vis ? 'auto' : 'none', tab: vis ? '0' : '-1', oculta: vis ? 'false' : 'true',
