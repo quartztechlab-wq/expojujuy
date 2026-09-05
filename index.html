@@ -43,6 +43,12 @@ body[data-noanim] .fc-card{opacity:1}
 main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 @keyframes faqAnswerIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .faq-answer{transform-origin:top;animation:faqAnswerIn .26s cubic-bezier(.2,.75,.25,1) both}
+/* Sobre v8: la spec usa data-m="2"/"static", que este repo no define; van como clases propias. */
+.sb-perfil>div:last-child{border-right:0}
+@media(max-width:1040px){.sb-act{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:900px){.sb-split.sb-split,.sb-cols{grid-template-columns:1fr!important}.sb-sticky{position:static!important}}
+@media(max-width:760px){.sb-obj{grid-template-columns:1fr!important}.sb-perfil.sb-perfil{grid-template-columns:1fr 1fr!important}.sb-perfil>div:nth-child(2n){border-right:0}.sb-perfil>div:nth-child(-n+2){border-bottom:1px solid var(--l08)}}
+@media(max-width:600px){.sb-act{grid-template-columns:1fr!important}.sb-cta{width:100%}.sb-cta>button{flex:1;min-width:0}}
 /* Mapa v7: cada sector/stand del plano SVG se levanta al pasar el puntero (style-hover). */
 .mp-hit{cursor:pointer;transition:transform .28s cubic-bezier(.2,.8,.2,1),filter .28s;transform-box:fill-box;transform-origin:center}
 .mp-hit:focus-visible{outline:none;filter:drop-shadow(0 0 8px var(--tq))!important}
@@ -253,17 +259,25 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </sc-if>
 
 <sc-if value="{{isSobre}}" hint-placeholder-val="{{false}}">
-<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:80px 48px">
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:48px;max-width:720px">
+<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:80px 48px 96px" data-m="pad">
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:44px;max-width:760px">
     <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Sobre ExpoJuy 2026</div>
-    <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Jujuy, tierra de innovación</h2>
-    <p style="font:300 18px/1.6 'Ambit';color:var(--t2);margin:8px 0 0;text-wrap:pretty">Organizada por la Cámara de Comercio Exterior de Jujuy, ExpoJuy conecta la producción del Norte Argentino con los mercados del mundo. La edición 2026 suma un eje central: la economía del conocimiento como motor de desarrollo regional.</p>
+    <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">La feria multisectorial más importante del Noroeste Argentino</h2>
+    <p style="font:300 18px/1.6 'Ambit';color:var(--t2);margin:8px 0 0;text-wrap:pretty">Organizada por la Cámara de Comercio Exterior de Jujuy, ExpoJuy promociona el potencial industrial, agrícola, ganadero, comercial, artesanal y de servicios de la provincia, como herramienta estratégica para su desarrollo económico, social y para la integración regional.</p>
   </div>
-  <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start;margin-bottom:64px">
-    <div style="display:flex;flex-direction:column;gap:18px">
-      <p style="font:400 16px/1.7 'Ambit';color:var(--t15);margin:0;text-wrap:pretty">Nacida como punto de encuentro entre productores, industrias y compradores internacionales, ExpoJuy creció hasta convertirse en la vidriera productiva más importante de la región: minería y litio, energías renovables, agroindustria, turismo, manufactura y servicios basados en conocimiento.</p>
-      <p style="font:400 16px/1.7 'Ambit';color:var(--t15);margin:0;text-wrap:pretty">En 2026, la expo se propone tender un puente entre la tradición productiva jujeña y las tecnologías que están transformando la economía global: inteligencia artificial, energía limpia y talento digital exportable.</p>
-      <div aria-label="Estadísticas edición anterior" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px">
+
+  <div class="sb-split" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-bottom:72px">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <p style="font:400 16px/1.7 'Ambit';color:var(--t15);margin:0;text-wrap:pretty">Nacida como punto de encuentro entre productores, industrias y compradores, ExpoJuy creció hasta convertirse en la vidriera productiva de la región: minería y litio, energías renovables, agroindustria, turismo, manufactura y servicios basados en conocimiento. En 2026 suma un eje central: la economía del conocimiento como motor de desarrollo regional.</p>
+      <div class="sb-perfil" style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--l09);border-radius:14px;background:var(--glass2);overflow:hidden">
+        <sc-for list="{{perfilExpo}}" as="p" hint-placeholder-count="4">
+          <div style="padding:16px 18px;display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--l08)">
+            <div style="font:600 10.5px 'Ambit';letter-spacing:.16em;color:var(--t3);text-transform:uppercase">{{p.l}}</div>
+            <div style="font:700 17px 'Ambit'">{{p.v}}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div aria-label="Estadísticas edición anterior" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px" data-m="stack">
         <sc-for list="{{edicionAnterior}}" as="c" hint-placeholder-count="3">
           <div style="background:var(--panel);border:1px solid var(--l08);border-radius:14px;padding:18px">
             <div style="font:700 26px 'Ambit';color:var(--tq)">{{c.v}}</div>
@@ -272,15 +286,76 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
         </sc-for>
       </div>
     </div>
-    <div style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--l10);aspect-ratio:16/10;background:linear-gradient(140deg,var(--vid1),var(--vid2) 60%,var(--vid1));display:flex;align-items:center;justify-content:center;cursor:pointer" role="button" aria-label="Reproducir video institucional" style-hover="border-color:rgba(43,196,214,.5)">
-      <div style="position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 48px"></div>
-      <div style="position:relative;width:76px;height:76px;border-radius:50%;background:rgba(120,87,245,.25);border:1px solid rgba(199,164,248,.6);display:flex;align-items:center;justify-content:center;animation:pulseGlow 3s ease-in-out infinite">
-        <div style="width:0;height:0;border-left:20px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:5px"></div>
+    <div style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--l10);aspect-ratio:16/10;background:var(--bg1)" style-hover="border-color:rgba(43,196,214,.5)">
+      <video src="{{vidSrc}}" ref="{{vidRef}}" autoplay muted loop playsinline preload="auto" aria-label="{{vidAriaVideo}}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block"></video>
+      <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(5,7,13,.75));pointer-events:none"></div>
+      <div style="position:absolute;left:18px;right:72px;bottom:16px;display:flex;flex-direction:column;gap:3px;pointer-events:none">
+        <div style="font:600 11px 'Ambit';letter-spacing:.2em;color:rgba(255,255,255,.7);text-transform:uppercase">{{vidKicker}}</div>
+        <div style="font:700 18px/1.2 'Ambit';color:#fff;text-wrap:balance">{{vidTitulo}}</div>
       </div>
-      <div style="position:absolute;bottom:16px;left:18px;font:600 12px 'Ambit';letter-spacing:.14em;color:var(--t2);text-transform:uppercase">Video institucional · material a proveer</div>
+      <button onClick="{{vidToggle}}" aria-label="{{vidAria}}" style="position:absolute;right:16px;bottom:16px;width:44px;height:44px;border-radius:50%;background:rgba(5,7,13,.55);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(6px);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;transition:background .2s" style-hover="background:rgba(43,196,214,.55)">
+        <sc-if value="{{vidPlaying}}" hint-placeholder-val="{{true}}"><span style="display:flex;gap:4px"><span style="width:4px;height:14px;background:#fff;border-radius:1px"></span><span style="width:4px;height:14px;background:#fff;border-radius:1px"></span></span></sc-if>
+        <sc-if value="{{vidPaused}}" hint-placeholder-val="{{false}}"><span style="width:0;height:0;border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:3px"></span></sc-if>
+      </button>
     </div>
   </div>
-  <div style="display:flex;flex-direction:column;gap:22px">
+
+  <div class="sb-cols" style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:40px;margin-bottom:72px;align-items:start">
+    <div class="sb-sticky" style="display:flex;flex-direction:column;gap:10px;position:sticky;top:96px">
+      <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Objetivos</div>
+      <h3 style="font:700 30px/1.15 'Ambit';margin:0;letter-spacing:-.01em">Un espacio para hacer negocios y mostrar Jujuy</h3>
+      <p style="font:400 14.5px/1.6 'Ambit';color:var(--t3);margin:4px 0 0;text-wrap:pretty">Trece objetivos guían la exposición desde su primera edición. Estos son los centrales.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="sb-obj" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+        <sc-for list="{{objTop}}" as="o" hint-placeholder-count="6">
+          <div style="display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--l08);border-radius:14px;padding:18px 20px" style-hover="border-color:rgba(43,196,214,.45)">
+            <div style="font:700 13px 'Ambit';color:var(--tq);min-width:26px;padding-top:2px">{{o.n}}</div>
+            <div style="display:flex;flex-direction:column;gap:3px"><div style="font:700 15.5px/1.3 'Ambit'">{{o.t}}</div><div style="font:400 13px/1.5 'Ambit';color:var(--t3)">{{o.d}}</div></div>
+          </div>
+        </sc-for>
+      </div>
+      <div id="sobre-objetivos" style="display:grid;grid-template-rows:{{objRows}};transition:grid-template-rows .4s cubic-bezier(.2,.8,.2,1)"><div style="overflow:hidden">
+        <div class="sb-obj" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;padding:8px 4px 4px">
+          <sc-for list="{{objRest}}" as="o" hint-placeholder-count="7">
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--l07);opacity:{{objRestOp}};transform:translateY({{objRestTy}});transition:opacity .35s ease {{o.delay}},transform .35s ease {{o.delay}}"><div style="font:700 12px/1.6 'Ambit';color:var(--t3);min-width:26px">{{o.n}}</div><div style="font:400 14.5px/1.4 'Ambit';color:var(--t15);text-wrap:pretty">{{o.t}}</div></div>
+          </sc-for>
+        </div>
+      </div></div>
+      <button onClick="{{objToggle}}" aria-expanded="{{objOpen}}" aria-controls="sobre-objetivos" style="align-self:flex-start;display:flex;align-items:center;gap:8px;background:none;border:1px solid var(--l14);color:var(--text);font:600 13.5px 'Ambit';padding:10px 16px;border-radius:9px;cursor:pointer" style-hover="border-color:var(--tq);color:var(--tq)">{{objLabel}}<span aria-hidden="true" style="display:inline-block;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate({{objArrow}});transition:transform .3s;margin-top:-3px"></span></button>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:22px;margin-bottom:72px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Más que stands</div><h3 style="font:700 30px/1.15 'Ambit';margin:0;letter-spacing:-.01em">Lo que pasa durante la expo</h3></div>
+      <div style="font:400 13.5px 'Ambit';color:var(--t3)">Datos de la edición 2024</div>
+    </div>
+    <div class="sb-act" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+      <sc-for list="{{actividades}}" as="a" hint-placeholder-count="4">
+        <div style="background:var(--panel);border:1px solid var(--l08);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:14px;min-height:200px;position:relative;overflow:hidden" style-hover="border-color:{{a.color}};transform:translateY(-3px)">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:{{a.color}}"></div>
+          <div style="display:flex;flex-direction:column;gap:2px"><div style="font:700 30px/1 'Ambit';color:{{a.color}}">{{a.big}}</div><div style="font:600 11px 'Ambit';letter-spacing:.14em;color:var(--t3);text-transform:uppercase">{{a.bigl}}</div></div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-top:auto"><div style="font:700 17px 'Ambit'">{{a.t}}</div><div style="font:400 13.5px/1.55 'Ambit';color:var(--t2);text-wrap:pretty">{{a.d}}</div></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="sb-cols" style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:40px;margin-bottom:72px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Sectores participantes</div>
+      <h3 style="font:700 30px/1.15 'Ambit';margin:0;letter-spacing:-.01em">Toda la economía jujeña en un predio</h3>
+      <p style="font:400 14.5px/1.6 'Ambit';color:var(--t3);margin:4px 0 0;text-wrap:pretty">Con la participación de municipios del interior y delegaciones de Chile, Bolivia y Brasil.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start">
+      <sc-for list="{{sectoresExpo}}" as="s" hint-placeholder-count="15">
+        <div style="display:flex;align-items:center;gap:10px;border:1px solid var(--l09);border-radius:12px;padding:12px 16px;background:var(--glass2);font:600 14.5px 'Ambit';white-space:nowrap" style-hover="border-color:{{s.color}}"><div style="width:10px;height:10px;background:{{s.color}};clip-path:polygon(0 100%,0 50%,50% 50%,50% 0,100% 0,100% 100%)"></div>{{s.n}}</div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:22px;margin-bottom:72px">
     <h3 style="font:700 26px 'Ambit';margin:0">Los valores que nos mueven</h3>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
       <sc-for list="{{valores}}" as="v" hint-placeholder-count="6">
@@ -291,6 +366,35 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
           <div style="font:600 16.5px 'Ambit'">{{v.n}}</div>
         </div>
       </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:18px;margin-bottom:64px;padding-top:40px;border-top:1px solid var(--l08)">
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font:600 11px 'Ambit';letter-spacing:.2em;color:var(--t3);text-transform:uppercase">Organiza</div>
+        <a href="{{organiza.href}}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--l10);border-radius:12px;padding:12px 18px 12px 12px;min-width:230px;text-decoration:none;color:var(--text)" style-hover="border-color:var(--tq)"><div style="background:#fff;border-radius:9px;padding:6px 8px;display:flex;align-items:center"><img src="{{organiza.logo}}" alt="{{organiza.alt}}" loading="lazy" style="height:34px;width:auto;display:block"></div><div style="display:flex;flex-direction:column"><div style="font:700 14px 'Ambit'">{{organiza.t}}</div><div style="font:400 12px 'Ambit';color:var(--t3)">{{organiza.sub}}</div></div></a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-width:280px">
+        <div style="font:600 11px 'Ambit';letter-spacing:.2em;color:var(--t3);text-transform:uppercase">Con el acompañamiento de</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <sc-for list="{{apoyos}}" as="ap" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--l10);border-radius:12px;padding:12px 18px 12px 12px;min-width:200px"><div style="background:#fff;border-radius:9px;padding:4px 8px;display:flex;align-items:center"><img src="{{ap.logo}}" alt="{{ap.alt}}" loading="lazy" style="height:38px;width:auto;display:block"></div><div style="display:flex;flex-direction:column"><div style="font:600 13.5px 'Ambit'">{{ap.t}}</div><div style="font:400 12px 'Ambit';color:var(--t3)">{{ap.sub}}</div></div></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--panel);border:1px solid var(--l10);border-radius:20px;padding:40px 44px;display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap;position:relative;overflow:hidden" data-m="pad">
+    <div aria-hidden="true" style="position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(120,87,245,.35),transparent 70%);pointer-events:none"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:520px;position:relative">
+      <div style="font:700 28px/1.15 'Ambit';letter-spacing:-.01em">Sé parte de ExpoJuy 2026</div>
+      <p style="font:300 15.5px/1.55 'Ambit';color:var(--t2);margin:0;text-wrap:pretty">Reservá tu stand y mostrá tu empresa al NOA y al mundo, o registrá tu entrada gratuita para recorrer la expo.</p>
+    </div>
+    <div class="sb-cta" style="display:flex;gap:12px;flex-wrap:wrap;position:relative">
+      <button onClick="{{ctaExponer}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 15px 'Ambit';padding:14px 26px;border-radius:11px;cursor:pointer;white-space:nowrap" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Quiero exponer</button>
+      <button onClick="{{goEntradas}}" style="background:transparent;border:1px solid var(--l28);color:var(--text);font:600 15px 'Ambit';padding:14px 26px;border-radius:11px;cursor:pointer;white-space:nowrap" style-hover="border-color:var(--tq);color:var(--tq)">Quiero visitar</button>
     </div>
   </div>
 </div>
@@ -1297,7 +1401,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
-  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'secB', mapQ:'', mapRubro:'Todos', mz:{s:1,tx:0,ty:0}, chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', areasOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
+  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, objOpen:false, vidPaused:false, stand:'secB', mapQ:'', mapRubro:'Todos', mz:{s:1,tx:0,ty:0}, chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', areasOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
     // Portal de usuario (sesión simulada, ver src/services/auth.js)
     user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
 
@@ -1314,6 +1418,8 @@ class Component extends DCLogic {
   AGENDA = DATA.AGENDA; NOTIS = DATA.NOTICIAS; SECTORMAP = DATA.SECTOR_POR_LETRA; FAQS = DATA.FAQS; TIERS = DATA.TIPOS_ENTRADA; GRUPO = DATA.GRUPO; TFAQS = DATA.FAQ_ENTRADAS; SPONSORS = DATA.SPONSORS;
   // Plano del predio (src/data/predio.js): sectores, stands D y F, métricas y leyenda.
   MAP = DATA.SECTORES; STANDS = DATA.STANDS; FSTANDS = DATA.STANDS_GASTRO; PLANO = DATA.PLANO; METRICAS_PREDIO = DATA.METRICAS_PREDIO; LEYENDA = DATA.LEYENDA; COLOR_STAND = DATA.COLOR_STAND;
+  // Contenido de la sección Sobre (src/data/sobre.js).
+  SOBRE = { perfil: DATA.PERFIL_EXPO, edicionAnterior: DATA.EDICION_ANTERIOR, objetivos: DATA.OBJETIVOS, destacados: DATA.OBJETIVOS_DESTACADOS, actividades: DATA.ACTIVIDADES, sectores: DATA.SECTORES_PARTICIPANTES, valores: DATA.VALORES, organiza: DATA.ORGANIZA, apoyos: DATA.APOYOS, video: DATA.VIDEO_2024 };
   keyOf = DATA.claveActividad;
 
   _runCounter(stateKey, rafKey, startedKey, obsKey, dur = 1400) {
@@ -1578,6 +1684,61 @@ class Component extends DCLogic {
     this.setState({ errs, formOk: ok });
     if (ok) this.setState({ fNombre: '', fEmail: '', fMensaje: '' });
   };
+
+  // ---- Sobre v8: perfil de la feria, video 2024, objetivos, actividades y apoyos ----
+  // (ver design_handoff_expojuy_v8/SOBRE-V8.md; datos en src/data/sobre.js)
+
+  /**
+   * El runtime recrea todo el template en cada setState, así que el <video> es un elemento
+   * nuevo en cada render: acá se recuerda el segundo en el que iba y si estaba en pausa,
+   * y se restauran sobre el elemento nuevo para que no vuelva a empezar.
+   */
+  vidAttach = (el) => {
+    if (!el || this._vidEl === el) return;
+    this._vidEl = el;
+    el.muted = true; // el atributo solo no alcanza cuando el elemento se recrea
+    const t = this._vidTime || 0;
+    if (t) {
+      const seek = () => { try { el.currentTime = t; } catch { /* el navegador todavía no puede buscar */ } };
+      if (el.readyState >= 1) seek(); else el.addEventListener('loadedmetadata', seek, { once: true });
+    }
+    el.addEventListener('timeupdate', () => { this._vidTime = el.currentTime; });
+    if (this.state.vidPaused) { el.autoplay = false; el.pause(); }
+    else { const p = el.play(); if (p && p.catch) p.catch(() => this.setState({ vidPaused: true })); }
+  };
+
+  sobreVals(st) {
+    const fmt = n => Math.round(n).toLocaleString('es-AR');
+    const destacados = this.SOBRE.destacados.map(o => o.n);
+    const open = !!st.objOpen;
+    const nn = n => String(n).padStart(2, '0');
+    return {
+      perfilExpo: this.SOBRE.perfil,
+      // Count-up al entrar en cuadro (statP2, mismo patrón que las cifras del Inicio).
+      edicionAnterior: this.SOBRE.edicionAnterior.map(c => ({ v: fmt(c.n * st.statP2), l: c.l })),
+      vidSrc: this.SOBRE.video.src, vidKicker: this.SOBRE.video.kicker, vidTitulo: this.SOBRE.video.titulo, vidAriaVideo: this.SOBRE.video.aria,
+      vidRef: this.vidAttach, vidPlaying: !st.vidPaused, vidPaused: !!st.vidPaused,
+      vidAria: st.vidPaused ? 'Reproducir el video de ExpoJuy 2024' : 'Pausar el video de ExpoJuy 2024',
+      vidToggle: () => {
+        const v = this._vidEl;
+        if (!v) return;
+        if (v.paused) { v.play(); this.setState({ vidPaused: false }); } else { v.pause(); this.setState({ vidPaused: true }); }
+      },
+      objTop: this.SOBRE.destacados.map(o => ({ n: nn(o.n), t: o.t, d: o.d })),
+      objRest: this.SOBRE.objetivos
+        .map((t, i) => ({ n: nn(i + 1), t, i }))
+        .filter(o => !destacados.includes(o.i + 1))
+        .map((o, k) => ({ ...o, delay: (k * 40) + 'ms' })),
+      objOpen: open, objRows: open ? '1fr' : '0fr', objRestOp: open ? 1 : 0, objRestTy: open ? '0' : '-6px',
+      objArrow: open ? '-135deg' : '45deg', objLabel: open ? 'Ver menos' : 'Ver los 13 objetivos',
+      objToggle: () => this.setState({ objOpen: !open }),
+      actividades: this.SOBRE.actividades,
+      sectoresExpo: this.SOBRE.sectores.map((n, i) => ({ n, color: ['var(--tq)', 'var(--vi)', 'var(--oc)', 'var(--ve)', 'var(--ma)'][i % 5] })),
+      valores: this.SOBRE.valores,
+      organiza: this.SOBRE.organiza, apoyos: this.SOBRE.apoyos,
+      ctaExponer: () => { this.setState({ fMotivo: 'Quiero exponer' }); this.go('contacto'); }
+    };
+  }
 
   // ---- Mapa v7: plano SVG del predio (ver design_handoff_expojuy_v7/MAPA-V7.md) ----
 
@@ -1888,15 +2049,6 @@ class Component extends DCLogic {
       : { text: m.text, just: 'flex-end', bg: 'rgba(120,87,245,.18)', border: 'rgba(120,87,245,.4)', radius: '14px 4px 14px 14px' });
     const sugerencias = ['¿Cuánto cuesta la entrada?', '¿Qué hay el viernes?', '¿Dónde como algo?'].map(q => ({ label: q, ask: () => this.sendMsg(q) }));
 
-    const valores = [
-      ['Innovación', 'var(--tq)', 'M9 18h6m-5 3h4m-5.2-6.4A6 6 0 1 1 15.2 14.6c-.9.7-1.2 1.7-1.2 3.4h-4c0-1.7-.3-2.7-1.2-3.4Z'],
-      ['Tecnología', 'var(--vi)', 'M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3M7 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm2 4h6v6H9V9Z'],
-      ['Producción', 'var(--oc)', 'M4 20V11h4v9m2 0V5h4v15m2 0v-7h4v7M3 20h18'],
-      ['Desarrollo', 'var(--ve)', 'M12 21v-8m0 0C7 13 4 10 4 5c5 0 8 3 8 8Zm0 3c0-4 2.7-7 8-7 0 5-3 7-8 7Z'],
-      ['Vinculación empresarial', 'var(--ma)', 'M8.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm12 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM14.5 5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM8.2 10l2.3-3m3 0 2.3 3m-7.3 2h7'],
-      ['Economía del Conocimiento', 'var(--li)', 'M9.5 4.5A3 3 0 0 0 5 7a3.2 3.2 0 0 0 .5 6.3A3.5 3.5 0 0 0 9 18h1V6.5a2 2 0 0 0-.5-2Zm5 0A3 3 0 0 1 19 7a3.2 3.2 0 0 1-.5 6.3A3.5 3.5 0 0 1 15 18h-1V6.5a2 2 0 0 1 .5-2ZM7 9h3m4 0h3m-7 5H7m7 0h3']
-    ].map(([n, color, icon]) => ({ n, color, icon }));
-
     // ---- Portal de usuario ----
     const user = st.user;
     const savedCount = Object.values(st.saved).filter(Boolean).length;
@@ -1940,8 +2092,7 @@ class Component extends DCLogic {
       goInicio: () => this.go('inicio'), goSobre: () => this.go('sobre'), goExpositores: () => this.go('expositores'), goAgenda: () => this.go('agenda'), goNoticias: () => this.go('noticias'), goMapa: () => this.go('mapa'), goSponsors: () => this.go('sponsors'), goFaq: () => this.go('faq'), goContacto: () => this.go('contacto'), goEntradas: () => this.go('entradas'),
       cdUnits, stats, highlights, socials,
       sponsorsHome,
-      edicionAnterior: (p2 => [{ v: fmt(180 * p2), l: 'expositores en 2024' }, { v: fmt(38000 * p2), l: 'visitantes en 2024' }, { v: String(Math.round(9 * p2)) || '0', l: 'países participantes' }])(st.statP2),
-      valores,
+      ...this.sobreVals(st),
       q: st.q, setQ: e => this.setState({ q: e.target.value }), rubroChips, expoList, noExpo: expoList.length === 0,
       expoOpen: !!sel, closeExpo: () => this.setState({ expoSel: null }), stopProp: e => e.stopPropagation(),
       selName: sel ? sel.name : '', selRubro: sel ? sel.rubro : '', selStand: sel ? sel.stand : '', selIni: sel ? sel.name.split(' ').slice(0, 2).map(w => w[0]).join('') : '', selGrad: sel ? grad(this.RUBROS[sel.rubro]) : '', selDesc: sel ? this.DESCS[sel.rubro] : '',
