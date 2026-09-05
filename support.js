@@ -34,12 +34,22 @@ const services = {
       main { padding-top: 112px !important; }
       section > div[style*="padding:96px 48px"], section[style*="padding:96px 48px"], section > div[style*="padding:80px 48px"], section[style*="padding:80px 48px"] { padding: 64px 22px !important; }
       div[style*="grid-template-columns:repeat(4,1fr)"], div[style*="grid-template-columns:repeat(3,1fr)"], div[style*="grid-template-columns:1.1fr .9fr"], div[style*="grid-template-columns:1fr 1fr"], div[style*="grid-template-columns:2fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+      /* Inicio v9: la grilla asimétrica de "Lo que se viene" y el mosaico de la galería se apilan. */
+      [data-m="hlgrid"][data-m="hlgrid"] { grid-template-columns: 1fr !important; grid-template-rows: auto !important; }
+      [data-m="hlhero"][data-m="hlhero"] { grid-row: auto !important; min-height: 380px !important; }
+      [data-m="hdr-right"] { align-items: flex-start !important; }
+      [data-m="galgrid"][data-m="galgrid"] { grid-template-columns: repeat(2, 1fr) !important; }
+      [data-m="galgrid"] button { grid-column: auto !important; grid-row: auto !important; }
     }
     @media (max-width: 600px) {
       body { padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
       nav[aria-label="Navegación principal"] > div { min-height: 64px; height: 64px !important; padding: 0 14px !important; flex-wrap: nowrap; }
       nav[aria-label="Navegación principal"] > div > div:nth-child(2) { display: none !important; }
       /* Portal de usuario: marcas data-m del handoff (oculto en mobile, menú de usuario a todo el ancho, grillas apiladas). */
+      /* Inicio v9: carrusel, mosaico y lightbox en teléfono. */
+      [data-m="galstage"] { height: 300px !important; margin-top: 28px !important; }
+      [data-m="galgrid"][data-m="galgrid"] { grid-auto-rows: 150px !important; }
+      [data-m="lbarrow"] { top: auto !important; bottom: 80px !important; transform: none !important; }
       [data-m="hide"] { display: none !important; }
       [data-m="umenu"] { left: 12px !important; right: 12px !important; width: auto !important; }
       [data-m="pad"] { padding-left: 20px !important; padding-right: 20px !important; }

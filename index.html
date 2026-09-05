@@ -212,18 +212,71 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
     </div>
   </section>
   <section aria-label="Destacados" style="max-width:1240px;margin:0 auto;padding:96px 48px;width:100%;box-sizing:border-box">
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:42px">
-      <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Edición 2026</div>
-      <h2 style="font:700 42px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Lo que se viene</h2>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:42px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Edición 2026</div>
+        <h2 style="font:700 42px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Lo que se viene</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px" data-m="hdr-right">
+        <div style="font:600 12px 'Ambit';letter-spacing:.18em;color:var(--t2);text-transform:uppercase">24 al 27 de septiembre · Ciudad Cultural</div>
+        <button onClick="{{goAgenda}}" style="background:none;border:none;padding:0;cursor:pointer;font:600 14px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">Ver agenda completa →</button>
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px">
-      <sc-for list="{{highlights}}" as="h" hint-placeholder-count="3">
-        <div style="background:var(--panel);border:1px solid var(--l08);border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:14px" style-hover="border-color:rgba(120,87,245,.5);transform:translateY(-3px)">
-          <div style="width:42px;height:8px;border-radius:4px;background:{{h.color}}"></div>
-          <div style="font:700 21px/1.25 'Ambit'">{{h.t}}</div>
-          <div style="font:300 15px/1.55 'Ambit';color:var(--t2);text-wrap:pretty">{{h.d}}</div>
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;grid-template-rows:auto auto;gap:20px" data-m="hlgrid">
+      <div onClick="{{hl0.go}}" onKeyDown="{{hl0.key}}" role="link" tabindex="0" aria-label="{{hl0.aria}}" data-m="hlhero" style="grid-row:span 2;position:relative;overflow:hidden;border-radius:22px;border:1px solid var(--l08);min-height:440px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;background:var(--panel)" style-hover="border-color:rgba(120,87,245,.6)">
+        <img src="assets/destacado-portada.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:.75;transition:transform .8s ease" style-hover="transform:scale(1.04)">
+        <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,13,.1) 20%,rgba(5,7,13,.92) 100%)"></div>
+        <div style="position:relative;padding:32px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:600 10px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:#05070D;background:{{hl0.color}};border-radius:999px;padding:5px 10px">{{hl0.tag}}</span>
+            <span style="font:600 12px 'Ambit';letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7);white-space:nowrap">{{hl0.n}} {{hl0.nl}}</span>
+          </div>
+          <div style="font:700 34px/1.1 'Ambit';letter-spacing:-.02em;color:#fff;max-width:520px">{{hl0.t}}</div>
+          <div style="font:300 15px/1.55 'Ambit';color:rgba(255,255,255,.78);max-width:520px;text-wrap:pretty">{{hl0.d}}</div>
+          <span style="display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin-top:6px;background:#fff;color:#05070D;border-radius:999px;padding:11px 18px;font:700 13px 'Ambit'">{{hl0.cta}} →</span>
+        </div>
+      </div>
+      <sc-for list="{{hlSide}}" as="h" hint-placeholder-count="2">
+        <div style="position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--l08);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:12px;transition:border-color .35s ease" style-hover="border-color:{{h.color}}">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:11px;background:{{h.color}};display:flex;align-items:center;justify-content:center">
+              <div aria-hidden="true" style="width:18px;height:18px;background:#05070D;clip-path:{{h.icon}}"></div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span style="font:700 26px/1 'Ambit';letter-spacing:-.02em">{{h.n}}</span>
+              <span style="font:600 11px 'Ambit';letter-spacing:.1em;text-transform:uppercase;color:var(--t3)">{{h.nl}}</span>
+            </div>
+          </div>
+          <div style="font:700 19px/1.25 'Ambit'">{{h.t}}</div>
+          <div style="font:300 14px/1.5 'Ambit';color:var(--t2);text-wrap:pretty">{{h.d}}</div>
           <button onClick="{{h.go}}" style="align-self:flex-start;background:none;border:none;padding:0;cursor:pointer;font:600 14px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">{{h.cta}} →</button>
         </div>
+      </sc-for>
+    </div>
+  </section>
+  <section aria-label="Galería fotográfica" style="border-top:1px solid var(--l06);overflow:hidden" onMouseEnter="{{galPause}}" onMouseLeave="{{galResume}}">
+    <div style="max-width:1240px;margin:0 auto;padding:88px 48px 0;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap" data-m="pad">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Galería</div>
+        <h2 style="font:700 42px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Así se vivió la ExpoJuy 2024</h2>
+      </div>
+      <button onClick="{{goGaleria}}" style="display:inline-flex;align-items:center;gap:10px;background:none;border:1px solid var(--l14);border-radius:999px;padding:12px 20px;cursor:pointer;font:600 14px 'Ambit';color:var(--text)" style-hover="border-color:var(--tq);color:var(--tq)">Explorar la galería <span aria-hidden="true">→</span></button>
+    </div>
+    <div style="position:relative;height:520px;margin-top:44px" data-m="galstage">
+      <sc-for list="{{galSlides}}" as="g" hint-placeholder-count="5">
+        <button onClick="{{g.click}}" aria-label="{{g.aria}}" aria-hidden="{{g.oculta}}" tabindex="{{g.tab}}" style="position:absolute;left:50%;top:50%;width:min(760px,74vw);aspect-ratio:3/2;padding:0;border:1px solid var(--l08);border-radius:20px;overflow:hidden;background:var(--panel);cursor:pointer;transform:{{g.tf}};opacity:{{g.op}};z-index:{{g.z}};filter:{{g.filter}};pointer-events:{{g.pe}};transition:transform .7s cubic-bezier(.22,.8,.26,1),opacity .7s ease,filter .7s ease;box-shadow:0 30px 80px rgba(0,0,0,.45)">
+          <img src="{{g.src}}" alt="{{g.label}}" loading="lazy" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+          <sc-if value="{{g.center}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="position:absolute;right:16px;bottom:16px;display:flex;align-items:center;gap:8px;background:rgba(10,12,20,.62);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 14px;font:600 12px 'Ambit';color:#fff;letter-spacing:.04em">Ampliar</div>
+          </sc-if>
+        </button>
+      </sc-for>
+      <button onClick="{{galPrev}}" aria-label="Foto anterior" style="position:absolute;left:max(16px,calc((100vw - 1240px)/2 + 32px));top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;border-radius:50%;border:1px solid var(--l14);background:var(--panel2);color:var(--text);cursor:pointer;font:400 22px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq);color:var(--tq)">‹</button>
+      <button onClick="{{galNext}}" aria-label="Foto siguiente" style="position:absolute;right:max(16px,calc((100vw - 1240px)/2 + 32px));top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;border-radius:50%;border:1px solid var(--l14);background:var(--panel2);color:var(--text);cursor:pointer;font:400 22px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq);color:var(--tq)">›</button>
+    </div>
+    <div style="display:flex;justify-content:center;gap:8px;padding:28px 0 88px">
+      <sc-for list="{{galDots}}" as="d" hint-placeholder-count="6">
+        <button onClick="{{d.go}}" aria-label="{{d.label}}" aria-pressed="{{d.on}}" style="width:{{d.w}};height:6px;border-radius:3px;border:none;padding:0;cursor:pointer;background:{{d.bg}};transition:width .4s ease,background .4s ease"></button>
       </sc-for>
     </div>
   </section>
@@ -1248,6 +1301,31 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </div>
 </sc-if>
 
+<sc-if value="{{isGaleria}}" hint-placeholder-val="{{false}}">
+<div style="animation:fadeUp .45s ease both;max-width:1240px;margin:0 auto;padding:80px 48px 96px" data-m="pad">
+  <button onClick="{{goInicio}}" style="display:inline-flex;align-items:center;gap:8px;background:none;border:none;padding:0;cursor:pointer;font:600 13px 'Ambit';color:var(--t3);margin-bottom:28px" style-hover="color:var(--tq)"><span aria-hidden="true">←</span> Volver al inicio</button>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:44px">
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:640px">
+      <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Galería · Edición 2024</div>
+      <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Así se vivió la ExpoJuy 2024</h2>
+      <p style="font:300 16px/1.55 'Ambit';color:var(--t2);margin:6px 0 0;text-wrap:pretty">Tres días de negocios, conferencias y espectáculos en Ciudad Cultural. Tocá cualquier foto para verla en grande.</p>
+    </div>
+    <div style="font:600 13px 'Ambit';color:var(--t3);letter-spacing:.08em">{{galCount}} fotos</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:240px;grid-auto-flow:dense;gap:16px" data-m="galgrid">
+    <sc-for list="{{galGrid}}" as="g" hint-placeholder-count="6">
+      <button onClick="{{g.click}}" aria-label="{{g.aria}}" style="position:relative;padding:0;border:1px solid var(--l08);border-radius:16px;overflow:hidden;background:var(--panel);cursor:pointer;grid-column:{{g.col}};grid-row:{{g.row}}" style-hover="border-color:rgba(43,196,214,.6)">
+        <img src="{{g.src}}" alt="{{g.label}}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease" style-hover="transform:scale(1.04)">
+      </button>
+    </sc-for>
+  </div>
+  <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:64px">
+    <button onClick="{{goExpositores}}" style="background:var(--tq);color:#06121a;border:none;border-radius:999px;padding:14px 24px;cursor:pointer;font:700 14px 'Ambit'" style-hover="filter:brightness(1.1)">Quiero exponer en 2026</button>
+    <button onClick="{{goSobre}}" style="background:none;color:var(--text);border:1px solid var(--l14);border-radius:999px;padding:14px 24px;cursor:pointer;font:600 14px 'Ambit'" style-hover="border-color:var(--tq);color:var(--tq)">Conocer más sobre la feria</button>
+  </div>
+</div>
+</sc-if>
+
 <sc-if value="{{expoOpen}}" hint-placeholder-val="{{false}}">
   <div onClick="{{closeExpo}}" style="position:fixed;inset:0;z-index:80;background:var(--overlay);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px">
     <div onClick="{{stopProp}}" role="dialog" aria-modal="true" tabindex="-1" aria-label="Ficha de expositor" style="background:var(--panel);border:1px solid rgba(120,87,245,.45);border-radius:20px;padding:34px;max-width:520px;width:100%;display:flex;flex-direction:column;gap:18px;animation:fadeUp .3s ease both">
@@ -1306,6 +1384,20 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
     </div>
   </div>
 </sc-if>
+<sc-if value="{{lbOpen}}" hint-placeholder-val="{{false}}">
+  <div onClick="{{lbClose}}" role="dialog" aria-modal="true" tabindex="-1" aria-label="Vista ampliada de la foto" style="position:fixed;inset:0;z-index:400;background:rgba(6,8,14,.92);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;animation:fadeUp .25s ease both;outline:none">
+    <img src="{{lbSrc}}" alt="{{lbLabel}}" onClick="{{stopProp}}" style="max-width:min(92vw,1400px);max-height:calc(100vh - 160px);border-radius:14px;box-shadow:0 40px 120px rgba(0,0,0,.6);animation:fadeUp .35s ease both;object-fit:contain">
+    <button onClick="{{lbClose}}" aria-label="Cerrar" style="position:absolute;top:22px;right:22px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:300 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">×</button>
+    <button onClick="{{lbPrev}}" aria-label="Foto anterior" data-m="lbarrow" style="position:absolute;left:22px;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:400 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">‹</button>
+    <button onClick="{{lbNext}}" aria-label="Foto siguiente" data-m="lbarrow" style="position:absolute;right:22px;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:400 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">›</button>
+    <div onClick="{{stopProp}}" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 16px;font:600 13px 'Ambit';color:#fff;letter-spacing:.06em;white-space:nowrap">
+      <span>{{lbPos}} / {{galCount}}</span>
+      <span aria-hidden="true" style="width:1px;height:14px;background:rgba(255,255,255,.2)"></span>
+      <span style="color:rgba(255,255,255,.6);font-weight:400">ExpoJuy 2024</span>
+    </div>
+  </div>
+</sc-if>
+
 
 </main>
 
@@ -1403,6 +1495,8 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 <script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
   state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, objOpen:false, vidPaused:false, stand:'secB', mapQ:'', mapRubro:'Todos', mz:{s:1,tx:0,ty:0}, chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', areasOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
+    // Galería v9: foto centrada del carrusel y foto abierta en el lightbox (null = cerrado).
+    gal:0, lb:null,
     // Portal de usuario (sesión simulada, ver src/services/auth.js)
     user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
 
@@ -1421,6 +1515,7 @@ class Component extends DCLogic {
   MAP = DATA.SECTORES; STANDS = DATA.STANDS; FSTANDS = DATA.STANDS_GASTRO; PLANO = DATA.PLANO; METRICAS_PREDIO = DATA.METRICAS_PREDIO; LEYENDA = DATA.LEYENDA; COLOR_STAND = DATA.COLOR_STAND;
   // Contenido de la sección Sobre (src/data/sobre.js).
   SOBRE = { perfil: DATA.PERFIL_EXPO, edicionAnterior: DATA.EDICION_ANTERIOR, objetivos: DATA.OBJETIVOS, destacados: DATA.OBJETIVOS_DESTACADOS, actividades: DATA.ACTIVIDADES, sectores: DATA.SECTORES_PARTICIPANTES, valores: DATA.VALORES, organiza: DATA.ORGANIZA, apoyos: DATA.APOYOS, video: DATA.VIDEO_2024 };
+  DESTACADOS = DATA.DESTACADOS; GAL = DATA.GALERIA;
   keyOf = DATA.claveActividad;
 
   _runCounter(stateKey, rafKey, startedKey, obsKey, dur = 1400) {
@@ -1484,9 +1579,24 @@ class Component extends DCLogic {
       if (this.props.reducirAnimaciones || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
       this.setState(s => ({ spSpot: (s.spSpot + 1) % this.SPONSORS.diamante.length }));
     }, 4500);
+    // Carrusel de la galería (Inicio v9): avanza cada 4 s con las mismas condiciones que el
+    // spotlight, y además se frena mientras el lightbox está abierto.
+    this._galTimer = setInterval(() => {
+      if (this.state.route !== 'inicio' || this._galPaused || this.state.lb != null || document.hidden) return;
+      if (this.props.reducirAnimaciones || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      this.setState(s => ({ gal: (s.gal + 1) % this.GAL.length }));
+    }, 4000);
+    // Esc cierra el lightbox y las flechas navegan (circular) mientras esté abierto.
+    this._galKeys = e => {
+      if (this.state.lb == null) return;
+      if (e.key === 'Escape') this.setState({ lb: null });
+      else if (e.key === 'ArrowRight') this.lbStep(1);
+      else if (e.key === 'ArrowLeft') this.lbStep(-1);
+    };
+    window.addEventListener('keydown', this._galKeys);
   }
   componentDidUpdate() { this.syncAnim(); this.persist(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver(); this.updateFlipClock(); }
-  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._spotTimer); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); }
+  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._spotTimer); clearInterval(this._galTimer); window.removeEventListener('keydown', this._galKeys); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); }
 
   syncAnim() { const off = this.props.reducirAnimaciones ?? false; if (off) document.body.setAttribute('data-noanim',''); else document.body.removeAttribute('data-noanim'); }
 
@@ -1547,7 +1657,8 @@ class Component extends DCLogic {
   }
 
   /** Rutas navegables por hash (#mapa, #contacto…). El portal queda afuera: exige sesión. */
-  RUTAS_HASH = ['inicio', 'sobre', 'expositores', 'agenda', 'noticias', 'mapa', 'sponsors', 'faq', 'contacto', 'entradas'];
+  // 'galeria' es una ruta oculta: se llega desde el Inicio o por #galeria, no está en el nav.
+  RUTAS_HASH = ['inicio', 'sobre', 'expositores', 'agenda', 'noticias', 'mapa', 'sponsors', 'faq', 'contacto', 'entradas', 'galeria'];
   /** Deja la ruta en la URL sin ensuciar el historial, para poder compartir y recargar la sección. */
   syncHash(r) {
     if (!window.history || !history.replaceState) return;
@@ -1556,7 +1667,7 @@ class Component extends DCLogic {
   }
   go = (r) => {
     const ir = (instant) => {
-      this.setState({ route: r, expoSel: null, mobileMore: false, userMenu: false });
+      this.setState({ route: r, expoSel: null, mobileMore: false, userMenu: false, lb: null });
       this.syncHash(r);
       window.scrollTo(instant ? { top: 0, behavior: 'instant' } : { top: 0 });
     };
@@ -1707,6 +1818,45 @@ class Component extends DCLogic {
     if (this.state.vidPaused) { el.autoplay = false; el.pause(); }
     else { const p = el.play(); if (p && p.catch) p.catch(() => this.setState({ vidPaused: true })); }
   };
+
+  /** Mueve el lightbox `d` fotos (circular). */
+  lbStep = d => this.setState(s => ({ lb: ((s.lb ?? 0) + d + this.GAL.length) % this.GAL.length }));
+
+  /**
+   * Deriva el carrusel del Inicio, la grilla de la ruta Galería y el lightbox (handoff v9).
+   * El carrusel es un coverflow: cada foto se posiciona por su distancia circular a la actual
+   * y solo se ven las dos vecinas de cada lado.
+   */
+  galVals(st) {
+    const N = this.GAL.length, cur = st.gal;
+    const galSlides = this.GAL.map((g, i) => {
+      let off = i - cur;
+      if (off > N / 2) off -= N;
+      if (off < -N / 2) off += N;
+      const a = Math.abs(off), vis = a <= 2, centro = a === 0;
+      const sc = centro ? 1 : a === 1 ? .78 : .62;
+      return { ...g, center: centro, tf: `translate(calc(-50% + ${off * 62}%), -50%) scale(${sc})`,
+        op: vis ? (centro ? 1 : a === 1 ? .55 : .3) : 0, z: 10 - a,
+        filter: centro ? 'none' : `brightness(${a === 1 ? .7 : .5}) saturate(.7)`,
+        pe: vis ? 'auto' : 'none', tab: vis ? '0' : '-1', oculta: vis ? 'false' : 'true',
+        aria: centro ? 'Ampliar ' + g.label : 'Ver ' + g.label,
+        click: () => this.setState(centro ? { lb: i } : { gal: i }) };
+    });
+    const galDots = this.GAL.map((g, i) => ({ on: i === cur ? 'true' : 'false', w: i === cur ? '28px' : '10px',
+      bg: i === cur ? 'var(--tq)' : 'var(--l14)', label: `Ir a la foto ${i + 1}`, go: () => this.setState({ gal: i }) }));
+    // Grilla tipo mosaico de la ruta Galería: los spans se repiten cada 6 fotos.
+    const spans = [['span 2','span 2'],['auto','auto'],['auto','auto'],['auto','auto'],['span 2','auto'],['auto','auto']];
+    const galGrid = this.GAL.map((g, i) => ({ ...g, col: spans[i % spans.length][0], row: spans[i % spans.length][1],
+      aria: 'Ampliar ' + g.label, click: () => this.setState({ lb: i }) }));
+    const lb = st.lb, lbOpen = lb != null;
+    return { galSlides, galDots, galGrid, galCount: N,
+      galPrev: () => this.setState({ gal: (cur - 1 + N) % N }), galNext: () => this.setState({ gal: (cur + 1) % N }),
+      // El hover pausa el autoplay sin pasar por el estado, para no re-renderizar (igual que el spotlight).
+      galPause: () => { this._galPaused = true; }, galResume: () => { this._galPaused = false; },
+      lbOpen, lbSrc: lbOpen ? this.GAL[lb].src : '', lbLabel: lbOpen ? this.GAL[lb].label : '', lbPos: lbOpen ? lb + 1 : 0,
+      lbClose: () => this.setState({ lb: null }),
+      lbPrev: e => { e.stopPropagation(); this.lbStep(-1); }, lbNext: e => { e.stopPropagation(); this.lbStep(1); } };
+  }
 
   sobreVals(st) {
     const fmt = n => Math.round(n).toLocaleString('es-AR');
@@ -1906,11 +2056,11 @@ class Component extends DCLogic {
       { v: fmt(200 * p) + '+', l: 'Expositores' }, { v: fmt(45000 * p), l: 'Visitantes esperados' },
       { v: fmt(12000 * p), l: 'm² de predio' }, { v: fmt(120 * p) + '+', l: 'Actividades y charlas' }
     ];
-    const highlights = [
-      { t: 'Rondas de negocios internacionales', d: 'Delegaciones de 12 países y agenda de reuniones 1:1 para conectar la producción jujeña con el mundo.', color: 'var(--vi)', cta: 'Ver agenda', go: () => this.go('agenda') },
-      { t: 'Zona Startups y Hackathon', d: 'El talento joven del NOA: Demo Day, mentorías y un hackathon universitario con premiación en el auditorio.', color: 'var(--ma)', cta: 'Conocer más', go: () => this.go('agenda') },
-      { t: 'Experiencia con IA', d: 'Cardón, el asistente virtual, te ayuda a armar tu recorrido, encontrar stands y no perderte nada del evento.', color: 'var(--ve)', cta: 'Probar a Cardón', go: () => this.setState({ chatOpen: true }) }
-    ];
+    // "Lo que se viene": el primero es la tarjeta hero con foto, los otros dos las laterales.
+    const highlights = this.DESTACADOS.map(h => ({ ...h,
+      go: h.accion === 'chat' ? () => this.setState({ chatOpen: true }) : () => this.go(h.accion),
+      aria: h.t + ' · ' + h.cta }));
+    highlights.forEach(h => { h.key = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h.go(); } }; });
     const socialPaths = {
       instagram: 'M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8Zm8.7 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',
       x: 'M18.9 2H22l-6.77 7.74L23.2 22h-6.24l-4.89-6.39L6.48 22H3.36l7.26-8.3L2.98 2h6.4l4.42 5.84L18.9 2Zm-1.1 17.84h1.73L8.44 4.05H6.58L17.8 19.84Z',
@@ -2066,7 +2216,8 @@ class Component extends DCLogic {
     const recCountN = Object.keys(st.intereses).some(k => st.intereses[k]) ? this.AGENDA.filter(a => st.intereses[a.eje]).length : 0;
 
     return {
-      isInicio: st.route === 'inicio', isSobre: st.route === 'sobre', isExpositores: st.route === 'expositores', isAgenda: st.route === 'agenda', isNoticias: st.route === 'noticias', isMapa: st.route === 'mapa', isSponsors: st.route === 'sponsors', isFaq: st.route === 'faq', isContacto: st.route === 'contacto', isEntradas: st.route === 'entradas', isPortal: st.route === 'portal',
+      isInicio: st.route === 'inicio', isSobre: st.route === 'sobre', isExpositores: st.route === 'expositores', isAgenda: st.route === 'agenda', isNoticias: st.route === 'noticias', isMapa: st.route === 'mapa', isSponsors: st.route === 'sponsors', isFaq: st.route === 'faq', isContacto: st.route === 'contacto', isEntradas: st.route === 'entradas', isPortal: st.route === 'portal', isGaleria: st.route === 'galeria',
+      goGaleria: () => this.go('galeria'), ...this.galVals(st),
       hasUser: !!user, noUser: !user, userName: user ? user.nombre : '', userEmail: user ? user.email : '', userFirst: user ? user.nombre.split(' ')[0] : '', userIni: user ? user.nombre.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() : '',
       userMenuOpen: st.userMenu, toggleUserMenu: () => this.setState({ userMenu: !st.userMenu }), closeUserMenu: () => this.setState({ userMenu: false }),
       userMenuItems: [{ label: 'Mi Agenda', badge: savedCount ? savedCount + (savedCount === 1 ? ' actividad' : ' actividades') : '', badgeColor: 'var(--ve)', go: () => this.goPortal('agenda') }, { label: 'Mi Entrada', badge: st.ticket ? 'Activa' : 'Pendiente', badgeColor: st.ticket ? 'var(--ve)' : 'var(--t3)', go: () => this.goPortal('entrada') }, { label: 'Mi Perfil', badge: '', badgeColor: 'var(--t3)', go: () => this.goPortal('perfil') }],
@@ -2091,7 +2242,7 @@ class Component extends DCLogic {
       navItems,
       mobilePrimaryNav, mobileMoreItems, mobileMoreOpen: st.mobileMore, mobileMoreCurrent, toggleMobileMore: () => this.setState({ mobileMore: !st.mobileMore }),
       goInicio: () => this.go('inicio'), goSobre: () => this.go('sobre'), goExpositores: () => this.go('expositores'), goAgenda: () => this.go('agenda'), goNoticias: () => this.go('noticias'), goMapa: () => this.go('mapa'), goSponsors: () => this.go('sponsors'), goFaq: () => this.go('faq'), goContacto: () => this.go('contacto'), goEntradas: () => this.go('entradas'),
-      cdUnits, stats, highlights, socials,
+      cdUnits, stats, socials, hl0: highlights[0], hlSide: highlights.slice(1),
       sponsorsHome,
       ...this.sobreVals(st),
       q: st.q, setQ: e => this.setState({ q: e.target.value }), rubroChips, expoList, noExpo: expoList.length === 0,
