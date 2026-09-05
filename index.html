@@ -7,8 +7,6 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='15' height='15' fill='%232BC4D6'/%3E%3Crect x='17' width='15' height='15' fill='%237857F5'/%3E%3Crect y='17' width='15' height='15' fill='%238A00CE'/%3E%3Crect x='17' y='17' width='15' height='15' fill='%23C7A4F8'/%3E%3C/svg%3E">
 <title>ExpoJuy 2026</title>
 <script type="module" src="./support.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 <x-dc>
@@ -47,16 +45,6 @@ main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 .faq-answer{transform-origin:top;animation:faqAnswerIn .26s cubic-bezier(.2,.75,.25,1) both}
 @keyframes mapPanelIn{from{opacity:.3;transform:translateX(10px)}to{opacity:1;transform:none}}
 .map-detail-panel{animation:mapPanelIn .3s cubic-bezier(.2,.75,.25,1) both}
-.leaflet-container{background:var(--bg1);font-family:'Ambit',system-ui,sans-serif;border-radius:16px}
-.leaflet-control-attribution{background:rgba(255,255,255,.88)!important;color:#687078!important;font-size:9px!important;backdrop-filter:blur(7px);border-radius:7px 0 0 0}
-.leaflet-control-attribution a{color:#4c5964!important}
-.leaflet-bar{border:1px solid rgba(0,0,0,.12)!important;border-radius:9px!important;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.2)!important}
-.leaflet-bar a{width:36px!important;height:36px!important;line-height:36px!important;background:rgba(255,255,255,.96)!important;color:#30343a!important;border-color:rgba(0,0,0,.1)!important;font-size:19px!important}
-.leaflet-bar a:hover{background:#f4f6f8!important;color:#111!important}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel)!important;color:var(--text)!important}
-.leaflet-tooltip{background:rgba(255,255,255,.97)!important;border:1px solid rgba(0,0,0,.14)!important;border-radius:7px!important;color:#2d3136!important;font:600 11.5px 'Ambit'!important;padding:7px 10px!important;box-shadow:0 3px 10px rgba(0,0,0,.22)!important}
-.leaflet-tooltip-top:before{border-top-color:rgba(255,255,255,.97)!important}
-.leaflet-control-scale-line{background:rgba(255,255,255,.82)!important;border-color:#687078!important;color:#42484e!important;border-radius:0 0 4px 4px;font:500 9px 'Ambit'!important}
 .map-filter-row{scrollbar-width:none}.map-filter-row::-webkit-scrollbar{display:none}
 .map-sector{isolation:isolate}.map-sector:after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(145deg,rgba(255,255,255,.055),transparent 52%);pointer-events:none;z-index:-1}
 .map-sector-badge{position:absolute;top:9px;right:9px;display:flex;align-items:center;gap:4px;padding:3px 7px;border-radius:20px;background:rgba(3,5,12,.58);border:1px solid rgba(255,255,255,.14);font:600 9px/1 'Ambit';color:rgba(255,255,255,.76);white-space:nowrap}
@@ -76,6 +64,16 @@ main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 @media(max-width:1000px){.tk-layout{grid-template-columns:1fr}.tk-cred{position:static}}
 @media(max-width:600px){.tk-panel{padding:26px 20px!important}.tk-price{font-size:46px!important}}
 @media(max-width:760px){.tk-ctrl{flex-direction:column;align-items:stretch!important}.tk-tabs{overflow-x:auto;max-width:100%}.tk-tab{white-space:nowrap}}
+/* Contacto v6: tiles de canales, ilustración del predio y desplegable de áreas. */
+@keyframes ctoPing{0%{transform:scale(.3);opacity:.9}100%{transform:scale(1.4);opacity:0}}
+.cto-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.cto-main{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start}
+.cto-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:980px){.cto-main{grid-template-columns:1fr}}
+@media(max-width:760px){.cto-tiles{grid-template-columns:1fr 1fr}.cto-2{grid-template-columns:1fr}}
+/* En teléfono los tiles a dos columnas parten los teléfonos y el email a mitad de palabra. */
+@media(max-width:520px){.cto-tiles{grid-template-columns:1fr}}
+
 /* Sponsors v5: spotlight Diamante, filas de logos, chips blancos y franja del Inicio. */
 body:not([data-light]) [data-logo="exar"]{filter:brightness(2.1) saturate(1.15)}
 body:not([data-light]) [data-logo="cannava"]{filter:brightness(1.35) saturate(1.05)}
@@ -646,77 +644,126 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </sc-if>
 
 <sc-if value="{{isContacto}}" hint-placeholder-val="{{false}}">
-<div style="animation:fadeUp .45s ease both;max-width:1140px;margin:0 auto;padding:80px 48px">
-  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:44px">
+<div style="animation:fadeUp .45s ease both;max-width:1140px;margin:0 auto;padding:80px 48px 96px" data-m="pad">
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:36px">
     <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Contacto</div>
-    <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Hablemos</h2>
+    <h2 style="font:700 46px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Hablemos de ExpoJuy</h2>
+    <p style="font:300 16px/1.5 'Ambit';color:var(--t2);margin:6px 0 0;max-width:560px;text-wrap:pretty">¿Querés exponer, ser sponsor, acreditarte como prensa o visitarnos? Escribinos por el canal que prefieras. Respondemos dentro de las 48 h hábiles.</p>
   </div>
-  <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start">
-    <div style="background:var(--panel);border:1px solid var(--l09);border-radius:18px;padding:32px;display:flex;flex-direction:column;gap:18px">
+
+  <div class="cto-tiles">
+    <a href="https://wa.me/543884212955" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:18px;text-decoration:none;color:var(--text);background:linear-gradient(135deg,rgba(43,196,214,.18),rgba(120,87,245,.18));border:1px solid rgba(43,196,214,.45);transition:transform .2s,border-color .2s" style-hover="transform:translateY(-3px);border-color:var(--tq)"><span style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--tq),var(--vi));color:#fff;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l1.6-4.6A9 9 0 1 1 8 19.3L3 21z"></path><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1.2-1.3-1.8-1-1 .7c-1-.4-1.9-1.3-2.3-2.3l.7-1-1-1.8L9 9.5z"></path></svg></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font:600 11px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--t3)">WhatsApp</span><span style="font:700 17px 'Ambit';letter-spacing:-.01em">+54 388 421-2955</span><span style="font:300 13px/1.4 'Ambit';color:var(--t2)">Respuesta rápida, lunes a viernes de 9 a 17 h</span></span></a>
+    <a href="tel:+543884233539" style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:18px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--l09);transition:transform .2s,border-color .2s" style-hover="transform:translateY(-3px);border-color:var(--tq)"><span style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(43,196,214,.12);color:var(--tq);flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"></path></svg></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font:600 11px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--t3)">Teléfono</span><span style="font:700 17px 'Ambit';letter-spacing:-.01em">+54 388 423-3539</span><span style="font:300 13px/1.4 'Ambit';color:var(--t2)">Cámara de Comercio Exterior de Jujuy</span></span></a>
+    <a href="mailto:expojuy2.0@gmail.com" style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:18px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--l09);transition:transform .2s,border-color .2s" style-hover="transform:translateY(-3px);border-color:var(--tq)"><span style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(43,196,214,.12);color:var(--tq);flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font:600 11px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--t3)">Email</span><span style="font:700 17px 'Ambit';letter-spacing:-.01em;overflow-wrap:anywhere">expojuy2.0@gmail.com</span><span style="font:300 13px/1.4 'Ambit';color:var(--t2)">Para propuestas, prensa y consultas formales</span></span></a>
+    <a href="https://instagram.com/expojuy" target="_blank" rel="noopener" style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:18px;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--l09);transition:transform .2s,border-color .2s" style-hover="transform:translateY(-3px);border-color:var(--tq)"><span style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(43,196,214,.12);color:var(--tq);flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"></circle></svg></span><span style="display:flex;flex-direction:column;gap:4px"><span style="font:600 11px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:var(--t3)">Instagram</span><span style="font:700 17px 'Ambit';letter-spacing:-.01em">@expojuy</span><span style="font:300 13px/1.4 'Ambit';color:var(--t2)">Novedades, expositores y agenda día a día</span></span></a>
+  </div>
+
+  <div class="cto-main">
+    <div id="cto-form" style="background:var(--panel);border:1px solid var(--l09);border-radius:18px;padding:32px;display:flex;flex-direction:column;gap:20px" data-m="pad">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="font:700 20px 'Ambit';letter-spacing:-.01em">Escribinos</div>
+        <div style="font:300 14px/1.5 'Ambit';color:var(--t3)">Contanos quién sos y qué necesitás. El equipo indicado te responde.</div>
+      </div>
       <sc-if value="{{formOk}}" hint-placeholder-val="{{false}}">
-        <div style="background:rgba(63,179,128,.12);border:1px solid rgba(63,179,128,.45);border-radius:12px;padding:18px 22px;font:600 15px 'Ambit';color:var(--ve)">¡Mensaje enviado! Te respondemos dentro de las próximas 48 horas hábiles.</div>
+        <div role="status" style="background:rgba(63,179,128,.12);border:1px solid rgba(63,179,128,.45);border-radius:12px;padding:18px 22px;font:600 15px 'Ambit';color:var(--ve)">¡Mensaje enviado! Te respondemos dentro de las próximas 48 horas hábiles.</div>
       </sc-if>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <span style="font:600 13px 'Ambit';color:var(--t2)">Motivo</span>
+        <div role="radiogroup" aria-label="Motivo de contacto" style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{motivos}}" as="m" hint-placeholder-count="4">
+            <button role="radio" onClick="{{m.pick}}" aria-checked="{{m.on}}" style="cursor:pointer;padding:9px 15px;border-radius:999px;font:600 13.5px 'Ambit';background:{{m.bg}};color:{{m.color}};border:1px solid {{m.border}};transition:background .2s ease,color .2s ease,border-color .2s ease" style-hover="border-color:var(--tq)">{{m.label}}</button>
+          </sc-for>
+        </div>
+        <div style="font:300 13px/1.4 'Ambit';color:var(--t3)">{{motivoHint}}</div>
+      </div>
+      <div class="cto-2">
         <div style="display:flex;flex-direction:column;gap:7px">
           <label for="f-nombre" style="font:600 13px 'Ambit';color:var(--t2)">Nombre y apellido</label>
-          <input id="f-nombre" value="{{fNombre}}" onChange="{{setNombre}}" style="background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);outline:none" style-focus="border-color:var(--tq)">
+          <input id="f-nombre" value="{{fNombre}}" onChange="{{setNombre}}" autocomplete="name" aria-invalid="{{errNombre}}" placeholder="Ana Pérez" style="background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);outline:none;width:100%;box-sizing:border-box" style-focus="border-color:var(--tq)">
           <sc-if value="{{errNombre}}" hint-placeholder-val="{{false}}"><span style="font:400 12.5px 'Ambit';color:var(--ma)">Ingresá tu nombre completo.</span></sc-if>
         </div>
         <div style="display:flex;flex-direction:column;gap:7px">
           <label for="f-email" style="font:600 13px 'Ambit';color:var(--t2)">Email</label>
-          <input id="f-email" value="{{fEmail}}" onChange="{{setEmail}}" style="background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);outline:none" style-focus="border-color:var(--tq)">
+          <input id="f-email" type="email" value="{{fEmail}}" onChange="{{setEmail}}" autocomplete="email" aria-invalid="{{errEmail}}" placeholder="ana@empresa.com" style="background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);outline:none;width:100%;box-sizing:border-box" style-focus="border-color:var(--tq)">
           <sc-if value="{{errEmail}}" hint-placeholder-val="{{false}}"><span style="font:400 12.5px 'Ambit';color:var(--ma)">Ingresá un email válido.</span></sc-if>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:7px">
-        <label style="font:600 13px 'Ambit';color:var(--t2)">Motivo</label>
-        <div style="position:relative">
-          <sc-if value="{{motivoOpen}}" hint-placeholder-val="{{false}}">
-            <div onClick="{{closeMotivo}}" style="position:fixed;inset:0;z-index:49"></div>
-          </sc-if>
-          <button onClick="{{toggleMotivo}}" aria-haspopup="listbox" style="width:100%;background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;box-sizing:border-box;outline:none" style-hover="border-color:var(--l20)"><span>{{fMotivo}}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t3);flex-shrink:0;transition:transform .18s ease;transform:{{motivoOpen ? 'rotate(180deg)' : 'none'}}"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <sc-if value="{{motivoOpen}}" hint-placeholder-val="{{false}}">
-            <div role="listbox" style="position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel2);border:1px solid var(--l14);border-radius:12px;overflow:hidden;z-index:50;box-shadow:0 16px 48px rgba(0,0,0,.55);padding:5px;animation:fadeUp .15s ease both">
-              <sc-for list="{{motivoOpts}}" as="m" hint-placeholder-count="4">
-                <button role="option" onClick="{{m.pick}}" style="width:100%;background:{{m.active ? 'rgba(43,196,214,.1)' : 'none'}};border:none;color:{{m.active ? 'var(--tq)' : 'var(--text)'}};font:{{m.active ? '600' : '400'}} 14.5px 'Ambit';padding:11px 14px;border-radius:8px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;box-sizing:border-box" style-hover="background:var(--l06)">
-                  <sc-if value="{{m.active}}" hint-placeholder-val="{{false}}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></sc-if>
-                  {{m.label}}
+        <label for="f-msj" style="font:600 13px 'Ambit';color:var(--t2)">Mensaje</label>
+        <textarea id="f-msj" value="{{fMensaje}}" onChange="{{setMensaje}}" rows="5" aria-invalid="{{errMensaje}}" placeholder="{{msjPlaceholder}}" style="background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);outline:none;width:100%;box-sizing:border-box;resize:vertical" style-focus="border-color:var(--tq)"></textarea>
+        <sc-if value="{{errMensaje}}" hint-placeholder-val="{{false}}"><span style="font:400 12.5px 'Ambit';color:var(--ma)">Contanos un poco más (mínimo 10 caracteres).</span></sc-if>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <span style="font:300 12.5px/1.4 'Ambit';color:var(--t3);max-width:300px">Usamos tus datos solo para responder esta consulta.</span>
+        <button onClick="{{submitForm}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 16px 'Ambit';padding:15px 32px;border-radius:11px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Enviar mensaje</button>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--l10);background:var(--bg1);display:flex;flex-direction:column;justify-content:flex-end;aspect-ratio:10/9">
+        <svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Plano esquemático: Ciudad Cultural entre Av. de los Estudiantes Jujeños, Av. de las Carrozas, Zorrilla de San Martín y Ruta Nacional 9" style="position:absolute;inset:0;width:100%;height:100%;font-family:'Ambit',system-ui,sans-serif">
+          <defs>
+            <pattern id="cto-grid" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(-48)"><path d="M0 0H30M0 0V30" style="stroke:var(--l09);stroke-width:1.2" fill="none"></path></pattern>
+            <radialGradient id="cto-fade" cx="50%" cy="48%" r="70%"><stop offset="55%" stop-color="#fff"></stop><stop offset="100%" stop-color="#000"></stop></radialGradient>
+            <mask id="cto-mask"><rect width="400" height="360" fill="url(#cto-fade)"></rect></mask>
+          </defs>
+          <rect width="400" height="360" fill="url(#cto-grid)" mask="url(#cto-mask)"></rect>
+          <g transform="rotate(-48 200 178)">
+            <rect x="60" y="143" width="280" height="70" rx="10" style="fill:rgba(43,196,214,.13);stroke:rgba(43,196,214,.7);stroke-width:1.5;stroke-dasharray:5 4"></rect>
+            <rect x="86" y="158" width="228" height="40" rx="20" style="fill:none;stroke:var(--l12);stroke-width:2"></rect>
+            <path d="M150 158V198M200 158V198M250 158V198" style="stroke:var(--l09);stroke-width:1.5"></path>
+            <circle cx="86" cy="178" r="7" style="fill:var(--bg1);stroke:var(--l28);stroke-width:2"></circle>
+            <circle cx="314" cy="178" r="7" style="fill:var(--bg1);stroke:var(--l28);stroke-width:2"></circle>
+            <path d="M-120 128H520" style="stroke:var(--l28);stroke-width:7;stroke-linecap:round"></path>
+            <path d="M-120 128H520" style="stroke:var(--bg1);stroke-width:1;stroke-dasharray:6 6"></path>
+            <path d="M-120 228H520" style="stroke:var(--l28);stroke-width:5;stroke-linecap:round"></path>
+            <text x="200" y="115" text-anchor="middle" style="font-size:9.5px;font-weight:600;letter-spacing:.08em;fill:var(--t3)">AV. DE LOS ESTUDIANTES JUJEÑOS</text>
+            <text x="200" y="246" text-anchor="middle" style="font-size:9.5px;font-weight:600;letter-spacing:.08em;fill:var(--t3)">AV. DE LAS CARROZAS</text>
+          </g>
+          <path d="M-10 44 L410 96" style="stroke:var(--l28);stroke-width:6;stroke-linecap:round"></path>
+          <text x="30" y="40" transform="rotate(7 30 40)" style="font-size:9px;font-weight:600;letter-spacing:.08em;fill:var(--t3)">ZORRILLA DE SAN MARTÍN</text>
+          <path d="M-10 300 L410 326" style="stroke:var(--l28);stroke-width:4;stroke-linecap:round"></path>
+          <text x="230" y="300" transform="rotate(3.5 230 300)" style="font-size:8.5px;font-weight:600;letter-spacing:.08em;fill:var(--t3)">SANTIAGO “PILA” SOLÁ</text>
+          <path d="M-10 330 L410 356" style="stroke:rgba(120,87,245,.55);stroke-width:12;stroke-linecap:round"></path>
+          <path d="M-10 330 L410 356" style="stroke:rgba(255,255,255,.35);stroke-width:1;stroke-dasharray:8 8"></path>
+          <g transform="translate(40 327) rotate(3.5)"><rect x="-13" y="-8" width="26" height="16" rx="3" fill="#fff"></rect><text text-anchor="middle" y="4" style="font-size:9px;font-weight:700;fill:#141720">RN 9</text></g>
+        </svg>
+        <div aria-hidden="true" style="position:absolute;left:50%;top:49%;transform:translate(-50%,-50%);width:170px;height:170px;pointer-events:none">
+          <div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(43,196,214,.55);animation:ctoPing 3s ease-out infinite"></div>
+          <div style="position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(120,87,245,.55);animation:ctoPing 3s ease-out 1.5s infinite"></div>
+        </div>
+        <div style="position:absolute;left:50%;top:49%;transform:translate(-50%,-100%)">
+          <div style="display:flex;flex-direction:column;align-items:center;animation:floaty 3s ease-in-out infinite">
+            <div style="width:62px;height:62px;border-radius:50%;background:#fff;border:3px solid transparent;background-image:linear-gradient(#fff,#fff),linear-gradient(135deg,var(--tq),var(--vi));background-origin:border-box;background-clip:padding-box,border-box;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(120,87,245,.45)"><img src="assets/expojuy-mark.png" alt="ExpoJuy" style="width:38px;height:38px;object-fit:contain;display:block"></div>
+            <div style="width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:14px solid var(--vi);margin-top:-3px;filter:drop-shadow(0 6px 8px rgba(120,87,245,.4))"></div>
+          </div>
+        </div>
+        <div style="position:absolute;left:50%;top:49%;transform:translate(-50%,10px);background:var(--panel);border:1px solid var(--l12);border-radius:10px;padding:7px 12px;text-align:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap">
+          <div style="font:700 13.5px 'Ambit'">Ciudad Cultural</div>
+          <div style="font:300 11.5px 'Ambit';color:var(--t3)">Av. Ricardo Balbín · San Salvador de Jujuy</div>
+        </div>
+        <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;background:linear-gradient(180deg,transparent,var(--bg1) 42%);flex-wrap:wrap">
+          <a href="https://maps.app.goo.gl/XhE75dxYtR9c5AbRA" target="_blank" rel="noopener" style="font:600 13.5px 'Ambit';color:var(--tq);text-decoration:none" style-hover="color:var(--li)">Ver en Google Maps</a>
+          <a href="https://www.google.com/maps/dir/?api=1&amp;destination=Ciudad+Cultural+Jujuy,+San+Salvador+de+Jujuy" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(90deg,var(--tq),var(--vi));color:#fff;font:700 14px 'Ambit';padding:12px 20px;border-radius:10px;text-decoration:none" style-hover="box-shadow:0 0 22px rgba(120,87,245,.55)">Cómo llegar <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        </div>
+      </div>
+
+      <div style="background:var(--panel);border:1px solid var(--l09);border-radius:18px;overflow:hidden">
+        <button onClick="{{toggleAreas}}" aria-expanded="{{areasOpen}}" aria-controls="cto-areas" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 22px;background:none;border:none;cursor:pointer;color:var(--text);text-align:left" style-hover="background:var(--l08)">
+          <span style="display:flex;flex-direction:column;gap:3px"><span style="font:700 16px 'Ambit'">Áreas de contacto</span><span style="font:300 13px 'Ambit';color:var(--t3)">{{areasSub}}</span></span>
+          <span style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--l12);color:var(--tq);flex-shrink:0;transform:rotate({{areasRot}});transition:transform .4s cubic-bezier(.2,.8,.2,1)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></span>
+        </button>
+        <div id="cto-areas" style="display:grid;grid-template-rows:{{areasRows}};transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1)">
+          <div style="overflow:hidden;min-height:0">
+            <div style="padding:0 22px 12px;display:flex;flex-direction:column;opacity:{{areasOp}};transform:translateY({{areasY}});transition:opacity .35s ease {{areasDelay}},transform .45s cubic-bezier(.2,.8,.2,1) {{areasDelay}}">
+              <sc-for list="{{areas}}" as="a" hint-placeholder-count="4">
+                <button onClick="{{a.pick}}" style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;text-align:left;background:none;border:none;border-top:1px solid var(--l09);padding:12px 4px;cursor:pointer;color:var(--text)" style-hover="color:var(--tq)">
+                  <span style="display:flex;flex-direction:column;gap:2px"><span style="font:600 14.5px 'Ambit'">{{a.n}}</span><span style="font:300 13px/1.4 'Ambit';color:var(--t3)">{{a.d}}</span></span>
+                  <span style="font:600 12px 'Ambit';color:var(--tq);white-space:nowrap">Escribir</span>
                 </button>
               </sc-for>
             </div>
-          </sc-if>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:7px">
-        <label for="f-msj" style="font:600 13px 'Ambit';color:var(--t2)">Mensaje</label>
-        <textarea id="f-msj" value="{{fMensaje}}" onChange="{{setMensaje}}" rows="5" style="background:var(--bg2);border:1px solid var(--l12);border-radius:10px;padding:13px 16px;font:400 15px 'Ambit';color:var(--text);outline:none;resize:vertical" style-focus="border-color:var(--tq)"></textarea>
-        <sc-if value="{{errMensaje}}" hint-placeholder-val="{{false}}"><span style="font:400 12.5px 'Ambit';color:var(--ma)">Contanos un poco más (mínimo 10 caracteres).</span></sc-if>
-      </div>
-      <button onClick="{{submitForm}}" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 16px 'Ambit';padding:15px;border-radius:11px;cursor:pointer" style-hover="box-shadow:0 0 24px rgba(120,87,245,.55)">Enviar mensaje</button>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:16px">
-      <div style="background:var(--panel);border:1px solid var(--l09);border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:16px">
-        <div style="font:700 18px 'Ambit'">Cámara de Comercio Exterior de Jujuy</div>
-        <div style="display:grid;grid-template-columns:64px 1fr;gap:10px 12px;font:400 14.5px/1.5 'Ambit';color:var(--t2);align-items:baseline">
-          <span style="font:600 11px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Predio</span><span>Ciudad Cultural, San Salvador de Jujuy</span>
-          <span style="font:600 11px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Email</span><span>info@expojuy.camcomexjujuy.com.ar</span>
-          <span style="font:600 11px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Tel</span><span>+54 388 000-0000</span>
-          <span style="font:600 11px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Horario</span><span>Lunes a viernes, 9 a 17 h</span>
-        </div>
-      </div>
-      <div style="background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--l12);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:13px">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:2px 6px 0">
-          <div style="font:600 11px 'Ambit';letter-spacing:.18em;color:var(--tq);text-transform:uppercase">Dónde es · cómo llegar</div>
-          <a href="https://www.openstreetmap.org/?mlat=-24.182539&amp;mlon=-65.329985#map=16/-24.182539/-65.329985" target="_blank" rel="noopener" style="font:600 12px 'Ambit'">Abrir mapa</a>
-        </div>
-        <div style="position:relative">
-          <div id="mapa-contacto" role="img" aria-label="Mapa de ubicación del predio Ciudad Cultural, San Salvador de Jujuy" style="height:340px;border-radius:14px;overflow:hidden;border:1px solid var(--l12);background:var(--bg1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)"></div>
-        </div>
-        <div style="display:grid;grid-template-columns:88px 1fr;gap:9px 12px;font:400 13.5px/1.5 'Ambit';color:var(--t2);align-items:baseline;padding:2px 6px">
-          <span style="font:600 10px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Predio</span><span>Ciudad Cultural, Av. Bolivia s/n · San Salvador de Jujuy</span>
-          <span style="font:600 10px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Accesos</span><span>Por Av. Bolivia o Ruta Nacional 9 (colectora Alto Padilla).</span>
-          <span style="font:600 10px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Tel</span><span>+54 388 000-0000</span>
-          <span style="font:600 10px 'Ambit';letter-spacing:.14em;color:var(--tq);text-transform:uppercase">Horario</span><span>Lunes a viernes, 9 a 17 h</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1135,7 +1182,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;asistenteVisible&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Asistente IA&quot;}, &quot;reducirAnimaciones&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accesibilidad&quot;}, &quot;fechaObjetivo&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;2026-09-24T09:00:00-03:00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Evento&quot;}, &quot;sesionDemo&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Portal de usuario&quot;}}">
 class Component extends DCLogic {
-  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', motivoOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
+  state = { route:'inicio', now:Date.now(), q:'', rubro:'Todos', expoSel:null, day:0, eje:'Todos', saved:{}, intereses:{}, faqOpen:-1, stand:'pabB', mapaFiltro:'todo', chatOpen:false, mobileMore:false, chatMsgs:[{who:'bot',text:'¡Hola! Soy Cardón, el asistente de ExpoJuy 2026. Preguntame por la agenda, los expositores, las entradas o el mapa del predio.'}], chatInput:'', fNombre:'', fEmail:'', fMotivo:'Consulta general', areasOpen:false, fMensaje:'', errs:{}, formOk:false, tier:0, grupo:false, tFaq:-1, spSpot:0, statP:0, statP2:0,
     // Portal de usuario (sesión simulada, ver src/services/auth.js)
     user:null, ticket:null, authOpen:null, authBusy:false, authErr:'', aNombre:'', aEmail:'', aPass:'', aInt:{}, aErrs:{}, userMenu:false, portalTab:'agenda', pNombre:'', pEmail:'', pErrs:{}, pSaved:false, pdfBusy:false, pdfErr:'' };
 
@@ -1211,30 +1258,9 @@ class Component extends DCLogic {
       this.setState(s => ({ spSpot: (s.spSpot + 1) % this.SPONSORS.diamante.length }));
     }, 4500);
   }
-  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncMapa(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver(); this.updateFlipClock(); }
-  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._spotTimer); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); clearTimeout(this._mapT); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); if (this.mapa) { this.mapa.remove(); this.mapa = null; } }
+  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver(); this.updateFlipClock(); }
+  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._spotTimer); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); }
 
-  PREDIO_LATLNG = [-24.182539, -65.329985];
-
-  syncMapa() {
-    const r = this.state.route;
-    if (r !== 'contacto' && this.mapa) { this.mapa.remove(); this.mapa = null; this._tiles = null; }
-    if (r !== 'contacto') { clearTimeout(this._mapT); return; }
-    if (!this.mapa) this.initMapa();
-  }
-  initMapa() {
-    const L = window.L, el = document.getElementById('mapa-contacto');
-    if (!el) return;
-    if (!L) { clearTimeout(this._mapT); this._mapT = setTimeout(() => this.syncMapa(), 250); return; }
-    this.mapa = L.map(el, { scrollWheelZoom: false, attributionControl: true, zoomControl: false, maxZoom: 19 }).setView(this.PREDIO_LATLNG, 16);
-    L.control.zoom({ position: 'bottomright' }).addTo(this.mapa);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(this.mapa);
-    const icon = L.divIcon({ className: '', iconSize: [32, 32], iconAnchor: [16, 31], html: '<div style="width:28px;height:28px;border-radius:50% 50% 50% 0;background:#E5484D;border:3px solid #fff;transform:rotate(-45deg);box-shadow:0 3px 9px rgba(0,0,0,.34);display:flex;align-items:center;justify-content:center"><span style="width:7px;height:7px;border-radius:50%;background:#fff"></span></div>' });
-    L.marker(this.PREDIO_LATLNG, { icon, title: 'Predio Ciudad Cultural', alt: 'Predio Ciudad Cultural' }).addTo(this.mapa)
-      .bindTooltip('Predio Ciudad Cultural', { permanent: true, direction: 'top', offset: [0, -29] });
-    L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(this.mapa);
-    setTimeout(() => { if (this.mapa) this.mapa.invalidateSize(); }, 150);
-  }
   syncAnim() { const off = this.props.reducirAnimaciones ?? false; if (off) document.body.setAttribute('data-noanim',''); else document.body.removeAttribute('data-noanim'); }
 
   _cdK = ['dd','hh','mm','ss'];
@@ -1559,6 +1585,37 @@ class Component extends DCLogic {
       setInd: () => this.setState({ grupo: false }), setGrp: () => this.setState({ grupo: true }), toggle: () => this.setState(s => ({ grupo: !s.grupo })),
       badge: '−' + Math.round(this.GRUPO.descuento * 100) + '% por persona', minimo: this.GRUPO.minimo + '+'
     };
+    // ---- Contacto v6: chips de motivo con ayuda dinámica + desplegable de áreas ----
+    const MOTIVO_HINT = {
+      'Consulta general': 'Entradas, horarios, accesibilidad y agenda. Te responde el equipo de visitantes.',
+      'Quiero exponer': 'Te enviamos el manual del expositor, plano de stands y tarifas dentro de las 48 h hábiles.',
+      'Quiero ser sponsor': 'Recibís el dossier con niveles Diamante, Oro y Plata y sus beneficios.',
+      'Prensa y medios': 'Acreditaciones, material de prensa y coordinación de entrevistas.'
+    };
+    const MOTIVO_PH = {
+      'Consulta general': 'Contanos tu consulta…',
+      'Quiero exponer': 'Empresa, rubro y tamaño de stand que te interesa…',
+      'Quiero ser sponsor': 'Empresa y nivel de patrocinio que te interesa…',
+      'Prensa y medios': 'Medio, cobertura prevista y fechas…'
+    };
+    // El scroll corre después del setState porque este runtime re-renderiza de forma síncrona.
+    const goForm = () => { const el = document.getElementById('cto-form'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' }); };
+    const ctoVals = {
+      areasOpen: st.areasOpen, toggleAreas: () => this.setState({ areasOpen: !st.areasOpen }),
+      areasRot: st.areasOpen ? '180deg' : '0deg', areasRows: st.areasOpen ? '1fr' : '0fr',
+      areasOp: st.areasOpen ? '1' : '0', areasY: st.areasOpen ? '0' : '-10px', areasDelay: st.areasOpen ? '.1s' : '0s',
+      areasSub: st.areasOpen ? 'Elegí un área y te llevamos al formulario' : 'Comercial · Sponsors · Prensa · Visitantes',
+      motivos: Object.keys(MOTIVO_HINT).map(m => { const on = st.fMotivo === m; return { label: m, on, pick: () => this.setState({ fMotivo: m }),
+        bg: on ? 'linear-gradient(90deg,var(--tq),var(--vi))' : 'var(--bg2)', color: on ? '#fff' : 'var(--t2)', border: on ? 'transparent' : 'var(--l12)' }; }),
+      motivoHint: MOTIVO_HINT[st.fMotivo] || '', msjPlaceholder: MOTIVO_PH[st.fMotivo] || '',
+      areas: [
+        { n: 'Comercial · Stands', d: 'Reserva de stands, manual del expositor y tarifas', m: 'Quiero exponer' },
+        { n: 'Sponsors', d: 'Niveles de patrocinio y beneficios de marca', m: 'Quiero ser sponsor' },
+        { n: 'Prensa', d: 'Acreditaciones y material para medios', m: 'Prensa y medios' },
+        { n: 'Visitantes', d: 'Entradas, accesibilidad y agenda', m: 'Consulta general' }
+      ].map(a => ({ ...a, pick: () => { this.setState({ fMotivo: a.m }); goForm(); } }))
+    };
+
     // ---- Sponsors v5: spotlight Diamante + filas + Organiza/Acompañan ----
     const SPOT = this.SPONSORS.diamante; const si = st.spSpot % SPOT.length; const spot = SPOT[si];
     const hasUrl = u => !!u && u !== '#';
@@ -1649,8 +1706,7 @@ class Component extends DCLogic {
       ...spotVals, spDia, spOro, spPlata, spOrg, spAcom, spMetrics: this.SPONSORS.metricas,
       faqs,
       fNombre: st.fNombre, fEmail: st.fEmail, fMotivo: st.fMotivo, fMensaje: st.fMensaje,
-      motivoOpen: st.motivoOpen, toggleMotivo: () => this.setState({ motivoOpen: !st.motivoOpen }), closeMotivo: () => this.setState({ motivoOpen: false }),
-      motivoOpts: ['Consulta general','Quiero exponer','Quiero ser sponsor','Prensa y medios'].map(m => ({ label: m, active: st.fMotivo === m, pick: () => this.setState({ fMotivo: m, motivoOpen: false }) })),
+      ...ctoVals,
       setNombre: e => this.setState({ fNombre: e.target.value }), setEmail: e => this.setState({ fEmail: e.target.value }), setMensaje: e => this.setState({ fMensaje: e.target.value }),
       errNombre: !!st.errs.nombre, errEmail: !!st.errs.email, errMensaje: !!st.errs.mensaje, formOk: st.formOk, submitForm: this.submitForm,
       tierTabs, tierVals, grupoCtl, tFaqs, tierSelName: this.TIERS[st.tier].name, qrRef: this.qrRef,
