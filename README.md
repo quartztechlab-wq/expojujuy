@@ -2,6 +2,17 @@
 
 > Estado actual: prototipo frontend funcional y navegable preparado para ejecución local, con **Portal de Usuario** (sesión simulada, Mi Agenda con itinerario en PDF, Mi Entrada con QR y Mi Perfil). Esta entrega no incluye backend, base de datos, pasarela de pagos ni servicios externos.
 
+## Handoffs aplicados
+| Versión | Qué trajo |
+|---|---|
+| v3 | **Portal de Usuario** (sesión simulada, Mi Agenda + PDF, Mi Entrada + QR, Mi Perfil) — detalle abajo. |
+| v4 | **Fondo fotográfico global** (`bg-mountains.jpg` + tokens translúcidos) y **Entradas** rehecha (tabs de tier, descuento grupal, credencial, FAQ). |
+| v5 | **Sponsors** con spotlight Diamante rotativo y logos reales, y la franja "Nos acompañan" del Inicio. |
+| v6 | **Contacto** con canales reales, motivo por chips, ilustración del predio y áreas desplegables (se quitó Leaflet). |
+| v7 | **Mapa del predio**: plano ilustrativo SVG con stands clickeables, buscador, filtro por rubro y zoom; `src/data/predio.js`; hash routing. |
+
+El hero fotográfico y la navbar vienen de commits del equipo, no de un handoff. El modo claro que describen los handoffs **no** se implementó a propósito: el sitio tiene un único tema oscuro.
+
 ## Portal de Usuario (handoff v3, 2026-09-03)
 Implementado según `design_handoff_expojuy_2026/PORTAL-USUARIO.md` sobre el stack actual del repo (Vite + runtime `.dc.html` propio). Sin backend: todo vive en el cliente.
 
@@ -25,7 +36,7 @@ Implementado según `design_handoff_expojuy_2026/PORTAL-USUARIO.md` sobre el sta
 ## Overview
 Propuesta conceptual y visual del sitio web oficial de **ExpoJuy 2026** (Desafío Digital ExpoJuy 2026, Cámara de Comercio Exterior de Jujuy), diseñada por **Quartz Tech Labs**. Incluye el sitio desktop navegable completo (10 secciones + entradas con QR + asistente IA "Cardón") y 6 pantallas mobile clave.
 
-Concepto: **"Jujuy, tierra de innovación"** — dark mode tecnológico (con **Modo Claro** alternativo) con acentos cromáticos de la Quebrada de Humahuaca, integrando la identidad oficial del evento (logo, tipografía Ambit, paleta turquesa/violeta/lila).
+Concepto: **"Jujuy, tierra de innovación"** — dark mode tecnológico (tema único, sin modo claro) con acentos cromáticos de la Quebrada de Humahuaca, integrando la identidad oficial del evento (logo, tipografía Ambit, paleta turquesa/violeta/lila).
 
 ## About the Design Files
 Los archivos de este paquete son **referencias de diseño creadas en HTML** (Design Components): prototipos que muestran el aspecto y comportamiento previstos, **no código de producción para copiar directamente**. La tarea es **recrear estos diseños en el stack objetivo del proyecto**:
@@ -36,6 +47,8 @@ Los archivos de este paquete son **referencias de diseño creadas en HTML** (Des
 - **Backend previsto:** Spring Boot + Gradle (API REST: expositores, agenda, noticias, entradas, panel admin)
 - **Extras:** PWA con modo offline (crítico para el QR de entrada dentro del predio), mapa interactivo (SVG propio; escalable a Mapbox/Leaflet)
 
+> **Ojo:** ese es el stack *objetivo* que plantean los handoffs. **Este repo no es Next.js**: es `index.html` (markup `<x-dc>` + clase `Component`) sobre `support.js`, un runtime propio, empaquetado con Vite. Los `.dc.html` que quedan en la raíz son solo referencia de diseño.
+
 ## Fidelity
 **High-fidelity (hifi).** Colores, tipografía, espaciado, copy e interacciones son finales. Las fechas, cifras, empresas y patrocinadores utilizados en el prototipo deberán validarse con la organización antes de una publicación oficial.
 
@@ -45,10 +58,12 @@ Los archivos de este paquete son **referencias de diseño creadas en HTML** (Des
 - `ios-frame.jsx` — marco de dispositivo usado solo para presentación (no implementar).
 - `assets/fonts/Ambit-{Light,Regular,SemiBold,Bold}.otf` — tipografía oficial del kit.
 - `assets/expojuy-logo.png`, `assets/logo-camcomext.png` — logos oficiales (usar sobre chips blancos: no funcionan sobre fondo oscuro).
-- `assets/hero-video.mp4` — video aéreo del predio para el fondo del hero (loop, muted, autoplay).
+- `assets/hero-expo.jpg` — foto del hero (reemplazó al video del handoff): `opacity .72`, `saturate(1.1) brightness(.8)`, `kenBurns` 22s y parallax `scrollY*0.22`.
+- `assets/bg-mountains.jpg` — fondo fotográfico global (montañas nocturnas) en una capa fija `body::before` bajo el velo de `--pageveil`.
+- `assets/sponsors/*.png` — logos reales de Diamante y de los organismos que acompañan; `assets/expojuy-mark.png` — monograma EJ del pin de Contacto. Los assets referenciados desde datos se **importan** en `src/data/evento.js`: Vite no copia a `dist/` las imágenes cuyo `src` es un binding.
 
 ### Screenshots
-`screenshots/01–06-desktop.png` (Inicio, Expositores, Agenda, Mapa, Entradas, chat Cardón) y `07-mobile.png` — referencia visual del resultado esperado.
+`screenshots/01–06-desktop.png` (Inicio, Expositores, Agenda, Mapa, Entradas, chat Cardón) y `07-mobile.png` — referencia visual. **Son capturas de v3**: el hero fotográfico y las secciones Entradas (v4), Sponsors (v5), Contacto (v6) y Mapa (v7) se rehicieron después; para verlas, correr el sitio.
 
 ## Tema visual
 El sitio utiliza exclusivamente un **tema oscuro**, elegido para reforzar el carácter tecnológico de la propuesta y destacar los acentos cromáticos inspirados en Jujuy. Los tokens de `:root` constituyen la paleta única de la interfaz.
@@ -61,8 +76,10 @@ Los valores de abajo corresponden al tema único definido en `:root`.
 |---|---|---|
 | `bg-base` | `#05070D` | Fondo global |
 | `bg-deep` | `#0A1428` | Gradiente de fondos hero |
-| `bg-alt` | `#070B16` | Franjas alternadas de sección |
-| `panel` | `#0D1428` | Tarjetas y paneles |
+| `bg-alt` | `rgba(7,11,22,.55)` | Franjas alternadas de sección (translúcido sobre el fondo fotográfico) |
+| `panel` | `rgba(13,20,40,.78)` | Tarjetas y paneles |
+| `page-bg` | `url(assets/bg-mountains.jpg)` | Fondo global fijo, `cover`, `center top` |
+| `page-veil` | `linear-gradient(180deg,rgba(5,7,13,.55),rgba(5,7,13,.72))` | Velo sobre la foto (legibilidad) |
 | `line` | `rgba(255,255,255,.08)` | Bordes (.06–.14 según jerarquía) |
 | `text` | `#EEF0F8` | Texto principal |
 | `text-2` | `#98A0B8` | Texto secundario |
@@ -105,16 +122,16 @@ Familia única: **Ambit** (kit oficial; pesos 300/400/600/700). Fallback `system
 ## Screens / Views (desktop)
 SPA con router por estado (`route`) reflejado en el hash de la URL (`#mapa`, `#contacto`…, vía `history.replaceState`; el portal queda afuera porque exige sesión), así una sección se puede compartir y recargar. En Next.js implementar como rutas reales (`/`, `/sobre`, `/expositores`, …) con scroll-to-top en navegación.
 
-1. **Inicio** — Hero full-viewport: **video de fondo** (`assets/hero-video.mp4`: loop/muted/autoplay/playsInline, object-fit cover, opacity .3, blur 5.2px, saturate .75, máscara radial + fundido vertical hacia el fondo — el video acompaña, nunca protagoniza; sobre él van las capas geométricas), fondo grid de 72px con máscara radial, 2 capas de montañas `clip-path` (siluetas Quebrada, opacidad baja), glows radiales violeta/turquesa. Eyebrow con fecha y sede, H1 "Viví la expo que **mueve al Norte**" con gradiente en segunda línea, 2 CTAs ("Conseguí tu entrada" primario, "Quiero exponer" outline), countdown live (4 cajas de 96px: días/horas/min/seg). Luego: línea de energía, franja de 4 contadores animados (200+ expositores, 45.000 visitantes, 12.000 m², 120+ actividades; count-up 1.4s ease-out al montar), 3 tarjetas destacadas (barra de color 42×8px arriba), strip de sponsors (chips outline), banner de redes (#ExpoJuy2026).
+1. **Inicio** — Hero full-viewport: **foto de fondo** (`assets/hero-expo.jpg`, opacity .72, `saturate(1.1) brightness(.8)`, `kenBurns` 22s y parallax `scrollY*0.22`; reemplaza al video del handoff), fondo grid de 72px con máscara radial, 2 capas de montañas `clip-path` (siluetas Quebrada, opacidad baja), glows radiales violeta/turquesa. Eyebrow con fecha y sede, H1 "Viví la expo que **mueve al Norte**" con gradiente en segunda línea, 2 CTAs ("Conseguí tu entrada" primario, "Quiero exponer" outline), countdown live (4 cajas de 96px: días/horas/min/seg). Luego: línea de energía, franja de 4 contadores animados (200+ expositores, 45.000 visitantes, 12.000 m², 120+ actividades; count-up 1.4s ease-out al montar), 3 tarjetas destacadas (barra de color 42×8px arriba), franja "Nos acompañan" con los 4 logos Diamante (realce de brillo en hover), banner de redes (#ExpoJuy2026). Todo el sitio se lee sobre un fondo fotográfico fijo (`body::before` con `--pagebg` + `--pageveil`).
 2. **Sobre** — Header + 2 columnas: texto histórico + placeholder de video institucional 16:10 (botón play con `pulseGlow`); 3 mini-tarjetas de cifras 2024; grilla 3×2 de valores con marca escalonada (clip-path en L) del color de cada valor.
 3. **Expositores** — Buscador (input 520px) + 9 chips de rubro (pill; activo: borde+fondo turquesa al 16%) + grilla 3 col de tarjetas (avatar 48px con gradiente del rubro e iniciales, nombre, stand, tag rubro). Click → **modal ficha** (overlay `rgba(3,4,9,.72)` + blur, tarjeta 520px, botones "Ubicar en el mapa" — navega al mapa y selecciona el stand exacto si es `D-xx`, o el sector si es A/B/C — y "Agendar reunión"). Estado vacío con mensaje.
 4. **Agenda** — Recomendador por intereses (chips de eje; al activar, las actividades del eje reciben borde lila + tag "PARA VOS"); 4 tabs de día (activo: gradiente + borde turquesa); chips de eje; lista de filas (hora turquesa 19px, título, meta, dot+eje, botón "Agendar" ↔ "✓ Agendado" verde).
 5. **Noticias** — Destacada grande (fondo gradiente + grid, tag sólido turquesa) + 4 tarjetas laterales; bloque "ExpoJuy en redes": 4 tiles cuadrados con gradientes Quebrada + botones IG/X/IN/YT.
 6. **Mapa del predio** — **Plano ilustrativo SVG** (viewBox 1000×700, `aspect-ratio` 10/7) que reproduce la distribución del informe 2024: pabellón cubierto con los sectores A/B/C (cada uno con su trama en `<defs>`), 34 stands descubiertos D y 12 gastronómicos F individuales, E1/E2, escenario, sanitarios, acceso, estacionamiento y rosa de los vientos. Header con 3 métricas del predio (18.000 m² · 34 descubiertos · 139 cubiertos). Cada sector y cada stand es un `<g role="button">` que se levanta 5px en hover y, seleccionado, sube el fill y suma glow del color; los ocupados llevan un punto turquesa. **Panel lateral sticky** con expositor (avatar + "Ver perfil"), actividades del espacio (si el sector tiene `loc` en la agenda), expositores confirmados del sector o, si el stand está libre, el CTA "Consultar por este stand" que precarga Contacto. **Buscador** "¿Dónde está…?" (hasta 6 resultados: stands por código o por expositor, expositores de sectores cubiertos, sectores), **filtro por rubro** (los que no coinciden bajan a `opacity .28`) y **zoom/arrastre** (botones ±/1:1, Ctrl+rueda, pinza; escala 1→4 con clamp para no sacar el plano del marco).
-7. **Sponsors** — Tiers: Diamante (2 tarjetas grandes, borde lila + glow hover), Oro (4, borde ocre), Plata (6 chips) + CTA "Convertite en sponsor".
+7. **Sponsors** — **Spotlight Diamante**: tarjeta grande rotativa (autoplay cada 4,5 s, en pausa con el puntero encima, detenido con `prefers-reduced-motion`) con logo, texto y puntos de navegación, más la fila de los 4 logos Diamante para saltar entre ellos. Debajo: **Oro** (4 tarjetas, borde ocre), **Plata** (6 chips), bloque **Organiza / Acompañan** con los logos institucionales reales y CTA "Tu marca puede estar acá" con las métricas del evento. Los logos van sobre chips claros: no funcionan sobre fondo oscuro.
 8. **FAQ** — Acordeón de 6 ítems (uno abierto a la vez, ícono +/−, `aria-expanded`), links a Cardón y Contacto.
-9. **Contacto** — Form (nombre, email, motivo select, mensaje) con validación client-side (nombre ≥3, email regex, mensaje ≥10; errores en `#D4548F` bajo el campo; éxito: banner verde) + tarjeta institucional (labels tipográficos PREDIO/EMAIL/TEL/HORARIO en turquesa) + placeholder de mapa de ubicación con pin animado (`floaty`).
-10. **Entradas** (CTA nav, no está en el menú) — 3 tiers seleccionables (General gratis / Full $15.000 / Empresarial $60.000; seleccionado: borde turquesa) + ticket sticky: franja gradiente 6px, QR generado en canvas (en producción: QR real por API), titular, tier, nº.
+9. **Contacto** — **Tiles de canal** (WhatsApp, teléfono, email, Instagram) con los datos reales de la Cámara. **Form** con el motivo como chips (radio) que cambian la ayuda y el placeholder del mensaje, y la validación client-side de siempre (nombre ≥3, email regex, mensaje ≥10; errores en `#D4548F` bajo el campo; éxito: banner verde). **Ilustración SVG** del entorno del predio (calles reales) con pin-logo animado (`floaty` + `ctoPing`) y "Ver en Google Maps" / "Cómo llegar". **Áreas de contacto** desplegables: elegir un área preselecciona el motivo y scrollea al formulario. El sitio ya no usa Leaflet.
+10. **Entradas** (CTA nav, no está en el menú) — **Tabs de tier** (`role=tablist`, paneles `tier-<0|1|2>`): General gratis / Full $15.000 / Empresarial $60.000, con **toggle grupal** (−20 % por persona desde 5 entradas) y panel de detalle por tier (para quién es, qué incluye, beneficios y nota). Al confirmar se emite la **credencial** con QR real (`qrcode`, carga diferida) pensada para funcionar sin conexión, más una FAQ corta de entradas y el bloque de acceso al portal.
 11. **Footer** (global) — Línea de energía, logos oficiales sobre chips blancos, 2 columnas de navegación, redes, y la firma: "Diseñado y desarrollado por **Quartz Tech Labs**" → https://quartztechlabs.com/ con dot glow.
 
 ### Asistente Cardón (global)
@@ -132,12 +149,13 @@ Patrón: navegación por **barra inferior** de 5 tabs (Inicio/Expositores/Agenda
 - Sin emojis; los íconos de redes son chips tipográficos (IG/X/IN/YT).
 
 ## State Management
-- `route` (string), `q` + `rubro` (filtro expositores), `expoSel` (modal), `day` + `eje` + `intereses` + `saved` (agenda), `stand` + `mapQ` + `mapRubro` + `mz` (mapa: selección, buscador, filtro por rubro y zoom/paneo), `faqOpen`, `tier` (entradas), `chatOpen` + `chatMsgs` + `chatInput`, campos + `errs` + `formOk` (contacto), `now` (countdown), `statP` (progreso count-up).
+- `route` (string), `q` + `rubro` (filtro expositores), `expoSel` (modal), `day` + `eje` + `intereses` + `saved` (agenda), `stand` + `mapQ` + `mapRubro` + `mz` (mapa: selección, buscador, filtro por rubro y zoom/paneo), `faqOpen`, `tier` + `grupo` + `tFaq` (entradas), `spSpot` (spotlight de Sponsors), `chatOpen` + `chatMsgs` + `chatInput`, campos + `errs` + `formOk` + `areasOpen` (contacto), `now` (countdown), `statP`/`statP2` (progreso count-up), y el bloque del portal (`user`, `ticket`, `authOpen`, `portalTab`…).
 - Los datos llegan de `src/data/evento.js` y `src/data/predio.js` inyectados como `DATA` (`EXPOS`, `AGENDA`, `NOTIS`, `MAP`, `STANDS`, `FAQS`, `TIERS`, `SPONSORS`) → reemplazar por fetch a la API Spring Boot / CMS.
 
 ## Assets
 - Fuentes Ambit y logos: **Kit de Diseño oficial del concurso** (provistos por la organización).
-- Todo lo demás (montañas, grids, cactus Cardón, QR demo, placeholders de video/mapa/feed) es CSS/canvas generado — sin dependencias externas. Fotos e imágenes institucionales reales llegarán del kit.
+- Fotos incorporadas: `hero-expo.jpg` (hero) y `bg-mountains.jpg` (fondo global). Los logos de sponsors y organismos son los archivos reales; KeLimpio sigue siendo un recorte de captura, pendiente del oficial.
+- Todo lo demás (montañas, grids, cactus Cardón, ilustración del predio en Contacto, plano del Mapa) es CSS/SVG generado — sin dependencias externas. El QR y el PDF sí usan librerías (`qrcode`, jsPDF), cargadas bajo demanda.
 
 ## Notas para el implementador
 - Las fechas, cifras y los nombres de expositores y sponsors utilizados en el prototipo deben validarse contra el material definitivo de la organización.
