@@ -66,7 +66,7 @@ main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 .tk-cta-shine{position:relative;overflow:hidden;isolation:isolate}
 .tk-cta-shine::after{content:'';position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
 .tk-layout{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
-.tk-cred{position:sticky;top:88px}
+.tk-cred{position:sticky;top:120px}
 @media(max-width:1000px){.tk-layout{grid-template-columns:1fr}.tk-cred{position:static}}
 @media(max-width:600px){.tk-panel{padding:26px 20px!important}.tk-price{font-size:46px!important}}
 @media(max-width:760px){.tk-ctrl{flex-direction:column;align-items:stretch!important}.tk-tabs{overflow-x:auto;max-width:100%}.tk-tab{white-space:nowrap}}
@@ -115,8 +115,8 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 </style>
 </helmet>
 <div style="min-height:100vh;display:flex;flex-direction:column">
-<nav aria-label="Navegación principal" style="position:fixed;top:0;left:0;right:0;z-index:60;background:var(--navbg);backdrop-filter:blur(14px);border-bottom:1px solid var(--l07)">
-  <div style="max-width:1400px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+<nav aria-label="Navegación principal" style="position:fixed;top:16px;left:16px;right:16px;z-index:60;background:var(--navbg);backdrop-filter:blur(14px);border:1.5px solid var(--l25);border-radius:20px;box-shadow:0 14px 38px rgba(0,0,0,.5),0 0 0 1px rgba(120,87,245,.12)">
+  <div style="max-width:1400px;margin:0 auto;padding:0 22px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px">
     <div style="display:flex;align-items:center;gap:11px;cursor:pointer;flex-shrink:0" onClick="{{goInicio}}" role="button" aria-label="Ir al inicio">
       <div style="display:grid;grid-template-columns:11px 11px;grid-template-rows:11px 11px;gap:2px">
         <div style="background:var(--tq)"></div><div style="background:var(--vi)"></div>
@@ -126,13 +126,13 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
     </div>
     <div style="display:flex;align-items:center;gap:2px;min-width:0;overflow-x:auto;scrollbar-width:none">
       <sc-for list="{{navItems}}" as="n" hint-placeholder-count="9">
-        <button onClick="{{n.go}}" style="background:none;border:none;cursor:pointer;padding:8px 9px;font:600 13px 'Ambit';letter-spacing:.01em;color:{{n.color}};border-radius:8px;white-space:nowrap" style-hover="color:var(--navon);background:var(--l06)">{{n.label}}</button>
+        <button onClick="{{n.go}}" style="position:relative;background:none;border:none;cursor:pointer;padding:10px 12px;font:{{n.weight}} 13px 'Ambit';letter-spacing:.01em;color:{{n.color}};border-radius:8px;white-space:nowrap" style-hover="color:var(--navon);background:var(--l06)">{{n.label}}<span style="position:absolute;left:12px;right:12px;bottom:3px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--tq),var(--vi));opacity:{{n.underline}}"></span></button>
       </sc-for>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-      <button onClick="{{goEntradas}}" data-m="hide" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 13.5px 'Ambit';padding:9px 16px;border-radius:9px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px" style-hover="box-shadow:0 0 22px rgba(120,87,245,.55)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v1a2 2 0 0 1 0 4v1a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1a2 2 0 0 1 0-4V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"/><line x1="9" x2="9" y1="4" y2="20" stroke-dasharray="2 2"/></svg>Entradas</button>
+      <button onClick="{{goEntradas}}" data-m="hide" style="background:linear-gradient(90deg,var(--tq),var(--vi));border:none;color:#fff;font:700 13.5px 'Ambit';padding:10px 18px;border-radius:999px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px" style-hover="box-shadow:0 0 22px rgba(120,87,245,.55)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v1a2 2 0 0 1 0 4v1a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1a2 2 0 0 1 0-4V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"/><line x1="9" x2="9" y1="4" y2="20" stroke-dasharray="2 2"/></svg>Entradas</button>
       <sc-if value="{{noUser}}" hint-placeholder-val="{{true}}">
-        <button onClick="{{openLogin}}" data-m="hide" style="background:none;border:1px solid var(--l16);color:var(--text);font:600 13.5px 'Ambit';padding:9px 15px;border-radius:9px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px" style-hover="border-color:var(--tq);color:var(--tq)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>Ingresar</button>
+        <button onClick="{{openLogin}}" data-m="hide" style="background:none;border:1px solid var(--l16);color:var(--text);font:600 13.5px 'Ambit';padding:10px 17px;border-radius:999px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px" style-hover="border-color:var(--tq);color:var(--tq)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>Ingresar</button>
       </sc-if>
       <sc-if value="{{hasUser}}" hint-placeholder-val="{{false}}">
         <button onClick="{{toggleUserMenu}}" aria-expanded="{{userMenuOpen}}" aria-haspopup="menu" aria-label="Abrir menú de usuario" style="position:relative;background:var(--panel);border:1px solid rgba(43,196,214,.45);border-radius:9px;height:38px;padding:0 12px 0 4px;cursor:pointer;display:flex;align-items:center;gap:9px;color:var(--text)" style-hover="border-color:var(--tq)">
@@ -145,7 +145,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
   </div>
   <sc-if value="{{userMenuOpen}}" hint-placeholder-val="{{false}}">
     <div onClick="{{closeUserMenu}}" style="position:fixed;inset:0;z-index:-1"></div>
-    <div role="menu" aria-label="Menú de usuario" data-m="umenu" style="position:absolute;top:70px;right:max(20px,calc((100vw - 1400px)/2 + 20px));width:280px;background:var(--panel2);border:1px solid var(--l14);border-radius:16px;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:4px;animation:fadeUp .25s ease both">
+    <div role="menu" aria-label="Menú de usuario" data-m="umenu" style="position:absolute;top:76px;right:max(20px,calc((100vw - 1400px)/2 + 20px));width:280px;background:var(--panel2);border:1px solid var(--l14);border-radius:16px;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:4px;animation:fadeUp .25s ease both">
       <div style="padding:10px 12px 12px;border-bottom:1px solid var(--l08);margin-bottom:4px;display:flex;flex-direction:column;gap:2px">
         <div style="font:700 15px 'Ambit'">{{userName}}</div>
         <div style="font:400 12.5px 'Ambit';color:var(--t3);overflow:hidden;text-overflow:ellipsis">{{userEmail}}</div>
@@ -170,7 +170,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
   </sc-for>
   <button onClick="{{toggleMobileMore}}" aria-expanded="{{mobileMoreOpen}}" aria-current="{{mobileMoreCurrent}}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="19" cy="12" r="1.8"></circle></svg><span>Más</span></button>
 </nav>
-<main style="flex:1;padding-top:64px">
+<main style="flex:1;padding-top:96px">
 
 <sc-if value="{{isInicio}}" hint-placeholder-val="{{true}}">
 <div style="animation:fadeUp .45s ease both">
@@ -301,7 +301,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
   </div>
 
   <div class="sb-cols" style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:40px;margin-bottom:72px;align-items:start">
-    <div class="sb-sticky" style="display:flex;flex-direction:column;gap:10px;position:sticky;top:96px">
+    <div class="sb-sticky" style="display:flex;flex-direction:column;gap:10px;position:sticky;top:128px">
       <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Objetivos</div>
       <h3 style="font:700 30px/1.15 'Ambit';margin:0;letter-spacing:-.01em">Un espacio para hacer negocios y mostrar Jujuy</h3>
       <p style="font:400 14.5px/1.6 'Ambit';color:var(--t3);margin:4px 0 0;text-wrap:pretty">Trece objetivos guían la exposición desde su primera edición. Estos son los centrales.</p>
@@ -667,7 +667,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
       </div>
     </div>
 
-    <div key="{{selKey}}" class="mp-panel" style="background:var(--panel);border:1px solid {{selBorder}};border-radius:18px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;position:sticky;top:88px;animation:fadeUp .35s ease both;transition:border-color .3s">
+    <div key="{{selKey}}" class="mp-panel" style="background:var(--panel);border:1px solid {{selBorder}};border-radius:18px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;position:sticky;top:120px;animation:fadeUp .35s ease both;transition:border-color .3s">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <div style="font:600 11px 'Ambit';letter-spacing:.2em;color:var(--tq);text-transform:uppercase">{{selKicker}}</div>
         <span style="font:600 11px 'Ambit';padding:4px 10px;border-radius:20px;white-space:nowrap;background:{{selPillBg}};color:{{selPillColor}};border:1px solid {{selPillBorder}}">{{selPill}}</span>
@@ -1892,7 +1892,7 @@ class Component extends DCLogic {
     const st = this.state, P = this.props;
     const routes = ['inicio','sobre','expositores','agenda','noticias','mapa','sponsors','faq','contacto'];
     const labels = { inicio:'Inicio', sobre:'Sobre', expositores:'Expositores', agenda:'Agenda', noticias:'Noticias', mapa:'Mapa', sponsors:'Sponsors', faq:'FAQ', contacto:'Contacto' };
-    const navItems = routes.map(r => ({ label: labels[r], go: () => this.go(r), color: st.route === r ? 'var(--navon)' : 'var(--t2)' }));
+    const navItems = routes.map(r => { const on = st.route === r; return { label: labels[r], go: () => this.go(r), color: on ? 'var(--navon)' : 'var(--t2)', weight: on ? 700 : 600, underline: on ? 1 : 0 }; });
 
     const target = new Date(P.fechaObjetivo ?? DATA.FECHA_APERTURA).getTime();
     let diff = Math.max(0, target - st.now);
