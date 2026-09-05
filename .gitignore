@@ -4,3 +4,5 @@ dist/
 .chrome-smoke-profile*/
 npm-debug.log*
 deploy.md
+.gstack/
+.claude/
