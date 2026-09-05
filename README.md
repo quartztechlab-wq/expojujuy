@@ -15,7 +15,8 @@ Implementado según `design_handoff_expojuy_2026/PORTAL-USUARIO.md` sobre el sta
 ### Estructura del código
 - `index.html` — el sitio: markup en `<x-dc>` y lógica (clase `Component`) en el `<script data-dc-script>`. Es la versión que se compila y despliega.
 - `support.js` — runtime propio del prototipo (renderiza `sc-if`/`sc-for`/`{{ }}`, foco y accesibilidad, CSS mobile) e inyección de `DATA` y `services` en `Component`.
-- `src/data/evento.js` — **mock data centralizada y tipada (JSDoc)**: `DIAS`, `RUBROS`, `EJES`, `EXPOSITORES`, `AGENDA`, `NOTICIAS`, `SECTORES`, `FAQS`, `TIPOS_ENTRADA`, `SPONSORS`, `PREDIO`. Buscador, mapa, agenda, recomendador, entradas y portal consumen esta única fuente; la API real reemplaza este módulo.
+- `src/data/evento.js` — **mock data centralizada y tipada (JSDoc)**: `DIAS`, `RUBROS`, `EJES`, `EXPOSITORES`, `AGENDA`, `NOTICIAS`, `FAQS`, `TIPOS_ENTRADA`, `SPONSORS`, `PREDIO`. Buscador, mapa, agenda, recomendador, entradas y portal consumen esta única fuente; la API real reemplaza este módulo.
+- `src/data/predio.js` — **plano del predio**: `PLANO` (viewBox 1000×700), `SECTORES` (14, con `shape` y color), `STANDS` (34 descubiertos, con m² y coordenadas), `STANDS_GASTRO` (12), `SECTOR_POR_LETRA`, `METRICAS_PREDIO` y `LEYENDA`. Reexportado dentro de `DATA`; pensado para venir del CMS con el plano de cada año.
 - `src/services/auth.js` — servicio único de sesión (`cargar`, `registrar`, `ingresar`, `guardar`, `cerrar`) con interfaz de Promises lista para apuntar a Spring Boot sin tocar la UI.
 - `src/services/qr.js` — QR de la entrada (`qrcode`, dynamic import, caché).
 - `src/services/itinerario-pdf.js` — PDF del itinerario (jsPDF + jspdf-autotable, dynamic import).
@@ -102,14 +103,14 @@ Familia única: **Ambit** (kit oficial; pesos 300/400/600/700). Fallback `system
 - Sombra/glow hover CTA: `box-shadow: 0 0 24px rgba(120,87,245,.55)`
 
 ## Screens / Views (desktop)
-SPA con router por estado (`route`); en Next.js implementar como rutas reales (`/`, `/sobre`, `/expositores`, …) con scroll-to-top en navegación.
+SPA con router por estado (`route`) reflejado en el hash de la URL (`#mapa`, `#contacto`…, vía `history.replaceState`; el portal queda afuera porque exige sesión), así una sección se puede compartir y recargar. En Next.js implementar como rutas reales (`/`, `/sobre`, `/expositores`, …) con scroll-to-top en navegación.
 
 1. **Inicio** — Hero full-viewport: **video de fondo** (`assets/hero-video.mp4`: loop/muted/autoplay/playsInline, object-fit cover, opacity .3, blur 5.2px, saturate .75, máscara radial + fundido vertical hacia el fondo — el video acompaña, nunca protagoniza; sobre él van las capas geométricas), fondo grid de 72px con máscara radial, 2 capas de montañas `clip-path` (siluetas Quebrada, opacidad baja), glows radiales violeta/turquesa. Eyebrow con fecha y sede, H1 "Viví la expo que **mueve al Norte**" con gradiente en segunda línea, 2 CTAs ("Conseguí tu entrada" primario, "Quiero exponer" outline), countdown live (4 cajas de 96px: días/horas/min/seg). Luego: línea de energía, franja de 4 contadores animados (200+ expositores, 45.000 visitantes, 12.000 m², 120+ actividades; count-up 1.4s ease-out al montar), 3 tarjetas destacadas (barra de color 42×8px arriba), strip de sponsors (chips outline), banner de redes (#ExpoJuy2026).
 2. **Sobre** — Header + 2 columnas: texto histórico + placeholder de video institucional 16:10 (botón play con `pulseGlow`); 3 mini-tarjetas de cifras 2024; grilla 3×2 de valores con marca escalonada (clip-path en L) del color de cada valor.
-3. **Expositores** — Buscador (input 520px) + 9 chips de rubro (pill; activo: borde+fondo turquesa al 16%) + grilla 3 col de tarjetas (avatar 48px con gradiente del rubro e iniciales, nombre, stand, tag rubro). Click → **modal ficha** (overlay `rgba(3,4,9,.72)` + blur, tarjeta 520px, botones "Ubicar en el mapa" — navega al mapa con el sector preseleccionado — y "Agendar reunión"). Estado vacío con mensaje.
+3. **Expositores** — Buscador (input 520px) + 9 chips de rubro (pill; activo: borde+fondo turquesa al 16%) + grilla 3 col de tarjetas (avatar 48px con gradiente del rubro e iniciales, nombre, stand, tag rubro). Click → **modal ficha** (overlay `rgba(3,4,9,.72)` + blur, tarjeta 520px, botones "Ubicar en el mapa" — navega al mapa y selecciona el stand exacto si es `D-xx`, o el sector si es A/B/C — y "Agendar reunión"). Estado vacío con mensaje.
 4. **Agenda** — Recomendador por intereses (chips de eje; al activar, las actividades del eje reciben borde lila + tag "PARA VOS"); 4 tabs de día (activo: gradiente + borde turquesa); chips de eje; lista de filas (hora turquesa 19px, título, meta, dot+eje, botón "Agendar" ↔ "✓ Agendado" verde).
 5. **Noticias** — Destacada grande (fondo gradiente + grid, tag sólido turquesa) + 4 tarjetas laterales; bloque "ExpoJuy en redes": 4 tiles cuadrados con gradientes Quebrada + botones IG/X/IN/YT.
-6. **Mapa del predio** — Grilla CSS 12 col × 60px con 10 sectores clickeables (fondo `rgba(color,.13)`, borde `.45`; seleccionado: fondo `.30` + borde sólido 2px) + panel lateral sticky con detalle del sector y expositores destacados. Nota "plano ilustrativo".
+6. **Mapa del predio** — **Plano ilustrativo SVG** (viewBox 1000×700, `aspect-ratio` 10/7) que reproduce la distribución del informe 2024: pabellón cubierto con los sectores A/B/C (cada uno con su trama en `<defs>`), 34 stands descubiertos D y 12 gastronómicos F individuales, E1/E2, escenario, sanitarios, acceso, estacionamiento y rosa de los vientos. Header con 3 métricas del predio (18.000 m² · 34 descubiertos · 139 cubiertos). Cada sector y cada stand es un `<g role="button">` que se levanta 5px en hover y, seleccionado, sube el fill y suma glow del color; los ocupados llevan un punto turquesa. **Panel lateral sticky** con expositor (avatar + "Ver perfil"), actividades del espacio (si el sector tiene `loc` en la agenda), expositores confirmados del sector o, si el stand está libre, el CTA "Consultar por este stand" que precarga Contacto. **Buscador** "¿Dónde está…?" (hasta 6 resultados: stands por código o por expositor, expositores de sectores cubiertos, sectores), **filtro por rubro** (los que no coinciden bajan a `opacity .28`) y **zoom/arrastre** (botones ±/1:1, Ctrl+rueda, pinza; escala 1→4 con clamp para no sacar el plano del marco).
 7. **Sponsors** — Tiers: Diamante (2 tarjetas grandes, borde lila + glow hover), Oro (4, borde ocre), Plata (6 chips) + CTA "Convertite en sponsor".
 8. **FAQ** — Acordeón de 6 ítems (uno abierto a la vez, ícono +/−, `aria-expanded`), links a Cardón y Contacto.
 9. **Contacto** — Form (nombre, email, motivo select, mensaje) con validación client-side (nombre ≥3, email regex, mensaje ≥10; errores en `#D4548F` bajo el campo; éxito: banner verde) + tarjeta institucional (labels tipográficos PREDIO/EMAIL/TEL/HORARIO en turquesa) + placeholder de mapa de ubicación con pin animado (`floaty`).
@@ -131,8 +132,8 @@ Patrón: navegación por **barra inferior** de 5 tabs (Inicio/Expositores/Agenda
 - Sin emojis; los íconos de redes son chips tipográficos (IG/X/IN/YT).
 
 ## State Management
-- `route` (string), `q` + `rubro` (filtro expositores), `expoSel` (modal), `day` + `eje` + `intereses` + `saved` (agenda), `stand` (mapa), `faqOpen`, `tier` (entradas), `chatOpen` + `chatMsgs` + `chatInput`, campos + `errs` + `formOk` (contacto), `now` (countdown), `statP` (progreso count-up).
-- Datos hoy hardcodeados en la clase (`EXPOS`, `AGENDA`, `NOTIS`, `MAP`, `FAQS`, `TIERS`, `SPONSORS`) → reemplazar por fetch a la API Spring Boot / CMS.
+- `route` (string), `q` + `rubro` (filtro expositores), `expoSel` (modal), `day` + `eje` + `intereses` + `saved` (agenda), `stand` + `mapQ` + `mapRubro` + `mz` (mapa: selección, buscador, filtro por rubro y zoom/paneo), `faqOpen`, `tier` (entradas), `chatOpen` + `chatMsgs` + `chatInput`, campos + `errs` + `formOk` (contacto), `now` (countdown), `statP` (progreso count-up).
+- Los datos llegan de `src/data/evento.js` y `src/data/predio.js` inyectados como `DATA` (`EXPOS`, `AGENDA`, `NOTIS`, `MAP`, `STANDS`, `FAQS`, `TIERS`, `SPONSORS`) → reemplazar por fetch a la API Spring Boot / CMS.
 
 ## Assets
 - Fuentes Ambit y logos: **Kit de Diseño oficial del concurso** (provistos por la organización).
@@ -141,7 +142,7 @@ Patrón: navegación por **barra inferior** de 5 tabs (Inicio/Expositores/Agenda
 ## Notas para el implementador
 - Las fechas, cifras y los nombres de expositores y sponsors utilizados en el prototipo deben validarse contra el material definitivo de la organización.
 - El QR debe generarse server-side o con lib (`qrcode`) firmado por entrada; el del prototipo es decorativo.
-- El mapa está pensado para escalar: cada sector es un nodo de datos (id, nombre, sub, área, color, descripción, expositores) — misma estructura sirve para un SVG real del predio.
+- El plano del predio ya es un SVG propio y toda su geometría vive en `src/data/predio.js`: un plano exportado de CAD puede reemplazar los `<rect>` manteniendo los mismos `id`, y el viewBox y las coordenadas deberían pasar al CMS para que la organización actualice la distribución sin tocar código. La ocupación de stands es la relación expositor ↔ `stand` (`D-29` → `D29`); el resto figura como "Disponible", así el plano también funciona como pieza comercial.
 
 ---
 
@@ -198,7 +199,7 @@ Antes de una publicación productiva se recomienda completar una auditoría WCAG
 
 ### Estrategia responsive
 
-La interfaz parte de contenedores fluidos y reorganiza grillas, columnas, tarjetas y paneles en los cortes de 900 y 600 píxeles. En pantallas pequeñas utiliza navegación inferior, objetivos táctiles de al menos 44 píxeles, contenidos en una sola columna y espacio inferior seguro para evitar que la barra tape información.
+La interfaz parte de contenedores fluidos y reorganiza grillas, columnas, tarjetas y paneles en los cortes de 900 y 600 píxeles (el plano del predio suma los suyos en 980 y 700, donde el panel de detalle deja de ser fijo y los rubros pasan a una fila desplazable). En pantallas pequeñas utiliza navegación inferior, objetivos táctiles de al menos 44 píxeles, contenidos en una sola columna y espacio inferior seguro para evitar que la barra tape información.
 
 Las acciones más utilizadas permanecen accesibles con el pulgar y el menú “Más” agrupa el resto de las secciones. El video, las fuentes y los recursos se sirven localmente para que el prototipo no dependa de terceros durante la evaluación.
 
@@ -214,7 +215,7 @@ En producción podría conectarse a un modelo con recuperación de información 
 - El QR es visual y no acredita acceso real.
 - El formulario valida datos localmente pero no envía información.
 - Los botones de registro, reuniones y Wallet son demostrativos.
-- El mapa representa una distribución ilustrativa del predio.
+- El plano reproduce la distribución del informe 2024 (a confirmar para 2026), y la asignación de stands por expositor es demostrativa.
 - La autenticación del portal es simulada en el cliente (localStorage de este dispositivo); no hay administración ni pagos.
 
 ## Ejecución y verificación
