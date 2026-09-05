@@ -10,6 +10,7 @@
 | v5 | **Sponsors** con spotlight Diamante rotativo y logos reales, y la franja "Nos acompañan" del Inicio. |
 | v6 | **Contacto** con canales reales, motivo por chips, ilustración del predio y áreas desplegables (se quitó Leaflet). |
 | v7 | **Mapa del predio**: plano ilustrativo SVG con stands clickeables, buscador, filtro por rubro y zoom; `src/data/predio.js`; hash routing. |
+| v8 | **Sobre** rehecha: video de ExpoJuy 2024, perfil de la feria, los 13 objetivos del informe, actividades, sectores participantes, logos institucionales y doble CTA; `src/data/sobre.js`. |
 
 El hero fotográfico y la navbar vienen de commits del equipo, no de un handoff. El modo claro que describen los handoffs **no** se implementó a propósito: el sitio tiene un único tema oscuro.
 
@@ -27,6 +28,7 @@ Implementado según `design_handoff_expojuy_2026/PORTAL-USUARIO.md` sobre el sta
 - `index.html` — el sitio: markup en `<x-dc>` y lógica (clase `Component`) en el `<script data-dc-script>`. Es la versión que se compila y despliega.
 - `support.js` — runtime propio del prototipo (renderiza `sc-if`/`sc-for`/`{{ }}`, foco y accesibilidad, CSS mobile) e inyección de `DATA` y `services` en `Component`.
 - `src/data/evento.js` — **mock data centralizada y tipada (JSDoc)**: `DIAS`, `RUBROS`, `EJES`, `EXPOSITORES`, `AGENDA`, `NOTICIAS`, `FAQS`, `TIPOS_ENTRADA`, `SPONSORS`, `PREDIO`. Buscador, mapa, agenda, recomendador, entradas y portal consumen esta única fuente; la API real reemplaza este módulo.
+- `src/data/sobre.js` — **contenido de la sección Sobre**: perfil de la feria, cifras 2024, los 13 objetivos del informe, actividades, sectores participantes, valores, logos de organizador y apoyos, y el video. Los logos y el video se **importan** para que Vite los emita.
 - `src/data/predio.js` — **plano del predio**: `PLANO` (viewBox 1000×700), `SECTORES` (14, con `shape` y color), `STANDS` (34 descubiertos, con m² y coordenadas), `STANDS_GASTRO` (12), `SECTOR_POR_LETRA`, `METRICAS_PREDIO` y `LEYENDA`. Reexportado dentro de `DATA`; pensado para venir del CMS con el plano de cada año.
 - `src/services/auth.js` — servicio único de sesión (`cargar`, `registrar`, `ingresar`, `guardar`, `cerrar`) con interfaz de Promises lista para apuntar a Spring Boot sin tocar la UI.
 - `src/services/qr.js` — QR de la entrada (`qrcode`, dynamic import, caché).
@@ -60,7 +62,8 @@ Los archivos de este paquete son **referencias de diseño creadas en HTML** (Des
 - `assets/expojuy-logo.png`, `assets/logo-camcomext.png` — logos oficiales (usar sobre chips blancos: no funcionan sobre fondo oscuro).
 - `assets/hero-expo.jpg` — foto del hero (reemplazó al video del handoff): `opacity .72`, `saturate(1.1) brightness(.8)`, `kenBurns` 22s y parallax `scrollY*0.22`.
 - `assets/bg-mountains.jpg` — fondo fotográfico global (montañas nocturnas) en una capa fija `body::before` bajo el velo de `--pageveil`.
-- `assets/sponsors/*.png` — logos reales de Diamante y de los organismos que acompañan; `assets/expojuy-mark.png` — monograma EJ del pin de Contacto. Los assets referenciados desde datos se **importan** en `src/data/evento.js`: Vite no copia a `dist/` las imágenes cuyo `src` es un binding.
+- `assets/expojuy-2024.mp4` — video aéreo de la edición 2024 que encabeza Sobre (11,8 MB, silenciado y en loop).
+- `assets/sponsors/*.png` — logos reales de Diamante y de los organismos que acompañan (Sobre reusa los de Municipalidad y Secretaría de Turismo, y suma `assets/logo-gobierno-jujuy.png`); `assets/expojuy-mark.png` — monograma EJ del pin de Contacto. Los assets referenciados desde datos se **importan** en `src/data/evento.js`: Vite no copia a `dist/` las imágenes cuyo `src` es un binding.
 
 ### Screenshots
 `screenshots/01–06-desktop.png` (Inicio, Expositores, Agenda, Mapa, Entradas, chat Cardón) y `07-mobile.png` — referencia visual. **Son capturas de v3**: el hero fotográfico y las secciones Entradas (v4), Sponsors (v5), Contacto (v6) y Mapa (v7) se rehicieron después; para verlas, correr el sitio.
@@ -123,7 +126,7 @@ Familia única: **Ambit** (kit oficial; pesos 300/400/600/700). Fallback `system
 SPA con router por estado (`route`) reflejado en el hash de la URL (`#mapa`, `#contacto`…, vía `history.replaceState`; el portal queda afuera porque exige sesión), así una sección se puede compartir y recargar. En Next.js implementar como rutas reales (`/`, `/sobre`, `/expositores`, …) con scroll-to-top en navegación.
 
 1. **Inicio** — Hero full-viewport: **foto de fondo** (`assets/hero-expo.jpg`, opacity .72, `saturate(1.1) brightness(.8)`, `kenBurns` 22s y parallax `scrollY*0.22`; reemplaza al video del handoff), fondo grid de 72px con máscara radial, 2 capas de montañas `clip-path` (siluetas Quebrada, opacidad baja), glows radiales violeta/turquesa. Eyebrow con fecha y sede, H1 "Viví la expo que **mueve al Norte**" con gradiente en segunda línea, 2 CTAs ("Conseguí tu entrada" primario, "Quiero exponer" outline), countdown live (4 cajas de 96px: días/horas/min/seg). Luego: línea de energía, franja de 4 contadores animados (200+ expositores, 45.000 visitantes, 12.000 m², 120+ actividades; count-up 1.4s ease-out al montar), 3 tarjetas destacadas (barra de color 42×8px arriba), franja "Nos acompañan" con los 4 logos Diamante (realce de brillo en hover), banner de redes (#ExpoJuy2026). Todo el sitio se lee sobre un fondo fotográfico fijo (`body::before` con `--pagebg` + `--pageveil`).
-2. **Sobre** — Header + 2 columnas: texto histórico + placeholder de video institucional 16:10 (botón play con `pulseGlow`); 3 mini-tarjetas de cifras 2024; grilla 3×2 de valores con marca escalonada (clip-path en L) del color de cada valor.
+2. **Sobre** — Header + intro a 2 columnas: texto, **perfil de la feria** (edición, frecuencia, carácter, superficie) y las 3 cifras de 2024 con count-up, junto al **video real de ExpoJuy 2024** (16/10, autoplay silenciado en loop, degradé y rótulo abajo, botón play/pausa de 44px). Sigue **Objetivos**: columna sticky + 6 tarjetas destacadas del informe y un desplegable (`grid-template-rows 0fr→1fr`, filas con fade escalonado) con los 7 restantes. Después, **lo que pasa durante la expo** (4 tarjetas: ronda de negocios 330 reuniones, 6 jornadas de conferencias, 3 delegaciones internacionales, 30+ artistas), **15 sectores participantes** en chips con marca en L, la grilla de **valores**, el bloque **Organiza / Con el acompañamiento de** con los logos reales, y una tarjeta de cierre con doble CTA ("Quiero exponer" precarga el motivo en Contacto; "Quiero visitar" va a Entradas).
 3. **Expositores** — Buscador (input 520px) + 9 chips de rubro (pill; activo: borde+fondo turquesa al 16%) + grilla 3 col de tarjetas (avatar 48px con gradiente del rubro e iniciales, nombre, stand, tag rubro). Click → **modal ficha** (overlay `rgba(3,4,9,.72)` + blur, tarjeta 520px, botones "Ubicar en el mapa" — navega al mapa y selecciona el stand exacto si es `D-xx`, o el sector si es A/B/C — y "Agendar reunión"). Estado vacío con mensaje.
 4. **Agenda** — Recomendador por intereses (chips de eje; al activar, las actividades del eje reciben borde lila + tag "PARA VOS"); 4 tabs de día (activo: gradiente + borde turquesa); chips de eje; lista de filas (hora turquesa 19px, título, meta, dot+eje, botón "Agendar" ↔ "✓ Agendado" verde).
 5. **Noticias** — Destacada grande (fondo gradiente + grid, tag sólido turquesa) + 4 tarjetas laterales; bloque "ExpoJuy en redes": 4 tiles cuadrados con gradientes Quebrada + botones IG/X/IN/YT.
@@ -149,7 +152,7 @@ Patrón: navegación por **barra inferior** de 5 tabs (Inicio/Expositores/Agenda
 - Sin emojis; los íconos de redes son chips tipográficos (IG/X/IN/YT).
 
 ## State Management
-- `route` (string), `q` + `rubro` (filtro expositores), `expoSel` (modal), `day` + `eje` + `intereses` + `saved` (agenda), `stand` + `mapQ` + `mapRubro` + `mz` (mapa: selección, buscador, filtro por rubro y zoom/paneo), `faqOpen`, `tier` + `grupo` + `tFaq` (entradas), `spSpot` (spotlight de Sponsors), `chatOpen` + `chatMsgs` + `chatInput`, campos + `errs` + `formOk` + `areasOpen` (contacto), `now` (countdown), `statP`/`statP2` (progreso count-up), y el bloque del portal (`user`, `ticket`, `authOpen`, `portalTab`…).
+- `route` (string), `q` + `rubro` (filtro expositores), `expoSel` (modal), `day` + `eje` + `intereses` + `saved` (agenda), `stand` + `mapQ` + `mapRubro` + `mz` (mapa: selección, buscador, filtro por rubro y zoom/paneo), `faqOpen`, `objOpen` + `vidPaused` (Sobre: desplegable de objetivos y video), `tier` + `grupo` + `tFaq` (entradas), `spSpot` (spotlight de Sponsors), `chatOpen` + `chatMsgs` + `chatInput`, campos + `errs` + `formOk` + `areasOpen` (contacto), `now` (countdown), `statP`/`statP2` (progreso count-up), y el bloque del portal (`user`, `ticket`, `authOpen`, `portalTab`…).
 - Los datos llegan de `src/data/evento.js` y `src/data/predio.js` inyectados como `DATA` (`EXPOS`, `AGENDA`, `NOTIS`, `MAP`, `STANDS`, `FAQS`, `TIERS`, `SPONSORS`) → reemplazar por fetch a la API Spring Boot / CMS.
 
 ## Assets
@@ -229,7 +232,7 @@ En producción podría conectarse a un modelo con recuperación de información 
 
 ### Alcance y limitaciones
 
-- Fechas, precios, cifras, agenda, expositores y patrocinadores son datos demostrativos hasta recibir confirmación oficial.
+- Fechas, precios, cifras, agenda, expositores y patrocinadores son datos demostrativos hasta recibir confirmación oficial. En Sobre quedan a confirmar la "17ª edición" (2024 fue la 16ª, con frecuencia bianual) y las cifras 180 / 38.000 / 9 de la edición anterior.
 - El QR es visual y no acredita acceso real.
 - El formulario valida datos localmente pero no envía información.
 - Los botones de registro, reuniones y Wallet son demostrativos.
