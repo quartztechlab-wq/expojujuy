@@ -71,7 +71,10 @@ main.view-exit{animation:viewExit .16s ease-out forwards;pointer-events:none}
 .tk-cta-shine{position:relative;overflow:hidden;isolation:isolate}
 .tk-cta-shine::after{content:'';position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
 .tk-layout{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
-.tk-cred{position:sticky;top:88px}
+/* Estático (no sticky): con top:88px arrancaba ya corrida 88px hacia abajo de .tk-panel (el inset de un
+   sticky se aplica siempre, no solo al pegarse) y el truco del margin negativo para cancelarlo rompía el
+   pegado al hacer scroll. Así queda siempre a la misma altura que .tk-panel. */
+.tk-cred{position:static}
 @media(max-width:1000px){.tk-layout{grid-template-columns:1fr}.tk-cred{position:static}}
 @media(max-width:600px){.tk-panel{padding:26px 20px!important}.tk-price{font-size:46px!important}}
 @media(max-width:760px){.tk-ctrl{flex-direction:column;align-items:stretch!important}.tk-tabs{overflow-x:auto;max-width:100%}.tk-tab{white-space:nowrap}}
@@ -95,11 +98,26 @@ body:not([data-light]) [data-logo="cannava"]{filter:brightness(1.35) saturate(1.
 .sp-cta{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:center}
 .sp-chip{display:flex;align-items:center;justify-content:center;background:#FFFFFF;border-radius:14px;padding:14px 22px;height:92px;box-sizing:border-box;min-width:200px;transition:box-shadow .2s ease}
 .sp-home>a,.sp-home>div{display:flex;align-items:center;justify-content:center;min-width:180px;height:84px;padding:14px 26px;box-sizing:border-box;border:1px solid var(--l10);border-radius:14px;background:rgba(255,255,255,.04);transition:border-color .2s ease}
+/* Marquee de sponsors (Inicio): franja de logos/chips en loop infinito, con los Diamante remarcados. */
+/* El desplazamiento lo maneja JS (ver marqueeTick): la página entera se re-renderiza cada 1s por el
+   countdown, y una animation CSS en el nodo se reiniciaría en cada re-render (nodo "nuevo" para el
+   navegador). marqueeTick calcula el offset a partir del reloj real, así el corte de nodo es invisible. */
+.sp-marquee-wrap{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.sp-marquee{display:flex;align-items:center;gap:16px;width:max-content}
+.sp-mq-dia{position:relative;display:flex;align-items:center;justify-content:center;min-width:180px;height:84px;padding:14px 28px;box-sizing:border-box;border-radius:14px;background:linear-gradient(160deg,rgba(199,164,248,.14),rgba(43,196,214,.08));border:1px solid rgba(199,164,248,.5);box-shadow:0 0 22px rgba(120,87,245,.22);flex-shrink:0}
+.sp-mq-chip{flex-shrink:0;display:flex;align-items:center;justify-content:center;height:84px;padding:0 22px;box-sizing:border-box;border-radius:14px;border:1px solid var(--l10);background:rgba(255,255,255,.03);font:600 14px 'Ambit';color:var(--t2);white-space:nowrap}
+.sp-mq-chip[data-tier="oro"]{border-color:rgba(224,154,69,.35);color:var(--t15)}
+@keyframes spFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.sp-row4 button{animation:spFloat 3.2s ease-in-out infinite}
+.sp-row4 button:nth-child(2){animation-delay:.3s}.sp-row4 button:nth-child(3){animation-delay:.6s}.sp-row4 button:nth-child(4){animation-delay:.9s}
+.sp-row4 button[aria-pressed="true"]{box-shadow:0 0 0 1px var(--li),0 0 20px rgba(120,87,245,.35)}
+body[data-noanim] .sp-row4 button{animation:none}
+@media(prefers-reduced-motion:reduce){.sp-row4 button{animation:none}}
 @media(max-width:1000px){.sp-spot{grid-template-columns:1fr}.sp-spot-text{border-left:none!important;border-top:1px solid var(--l08);padding:32px 28px!important}.sp-row4{grid-template-columns:1fr 1fr}.sp-org,.sp-cta{grid-template-columns:1fr}}
 @media(max-width:600px){.sp-home>a,.sp-home>div{min-width:calc(50% - 9px);padding:12px 16px}.sp-chip{min-width:calc(50% - 6px)}.sp-cta{padding:26px 20px!important}}
 @keyframes kenBurns{from{transform:scale(1) translateY(0)}to{transform:scale(1.07) translateY(-1%)}}
 #hero-media{position:absolute;inset:-8% 0;will-change:transform}
-.hero-img{width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.72;filter:saturate(1.1) brightness(.8);animation:kenBurns 22s ease-in-out infinite alternate;transform-origin:center center}
+.hero-img{width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.94;filter:saturate(1.25) brightness(.98);animation:kenBurns 22s ease-in-out infinite alternate;transform-origin:center center}
 .reveal-grid>*{opacity:0;transform:translateY(18px);transition:opacity .42s ease,transform .42s ease}
 .reveal-grid.revealed>*{opacity:1;transform:none}
 .reveal-grid.revealed>*:nth-child(1){transition-delay:.00s}
@@ -181,8 +199,8 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
 <div style="animation:fadeUp .45s ease both">
   <section aria-label="Portada" style="position:relative;overflow:hidden;min-height:86vh;display:flex;align-items:center">
     <div id="hero-media"><img src="assets/hero-expo.jpg" alt="" aria-hidden="true" class="hero-img"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(90deg,var(--bg0) 0%,var(--bg0) 18%,rgba(5,7,13,.82) 38%,rgba(5,7,13,.45) 62%,rgba(5,7,13,.2) 100%)"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,13,.7) 0%,transparent 20%,transparent 72%,var(--bg0) 100%)"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,7,13,.62) 0%,rgba(5,7,13,.4) 28%,rgba(5,7,13,.15) 52%,transparent 72%)"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,13,.25) 0%,transparent 22%,transparent 74%,var(--bg0) 100%)"></div>
     <div style="position:absolute;left:0;right:0;bottom:0;height:44%;clip-path:polygon(0 100%,0 66%,11% 46%,24% 62%,37% 34%,50% 56%,63% 26%,77% 50%,89% 36%,100% 48%,100% 100%);background:linear-gradient(180deg,rgba(120,87,245,.20),rgba(120,87,245,.02))"></div>
     <div style="position:absolute;left:0;right:0;bottom:0;height:30%;clip-path:polygon(0 100%,0 58%,14% 40%,29% 60%,44% 32%,58% 54%,72% 38%,86% 58%,100% 30%,100% 100%);background:linear-gradient(180deg,rgba(43,196,214,.16),rgba(212,84,143,.05))"></div>
     <div style="position:relative;max-width:1240px;margin:0 auto;padding:96px 48px;width:100%">
@@ -215,50 +233,7 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
       </sc-for>
     </div>
   </section>
-  <section aria-label="Destacados" style="max-width:1240px;margin:0 auto;padding:96px 48px;width:100%;box-sizing:border-box">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:42px">
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Edición 2026</div>
-        <h2 style="font:700 42px/1.08 'Ambit';letter-spacing:-.02em;margin:0">Lo que se viene</h2>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px" data-m="hdr-right">
-        <div style="font:600 12px 'Ambit';letter-spacing:.18em;color:var(--t2);text-transform:uppercase">24 al 27 de septiembre · Ciudad Cultural</div>
-        <button onClick="{{goAgenda}}" style="background:none;border:none;padding:0;cursor:pointer;font:600 14px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">Ver agenda completa →</button>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1.6fr 1fr;grid-template-rows:auto auto;gap:20px" data-m="hlgrid">
-      <div onClick="{{hl0.go}}" onKeyDown="{{hl0.key}}" role="link" tabindex="0" aria-label="{{hl0.aria}}" data-m="hlhero" style="grid-row:span 2;position:relative;overflow:hidden;border-radius:22px;border:1px solid var(--l08);min-height:440px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;background:var(--panel)" style-hover="border-color:rgba(120,87,245,.6)">
-        <img src="assets/destacado-portada.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:.75;transition:transform .8s ease" style-hover="transform:scale(1.04)">
-        <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,7,13,.1) 20%,rgba(5,7,13,.92) 100%)"></div>
-        <div style="position:relative;padding:32px;display:flex;flex-direction:column;gap:14px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font:600 10px 'Ambit';letter-spacing:.16em;text-transform:uppercase;color:#05070D;background:{{hl0.color}};border-radius:999px;padding:5px 10px">{{hl0.tag}}</span>
-            <span style="font:600 12px 'Ambit';letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7);white-space:nowrap">{{hl0.n}} {{hl0.nl}}</span>
-          </div>
-          <div style="font:700 34px/1.1 'Ambit';letter-spacing:-.02em;color:#fff;max-width:520px">{{hl0.t}}</div>
-          <div style="font:300 15px/1.55 'Ambit';color:rgba(255,255,255,.78);max-width:520px;text-wrap:pretty">{{hl0.d}}</div>
-          <span style="display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin-top:6px;background:#fff;color:#05070D;border-radius:999px;padding:11px 18px;font:700 13px 'Ambit'">{{hl0.cta}} →</span>
-        </div>
-      </div>
-      <sc-for list="{{hlSide}}" as="h" hint-placeholder-count="2">
-        <div style="position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--l08);border-radius:22px;padding:26px;display:flex;flex-direction:column;gap:12px;transition:border-color .35s ease" style-hover="border-color:{{h.color}}">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-            <div style="width:40px;height:40px;border-radius:11px;background:{{h.color}};display:flex;align-items:center;justify-content:center">
-              <div aria-hidden="true" style="width:18px;height:18px;background:#05070D;clip-path:{{h.icon}}"></div>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px">
-              <span style="font:700 26px/1 'Ambit';letter-spacing:-.02em">{{h.n}}</span>
-              <span style="font:600 11px 'Ambit';letter-spacing:.1em;text-transform:uppercase;color:var(--t3)">{{h.nl}}</span>
-            </div>
-          </div>
-          <div style="font:700 19px/1.25 'Ambit'">{{h.t}}</div>
-          <div style="font:300 14px/1.5 'Ambit';color:var(--t2);text-wrap:pretty">{{h.d}}</div>
-          <button onClick="{{h.go}}" style="align-self:flex-start;background:none;border:none;padding:0;cursor:pointer;font:600 14px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">{{h.cta}} →</button>
-        </div>
-      </sc-for>
-    </div>
-  </section>
-  <section aria-label="Galería fotográfica" style="border-top:1px solid var(--l06);overflow:hidden" onMouseEnter="{{galPause}}" onMouseLeave="{{galResume}}">
+  <section aria-label="Galería fotográfica" style="border-top:1px solid var(--l06);overflow:hidden">
     <div style="max-width:1240px;margin:0 auto;padding:88px 48px 0;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap" data-m="pad">
       <div style="display:flex;flex-direction:column;gap:10px">
         <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--tq);text-transform:uppercase">Galería</div>
@@ -268,15 +243,19 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
     </div>
     <div style="position:relative;height:520px;margin-top:44px" data-m="galstage">
       <sc-for list="{{galSlides}}" as="g" hint-placeholder-count="5">
-        <button onClick="{{g.click}}" aria-label="{{g.aria}}" aria-hidden="{{g.oculta}}" tabindex="{{g.tab}}" style="position:absolute;left:50%;top:50%;width:min(760px,74vw);aspect-ratio:3/2;padding:0;border:1px solid var(--l08);border-radius:20px;overflow:hidden;background:var(--panel);cursor:pointer;transform:{{g.tf}};opacity:{{g.op}};z-index:{{g.z}};filter:{{g.filter}};pointer-events:{{g.pe}};transition:transform .7s cubic-bezier(.22,.8,.26,1),opacity .7s ease,filter .7s ease;box-shadow:0 30px 80px rgba(0,0,0,.45)">
-          <img src="{{g.src}}" alt="{{g.label}}" loading="lazy" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
-          <sc-if value="{{g.center}}" hint-placeholder-val="{{false}}">
-            <div aria-hidden="true" style="position:absolute;right:16px;bottom:16px;display:flex;align-items:center;gap:8px;background:rgba(10,12,20,.62);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 14px;font:600 12px 'Ambit';color:#fff;letter-spacing:.04em">Ampliar</div>
-          </sc-if>
-        </button>
+        <!-- v9.1: la capa [data-gal] ocupa todo el escenario y centra la tarjeta con flex. El transform del
+             coverflow vive en la capa (nunca en el <button>), y la animación la hace galFlip() con WAAPI. -->
+        <div data-gal="{{g.key}}" aria-hidden="{{g.oculta}}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transform:{{g.tf}};opacity:{{g.op}};z-index:{{g.z}};filter:{{g.filter}};will-change:transform,opacity">
+          <button onClick="{{g.click}}" aria-label="{{g.aria}}" tabindex="{{g.tab}}" style="position:relative;width:min(760px,74vw);aspect-ratio:3/2;padding:0;border:1px solid var(--l08);border-radius:20px;overflow:hidden;background:var(--panel);cursor:pointer;pointer-events:{{g.pe}};box-shadow:0 30px 80px rgba(0,0,0,.45);display:block">
+            <img src="{{g.src}}" alt="{{g.label}}" loading="lazy" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+            <sc-if value="{{g.center}}" hint-placeholder-val="{{false}}">
+              <div aria-hidden="true" style="position:absolute;right:16px;bottom:16px;display:flex;align-items:center;gap:8px;background:rgba(10,12,20,.62);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 14px;font:600 12px 'Ambit';color:#fff;letter-spacing:.04em">Ampliar</div>
+            </sc-if>
+          </button>
+        </div>
       </sc-for>
-      <button onClick="{{galPrev}}" aria-label="Foto anterior" style="position:absolute;left:max(16px,calc((100vw - 1240px)/2 + 32px));top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;border-radius:50%;border:1px solid var(--l14);background:var(--panel2);color:var(--text);cursor:pointer;font:400 22px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq);color:var(--tq)">‹</button>
-      <button onClick="{{galNext}}" aria-label="Foto siguiente" style="position:absolute;right:max(16px,calc((100vw - 1240px)/2 + 32px));top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;border-radius:50%;border:1px solid var(--l14);background:var(--panel2);color:var(--text);cursor:pointer;font:400 22px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq);color:var(--tq)">›</button>
+      <button onClick="{{galPrev}}" aria-label="Foto anterior" style="position:absolute;left:max(16px,calc((100vw - 1240px)/2 + 32px));top:calc(50% - 24px);z-index:20;width:48px;height:48px;border-radius:50%;border:1px solid var(--l14);background:var(--panel2);color:var(--text);cursor:pointer;font:400 22px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq);color:var(--tq)">‹</button>
+      <button onClick="{{galNext}}" aria-label="Foto siguiente" style="position:absolute;right:max(16px,calc((100vw - 1240px)/2 + 32px));top:calc(50% - 24px);z-index:20;width:48px;height:48px;border-radius:50%;border:1px solid var(--l14);background:var(--panel2);color:var(--text);cursor:pointer;font:400 22px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--tq);color:var(--tq)">›</button>
     </div>
     <div style="display:flex;justify-content:center;gap:8px;padding:28px 0 88px">
       <sc-for list="{{galDots}}" as="d" hint-placeholder-count="6">
@@ -287,30 +266,29 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
   <section aria-label="Sponsors destacados" style="border-top:1px solid var(--l06);background:var(--bg2)">
     <div style="max-width:1240px;margin:0 auto;padding:56px 48px;display:flex;flex-direction:column;gap:26px" data-m="pad">
       <div style="font:600 11px 'Ambit';letter-spacing:.24em;color:var(--t3);text-transform:uppercase;text-align:center">Nos acompañan</div>
-      <div class="sp-home" style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap">
-        <sc-for list="{{sponsorsHome}}" as="sp" hint-placeholder-count="4">
-          <sc-if value="{{sp.hasUrl}}" hint-placeholder-val="{{true}}">
-            <a href="{{sp.url}}" target="_blank" rel="noopener" aria-label="{{sp.name}}" style-hover="border-color:rgba(199,164,248,.5)"><img src="{{sp.logo}}" alt="{{sp.name}}" data-logo="{{sp.key}}" style="max-width:100%;height:{{sp.hHome}};object-fit:contain"></a>
-          </sc-if>
-          <sc-if value="{{sp.noUrl}}" hint-placeholder-val="{{false}}">
-            <div role="img" aria-label="{{sp.name}}" style-hover="border-color:rgba(199,164,248,.5)"><img src="{{sp.logo}}" alt="" data-logo="{{sp.key}}" style="max-width:100%;height:{{sp.hHome}};object-fit:contain"></div>
-          </sc-if>
-        </sc-for>
+      <div class="sp-marquee-wrap">
+        <div class="sp-marquee">
+          <sc-for list="{{sponsorsMarquee}}" as="sp" hint-placeholder-count="16">
+            <sc-if value="{{sp.isDia}}" hint-placeholder-val="{{true}}">
+              <sc-if value="{{sp.hasUrl}}" hint-placeholder-val="{{true}}">
+                <a href="{{sp.url}}" target="_blank" rel="noopener" aria-label="{{sp.name}}" aria-hidden="{{sp.hide}}" tabindex="{{sp.tab}}" class="sp-mq-dia" style-hover="border-color:rgba(199,164,248,.8)"><img src="{{sp.logo}}" alt="{{sp.name}}" data-logo="{{sp.key}}" style="max-width:100%;height:{{sp.hHome}};object-fit:contain"></a>
+              </sc-if>
+              <sc-if value="{{sp.noUrl}}" hint-placeholder-val="{{false}}">
+                <div role="img" aria-label="{{sp.name}}" aria-hidden="{{sp.hide}}" class="sp-mq-dia"><img src="{{sp.logo}}" alt="" data-logo="{{sp.key}}" style="max-width:100%;height:{{sp.hHome}};object-fit:contain"></div>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{sp.isText}}" hint-placeholder-val="{{false}}">
+              <sc-if value="{{sp.hasUrl}}" hint-placeholder-val="{{false}}">
+                <a href="{{sp.url}}" target="_blank" rel="noopener" aria-hidden="{{sp.hide}}" tabindex="{{sp.tab}}" class="sp-mq-chip" data-tier="{{sp.tier}}">{{sp.name}}</a>
+              </sc-if>
+              <sc-if value="{{sp.noUrl}}" hint-placeholder-val="{{true}}">
+                <div class="sp-mq-chip" data-tier="{{sp.tier}}" aria-hidden="{{sp.hide}}">{{sp.name}}</div>
+              </sc-if>
+            </sc-if>
+          </sc-for>
+        </div>
       </div>
       <button onClick="{{goSponsors}}" style="align-self:center;background:none;border:none;cursor:pointer;font:600 14px 'Ambit';color:var(--tq)" style-hover="color:var(--li)">Ver niveles de patrocinio →</button>
-    </div>
-  </section>
-  <section aria-label="Redes sociales" style="max-width:1240px;margin:0 auto;padding:72px 48px;width:100%;box-sizing:border-box">
-    <div style="background:linear-gradient(120deg,rgba(120,87,245,.16),rgba(43,196,214,.1));border:1px solid rgba(120,87,245,.35);border-radius:20px;padding:40px 44px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="font:700 26px 'Ambit'">Seguí la conversación</div>
-        <div style="font:300 15px 'Ambit';color:var(--t15)">Novedades, backstage y anuncios en tiempo real con <span style="color:var(--li);font-weight:600">#ExpoJuy2026</span></div>
-      </div>
-      <div style="display:flex;gap:10px">
-        <sc-for list="{{socials}}" as="so" hint-placeholder-count="4">
-          <a href="{{so.href}}" target="_blank" rel="noopener noreferrer" aria-label="{{so.name}}" style="width:46px;height:46px;border-radius:12px;border:1px solid var(--l18);display:flex;align-items:center;justify-content:center;color:var(--text)" style-hover="background:linear-gradient(120deg,var(--tq),var(--vi));border-color:transparent;color:#fff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="{{so.path}}" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg></a>
-        </sc-for>
-      </div>
     </div>
   </section>
 </div>
@@ -830,15 +808,17 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
         <span style="font:700 13px 'Ambit';letter-spacing:.2em;text-transform:uppercase;color:var(--oc)">Oro</span>
         <span style="flex:1;height:1px;background:linear-gradient(90deg,rgba(224,154,69,.3),transparent)"></span>
       </div>
-      <div class="sp-row4 reveal-grid">
-        <sc-for list="{{spOro}}" as="s" hint-placeholder-count="4">
-          <sc-if value="{{s.hasUrl}}" hint-placeholder-val="{{false}}">
-            <a href="{{s.url}}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:118px;padding:24px 18px;border:1px solid var(--l10);border-radius:15px;background:rgba(255,255,255,.04);text-decoration:none;transition:border-color .25s ease,transform .25s ease;box-sizing:border-box" style-hover="border-color:var(--oc);transform:translateY(-2px)"><span style="font:700 19px 'Ambit';letter-spacing:-.01em;color:var(--text);text-align:center">{{s.name}}</span></a>
-          </sc-if>
-          <sc-if value="{{s.noUrl}}" hint-placeholder-val="{{true}}">
-            <div style="display:flex;align-items:center;justify-content:center;min-height:118px;padding:24px 18px;border:1px solid var(--l10);border-radius:15px;background:rgba(255,255,255,.04);transition:border-color .25s ease,transform .25s ease;box-sizing:border-box" style-hover="border-color:var(--oc);transform:translateY(-2px)"><span style="font:700 19px 'Ambit';letter-spacing:-.01em;color:var(--text);text-align:center">{{s.name}}</span></div>
-          </sc-if>
-        </sc-for>
+      <div class="sp-marquee-wrap">
+        <div class="sp-marquee">
+          <sc-for list="{{spOroLoop}}" as="s" hint-placeholder-count="8">
+            <sc-if value="{{s.hasUrl}}" hint-placeholder-val="{{false}}">
+              <a href="{{s.url}}" target="_blank" rel="noopener" aria-hidden="{{s.hide}}" tabindex="{{s.tab}}" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;min-height:118px;padding:24px 26px;border:1px solid var(--l10);border-radius:15px;background:rgba(255,255,255,.04);text-decoration:none;transition:border-color .25s ease;box-sizing:border-box" style-hover="border-color:var(--oc)"><span style="font:700 19px 'Ambit';letter-spacing:-.01em;color:var(--text);text-align:center;white-space:nowrap">{{s.name}}</span></a>
+            </sc-if>
+            <sc-if value="{{s.noUrl}}" hint-placeholder-val="{{true}}">
+              <div aria-hidden="{{s.hide}}" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;min-height:118px;padding:24px 26px;border:1px solid var(--l10);border-radius:15px;background:rgba(255,255,255,.04);transition:border-color .25s ease;box-sizing:border-box"><span style="font:700 19px 'Ambit';letter-spacing:-.01em;color:var(--text);text-align:center;white-space:nowrap">{{s.name}}</span></div>
+            </sc-if>
+          </sc-for>
+        </div>
       </div>
     </div>
 
@@ -847,15 +827,17 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
         <span style="font:700 13px 'Ambit';letter-spacing:.2em;text-transform:uppercase;color:var(--t2)">Plata</span>
         <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--l14),transparent)"></span>
       </div>
-      <div class="reveal-grid" style="display:flex;gap:12px;flex-wrap:wrap">
-        <sc-for list="{{spPlata}}" as="s" hint-placeholder-count="8">
-          <sc-if value="{{s.hasUrl}}" hint-placeholder-val="{{false}}">
-            <a href="{{s.url}}" target="_blank" rel="noopener" style="border:1px solid var(--l12);border-radius:999px;padding:13px 24px;font:600 14px 'Ambit';color:var(--t15);text-decoration:none;transition:color .2s ease,border-color .2s ease" style-hover="color:var(--text);border-color:var(--l25)">{{s.name}}</a>
-          </sc-if>
-          <sc-if value="{{s.noUrl}}" hint-placeholder-val="{{true}}">
-            <div style="border:1px solid var(--l12);border-radius:999px;padding:13px 24px;font:600 14px 'Ambit';color:var(--t15);transition:color .2s ease,border-color .2s ease" style-hover="color:var(--text);border-color:var(--l25)">{{s.name}}</div>
-          </sc-if>
-        </sc-for>
+      <div class="sp-marquee-wrap">
+        <div class="sp-marquee">
+          <sc-for list="{{spPlataLoop}}" as="s" hint-placeholder-count="16">
+            <sc-if value="{{s.hasUrl}}" hint-placeholder-val="{{false}}">
+              <a href="{{s.url}}" target="_blank" rel="noopener" aria-hidden="{{s.hide}}" tabindex="{{s.tab}}" style="flex-shrink:0;white-space:nowrap;border:1px solid var(--l12);border-radius:999px;padding:13px 24px;font:600 14px 'Ambit';color:var(--t15);text-decoration:none;transition:color .2s ease,border-color .2s ease" style-hover="color:var(--text);border-color:var(--l25)">{{s.name}}</a>
+            </sc-if>
+            <sc-if value="{{s.noUrl}}" hint-placeholder-val="{{true}}">
+              <div aria-hidden="{{s.hide}}" style="flex-shrink:0;white-space:nowrap;border:1px solid var(--l12);border-radius:999px;padding:13px 24px;font:600 14px 'Ambit';color:var(--t15);transition:color .2s ease,border-color .2s ease" style-hover="color:var(--text);border-color:var(--l25)">{{s.name}}</div>
+            </sc-if>
+          </sc-for>
+        </div>
       </div>
     </div>
 
@@ -1104,23 +1086,63 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
       </div>
     </div>
 
-    <div class="tk-cred" aria-label="Vista previa de tu credencial" style="border-radius:20px;overflow:hidden;border:1px solid var(--l10);background:var(--panel)">
-      <div style="height:6px;background:{{tierVals.credStrip}}"></div>
-      <div style="padding:26px;display:flex;flex-direction:column;gap:18px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font:700 17px 'Ambit';letter-spacing:.04em">EXPOJUY <span style="color:var(--li)">2026</span></div>
-          <div style="font:600 10.5px 'Ambit';letter-spacing:.18em;color:var(--t3);text-transform:uppercase">Credencial</div>
+    <div class="tk-cred" aria-label="Vista previa de tu credencial" style="position:relative;border-radius:24px;overflow:hidden;border:1px solid rgba(120,87,245,.35);background:var(--panel);box-shadow:0 25px 60px rgba(0,0,0,.4)">
+      <div aria-hidden="true" style="position:absolute;inset:0;background-image:linear-gradient(rgba(120,87,245,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(120,87,245,.08) 1px,transparent 1px);background-size:26px 26px"></div>
+      <div aria-hidden="true" style="position:absolute;left:-20%;bottom:-25%;width:70%;height:65%;background:radial-gradient(circle,rgba(120,87,245,.14),transparent 70%);pointer-events:none"></div>
+      <div style="position:relative;padding:24px 26px 18px;display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--tq),var(--vi));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <div style="display:grid;grid-template-columns:5px 5px;grid-template-rows:5px 5px;gap:1px">
+              <div style="background:rgba(255,255,255,.95)"></div><div style="background:rgba(255,255,255,.5)"></div>
+              <div style="background:rgba(255,255,255,.5)"></div><div style="background:rgba(255,255,255,.95)"></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <div style="font:700 13px 'Ambit';letter-spacing:.1em">EXPOJUY</div>
+            <div style="font:600 7.5px 'Ambit';letter-spacing:.1em;color:var(--t3);text-transform:uppercase;white-space:nowrap">Innovación que conecta</div>
+          </div>
         </div>
-        <div style="display:flex;justify-content:center;padding:6px 0">
-          <canvas ref="{{qrRef}}" width="160" height="160" aria-label="Código QR de acceso (demostración)" style="width:160px;height:160px;border-radius:12px;background:#fff"></canvas>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:1px;height:28px;background:rgba(255,255,255,.14)"></div>
+          <div style="text-align:right;display:flex;flex-direction:column;gap:1px">
+            <div style="font:700 11px 'Ambit';letter-spacing:.06em">2026</div>
+            <div style="font:600 7.5px 'Ambit';letter-spacing:.1em;color:var(--t3);text-transform:uppercase">Jujuy</div>
+            <div style="font:600 7.5px 'Ambit';letter-spacing:.1em;color:var(--t3);text-transform:uppercase">Argentina</div>
+          </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;text-align:center">
-          <div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Titular</div>
-          <div style="font:700 19px 'Ambit'">{{ticketHolder}}</div>
-          <div style="font:600 13.5px 'Ambit';color:{{tierVals.accent}}">{{tierSelName}}</div>
-          <div style="font:400 12.5px 'Ambit';color:var(--t3)">Nº {{ticketNro}} · 24 al 27 SEP 2026</div>
+      </div>
+      <div style="position:relative;padding:4px 26px 0;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <div style="font:700 34px/1.05 'Ambit';letter-spacing:-.01em">EXPOJUY</div>
+          <div style="font:700 34px/1.05 'Ambit';letter-spacing:-.01em;background:linear-gradient(90deg,var(--tq),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent">2026</div>
         </div>
-        <div style="border-top:1px dashed var(--l18);padding-top:14px;font:300 12.5px/1.55 'Ambit';color:var(--t3);text-align:center">Presentá este código en los accesos del predio. Funciona sin conexión desde la PWA del evento.</div>
+        <div style="font:600 11px 'Ambit';letter-spacing:.2em;color:var(--t3);text-transform:uppercase">Pase digital</div>
+        <div style="align-self:flex-start;font:700 11px 'Ambit';letter-spacing:.14em;color:var(--li);border:1px solid rgba(120,87,245,.5);border-radius:20px;padding:7px 16px;text-transform:uppercase;white-space:nowrap">{{tierSelAcceso}}</div>
+      </div>
+      <div aria-hidden="true" style="position:relative;margin:20px 26px 0;border-top:1px solid rgba(255,255,255,.1)"></div>
+      <div style="position:relative;padding:18px 26px 0;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Nombre</div><div style="font:600 15px 'Ambit';margin-top:4px">{{ticketHolder}}</div></div>
+        <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Fecha</div><div style="font:600 15px 'Ambit';margin-top:4px">{{fechasTexto}}</div></div>
+        <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Sector</div><div style="font:600 15px 'Ambit';margin-top:4px">{{predioNombre}}</div></div>
+        <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Tipo</div><div style="font:600 15px 'Ambit';margin-top:4px">{{tierSelShort}}</div></div>
+      </div>
+      <div aria-hidden="true" style="position:relative;margin-top:22px;border-top:1.5px dashed rgba(120,87,245,.35)">
+        <span style="position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;background:var(--bg0)"></span>
+        <span style="position:absolute;right:-12px;top:-12px;width:24px;height:24px;border-radius:50%;background:var(--bg0)"></span>
+      </div>
+      <div style="position:relative;padding:24px 26px 4px;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="position:relative;padding:14px">
+          <span aria-hidden="true" style="position:absolute;left:0;top:0;width:18px;height:18px;border-top:2px solid var(--vi);border-left:2px solid var(--vi);border-radius:6px 0 0 0"></span>
+          <span aria-hidden="true" style="position:absolute;right:0;top:0;width:18px;height:18px;border-top:2px solid var(--vi);border-right:2px solid var(--vi);border-radius:0 6px 0 0"></span>
+          <span aria-hidden="true" style="position:absolute;left:0;bottom:0;width:18px;height:18px;border-bottom:2px solid var(--vi);border-left:2px solid var(--vi);border-radius:0 0 0 6px"></span>
+          <span aria-hidden="true" style="position:absolute;right:0;bottom:0;width:18px;height:18px;border-bottom:2px solid var(--vi);border-right:2px solid var(--vi);border-radius:0 0 6px 0"></span>
+          <canvas ref="{{qrRef}}" width="360" height="360" aria-label="Código QR de acceso (demostración)" style="width:140px;height:140px;border-radius:8px;background:#fff;display:block"></canvas>
+        </div>
+        <div style="font:600 10px 'Ambit';letter-spacing:.16em;color:var(--t3);text-transform:uppercase">Escanear para ingresar</div>
+      </div>
+      <div style="position:relative;margin-top:18px;padding:16px 26px 22px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.08)">
+        <div style="font:600 8px/1.6 'Ambit';letter-spacing:.12em;color:var(--t4);text-transform:uppercase">Ideas<br>Personas<br>Futuro</div>
+        <div style="font:600 10px 'Ambit';letter-spacing:.08em;color:var(--t3)">— #ExpoJuy2026</div>
       </div>
     </div>
   </div>
@@ -1237,21 +1259,66 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
       </sc-if>
       <sc-if value="{{hasTicket}}" hint-placeholder-val="{{false}}">
         <div style="display:grid;grid-template-columns:420px 1fr;gap:28px;align-items:start" data-m="stack">
-          <div style="border-radius:20px;overflow:hidden;border:1px solid rgba(199,164,248,.4);background:linear-gradient(160deg,var(--tick1),var(--tick2))">
-            <div style="height:6px;background:linear-gradient(90deg,var(--tq),var(--ve),var(--oc),var(--ma),var(--vi))"></div>
-            <div style="padding:28px;display:flex;flex-direction:column;gap:20px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div style="font:700 17px 'Ambit';letter-spacing:.04em">EXPOJUY <span style="color:var(--li)">2026</span></div>
-                <div style="font:600 10.5px 'Ambit';letter-spacing:.18em;color:var(--ve);text-transform:uppercase;display:flex;align-items:center;gap:6px"><span aria-hidden="true" style="width:7px;height:7px;border-radius:50%;background:var(--ve)"></span>Activa</div>
+          <div style="position:relative;border-radius:24px;overflow:hidden;border:1px solid rgba(120,87,245,.35);background:var(--panel);box-shadow:0 25px 60px rgba(0,0,0,.4)">
+            <div aria-hidden="true" style="position:absolute;inset:0;background-image:linear-gradient(rgba(120,87,245,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(120,87,245,.08) 1px,transparent 1px);background-size:26px 26px"></div>
+            <div aria-hidden="true" style="position:absolute;left:-20%;bottom:-25%;width:70%;height:65%;background:radial-gradient(circle,rgba(120,87,245,.14),transparent 70%);pointer-events:none"></div>
+            <div style="position:relative;padding:24px 26px 18px;display:flex;justify-content:space-between;align-items:center">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--tq),var(--vi));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  <div style="display:grid;grid-template-columns:5px 5px;grid-template-rows:5px 5px;gap:1px">
+                    <div style="background:rgba(255,255,255,.95)"></div><div style="background:rgba(255,255,255,.5)"></div>
+                    <div style="background:rgba(255,255,255,.5)"></div><div style="background:rgba(255,255,255,.95)"></div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:1px">
+                  <div style="font:700 13px 'Ambit';letter-spacing:.1em">EXPOJUY</div>
+                  <div style="font:600 7.5px 'Ambit';letter-spacing:.1em;color:var(--t3);text-transform:uppercase;white-space:nowrap">Innovación que conecta</div>
+                </div>
               </div>
-              <div style="display:flex;justify-content:center;padding:8px 0"><canvas ref="{{ticketQrRef}}" width="360" height="360" role="img" aria-label="Código QR de acceso (demostración)" style="width:180px;height:180px;border-radius:14px;background:#fff"></canvas></div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Titular</div><div style="font:700 15.5px 'Ambit'">{{userName}}</div></div>
-                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Tipo</div><div style="font:700 15.5px 'Ambit';color:var(--tq)">{{ticketTier}}</div></div>
-                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Fechas</div><div style="font:600 14px 'Ambit'">{{fechasTexto}}</div></div>
-                <div style="display:flex;flex-direction:column;gap:3px"><div style="font:600 11px 'Ambit';color:var(--t3);letter-spacing:.1em;text-transform:uppercase">Nº</div><div style="font:600 14px 'Ambit'">{{ticketNro}}</div></div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:1px;height:28px;background:rgba(255,255,255,.14)"></div>
+                <div style="text-align:right;display:flex;flex-direction:column;gap:1px">
+                  <div style="font:700 11px 'Ambit';letter-spacing:.06em">2026</div>
+                  <div style="font:600 7.5px 'Ambit';letter-spacing:.1em;color:var(--t3);text-transform:uppercase">Jujuy</div>
+                  <div style="font:600 7.5px 'Ambit';letter-spacing:.1em;color:var(--t3);text-transform:uppercase">Argentina</div>
+                </div>
               </div>
-              <div style="border-top:1px dashed var(--l18);padding-top:16px;font:300 12.5px/1.55 'Ambit';color:var(--t3)">Presentá este código en los accesos del predio. Funciona sin conexión.</div>
+            </div>
+            <div style="position:relative;padding:4px 26px 0;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:1px">
+                <div style="font:700 34px/1.05 'Ambit';letter-spacing:-.01em">EXPOJUY</div>
+                <div style="font:700 34px/1.05 'Ambit';letter-spacing:-.01em;background:linear-gradient(90deg,var(--tq),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent">2026</div>
+              </div>
+              <div style="font:600 11px 'Ambit';letter-spacing:.2em;color:var(--t3);text-transform:uppercase">Pase digital</div>
+              <div style="align-self:flex-start;font:700 11px 'Ambit';letter-spacing:.14em;color:var(--li);border:1px solid rgba(120,87,245,.5);border-radius:20px;padding:7px 16px;text-transform:uppercase;white-space:nowrap">{{ticketAcceso}}</div>
+            </div>
+            <div aria-hidden="true" style="position:relative;margin:20px 26px 0;border-top:1px solid rgba(255,255,255,.1)"></div>
+            <div style="position:relative;padding:18px 26px 0;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Nombre</div><div style="font:600 15px 'Ambit';margin-top:4px">{{userName}}</div></div>
+              <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Fecha</div><div style="font:600 15px 'Ambit';margin-top:4px">{{fechasTexto}}</div></div>
+              <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Sector</div><div style="font:600 15px 'Ambit';margin-top:4px">{{predioNombre}}</div></div>
+              <div><div style="font:600 9px 'Ambit';color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Tipo</div><div style="font:600 15px 'Ambit';margin-top:4px">{{ticketTier}}</div></div>
+            </div>
+            <div aria-hidden="true" style="position:relative;margin-top:22px;border-top:1.5px dashed rgba(120,87,245,.35)">
+              <span style="position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;background:var(--bg0)"></span>
+              <span style="position:absolute;right:-12px;top:-12px;width:24px;height:24px;border-radius:50%;background:var(--bg0)"></span>
+            </div>
+            <div style="position:relative;padding:24px 26px 4px;display:flex;flex-direction:column;align-items:center;gap:10px">
+              <div style="position:relative;padding:14px">
+                <span aria-hidden="true" style="position:absolute;left:0;top:0;width:18px;height:18px;border-top:2px solid var(--vi);border-left:2px solid var(--vi);border-radius:6px 0 0 0"></span>
+                <span aria-hidden="true" style="position:absolute;right:0;top:0;width:18px;height:18px;border-top:2px solid var(--vi);border-right:2px solid var(--vi);border-radius:0 6px 0 0"></span>
+                <span aria-hidden="true" style="position:absolute;left:0;bottom:0;width:18px;height:18px;border-bottom:2px solid var(--vi);border-left:2px solid var(--vi);border-radius:0 0 0 6px"></span>
+                <span aria-hidden="true" style="position:absolute;right:0;bottom:0;width:18px;height:18px;border-bottom:2px solid var(--vi);border-right:2px solid var(--vi);border-radius:0 0 6px 0"></span>
+                <canvas ref="{{ticketQrRef}}" width="360" height="360" role="img" aria-label="Código QR de acceso (demostración)" style="width:140px;height:140px;border-radius:8px;background:#fff;display:block"></canvas>
+              </div>
+              <div style="font:600 10px 'Ambit';letter-spacing:.16em;color:var(--t3);text-transform:uppercase">Escanear para ingresar</div>
+            </div>
+            <div style="position:relative;margin-top:18px;padding:16px 26px 22px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.08)">
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <div style="font:600 8px 'Ambit';letter-spacing:.12em;color:var(--t4);text-transform:uppercase">Nº {{ticketNro}}</div>
+                <div style="font:700 10px 'Ambit';letter-spacing:.08em;color:var(--ve);text-transform:uppercase;display:flex;align-items:center;gap:5px"><span aria-hidden="true" style="width:6px;height:6px;border-radius:50%;background:var(--ve)"></span>Activa</div>
+              </div>
+              <div style="font:600 10px 'Ambit';letter-spacing:.08em;color:var(--t3)">— #ExpoJuy2026</div>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:14px">
@@ -1392,8 +1459,8 @@ body[data-noanim] .reveal-grid>*{opacity:1!important;transform:none!important}
   <div onClick="{{lbClose}}" role="dialog" aria-modal="true" tabindex="-1" aria-label="Vista ampliada de la foto" style="position:fixed;inset:0;z-index:400;background:rgba(6,8,14,.92);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;animation:fadeUp .25s ease both;outline:none">
     <img src="{{lbSrc}}" alt="{{lbLabel}}" onClick="{{stopProp}}" style="max-width:min(92vw,1400px);max-height:calc(100vh - 160px);border-radius:14px;box-shadow:0 40px 120px rgba(0,0,0,.6);animation:fadeUp .35s ease both;object-fit:contain">
     <button onClick="{{lbClose}}" aria-label="Cerrar" style="position:absolute;top:22px;right:22px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:300 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">×</button>
-    <button onClick="{{lbPrev}}" aria-label="Foto anterior" data-m="lbarrow" style="position:absolute;left:22px;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:400 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">‹</button>
-    <button onClick="{{lbNext}}" aria-label="Foto siguiente" data-m="lbarrow" style="position:absolute;right:22px;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:400 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">›</button>
+    <button onClick="{{lbPrev}}" aria-label="Foto anterior" data-m="lbarrow" style="position:absolute;left:22px;top:calc(50% - 26px);width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:400 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">‹</button>
+    <button onClick="{{lbNext}}" aria-label="Foto siguiente" data-m="lbarrow" style="position:absolute;right:22px;top:calc(50% - 26px);width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:400 26px/1 'Ambit';display:flex;align-items:center;justify-content:center" style-hover="background:rgba(255,255,255,.14)">›</button>
     <div onClick="{{stopProp}}" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 16px;font:600 13px 'Ambit';color:#fff;letter-spacing:.06em;white-space:nowrap">
       <span>{{lbPos}} / {{galCount}}</span>
       <span aria-hidden="true" style="width:1px;height:14px;background:rgba(255,255,255,.2)"></span>
@@ -1576,6 +1643,8 @@ class Component extends DCLogic {
     document.addEventListener('visibilitychange', this._onVisibility);
     this._heroParallax = () => { const el = document.getElementById('hero-media'); if (el) el.style.transform = `translateY(${window.scrollY * 0.22}px)`; };
     window.addEventListener('scroll', this._heroParallax, { passive: true });
+    this._marqueeStart = performance.now();
+    this.marqueeTick();
     // Spotlight Diamante (Sponsors v5): avanza cada 4,5 s solo en la ruta Sponsors, con la pestaña visible,
     // sin hover sobre el bloque y sin reducción de movimiento (media query o flag reducirAnimaciones).
     this._spotTimer = setInterval(() => {
@@ -1585,8 +1654,11 @@ class Component extends DCLogic {
     }, 4500);
     // Carrusel de la galería (Inicio v9): avanza cada 4 s con las mismas condiciones que el
     // spotlight, y además se frena mientras el lightbox está abierto.
+    // v9.1: la pausa por hover se lee del DOM (:hover sobre el escenario) en vez de banderas por
+    // mouseenter/mouseleave, que quedaban colgadas cuando __render reemplazaba los nodos.
     this._galTimer = setInterval(() => {
-      if (this.state.route !== 'inicio' || this._galPaused || this.state.lb != null || document.hidden) return;
+      if (this.state.route !== 'inicio' || this.state.lb != null || document.hidden) return;
+      const stage = document.querySelector('[data-m="galstage"]'); if (!stage || stage.matches(':hover')) return;
       if (this.props.reducirAnimaciones || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
       this.setState(s => ({ gal: (s.gal + 1) % this.GAL.length }));
     }, 4000);
@@ -1598,9 +1670,48 @@ class Component extends DCLogic {
       else if (e.key === 'ArrowLeft') this.lbStep(-1);
     };
     window.addEventListener('keydown', this._galKeys);
+    this.galFlip();
   }
-  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver(); this.updateFlipClock(); }
-  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._spotTimer); clearInterval(this._galTimer); window.removeEventListener('keydown', this._galKeys); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); }
+  componentDidUpdate() { this.syncAnim(); this.persist(); this.syncStatsObserver(); this.syncSobreObserver(); this.syncRevealObserver(); this.updateFlipClock(); this.galFlip(); }
+  /**
+   * v9.1 — Anima el coverflow con Web Animations (FLIP) en vez de transiciones CSS: __render reconstruye
+   * el DOM en cada setState, los nodos nuevos nacen ya en su posición final y una transición CSS nunca
+   * arranca. Compara el estilo inline de cada capa [data-gal] con el del render anterior y, si cambió,
+   * interpola transform/opacity/filter durante 700 ms. Respeta data-noanim y prefers-reduced-motion.
+   */
+  galFlip() {
+    const prev = this._galPrev || {}, next = {};
+    const reduce = document.body.hasAttribute('data-noanim') || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    document.querySelectorAll('[data-gal]').forEach(el => {
+      const cur = { transform: el.style.transform || 'none', opacity: el.style.opacity || '1', filter: el.style.filter || 'none' };
+      const k = el.getAttribute('data-gal'), p = prev[k]; next[k] = cur;
+      if (!p || reduce || typeof el.animate !== 'function' || (p.transform === cur.transform && p.opacity === cur.opacity && p.filter === cur.filter)) return;
+      el.getAnimations().forEach(a => a.cancel());
+      el.animate([p, cur], { duration: 700, easing: 'cubic-bezier(.22,.8,.26,1)' });
+    });
+    this._galPrev = next;
+  }
+  componentWillUnmount() { clearInterval(this._tick); clearInterval(this._spotTimer); clearInterval(this._galTimer); window.removeEventListener('keydown', this._galKeys); cancelAnimationFrame(this._raf); cancelAnimationFrame(this._raf2); cancelAnimationFrame(this._marqueeRaf); this._statsObserver?.disconnect(); this._statsObserver2?.disconnect(); this._revealObs?.disconnect(); window.removeEventListener('scroll', this._heroParallax); document.removeEventListener('visibilitychange', this._onVisibility); }
+
+  /**
+   * Franjas de sponsors en movimiento (Inicio + Oro/Plata de Sponsors): el offset sale del reloj real
+   * (performance.now()), no de una animation CSS. Como el countdown re-renderiza toda la página cada 1s
+   * y el runtime reemplaza esos nodos, una animation CSS se reiniciaría en cada re-render (para el
+   * navegador es un elemento nuevo) y se vería "saltar" al principio todo el tiempo. Calculando el
+   * translateX en cada frame a partir del tiempo transcurrido, el corte de nodo es invisible: el nuevo
+   * nodo arranca ya en el offset que le toca.
+   */
+  marqueeTick = () => {
+    const reduce = document.body.hasAttribute('data-noanim') || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (!reduce) {
+      const elapsed = (performance.now() - this._marqueeStart) / 1000, speed = 42; // px/s
+      document.querySelectorAll('.sp-marquee').forEach(el => {
+        const half = el.scrollWidth / 2;
+        if (half > 0) el.style.transform = `translateX(${-((elapsed * speed) % half)}px)`;
+      });
+    }
+    this._marqueeRaf = requestAnimationFrame(this.marqueeTick);
+  };
 
   syncAnim() { const off = this.props.reducirAnimaciones ?? false; if (off) document.body.setAttribute('data-noanim',''); else document.body.removeAttribute('data-noanim'); }
 
@@ -1839,9 +1950,10 @@ class Component extends DCLogic {
       if (off < -N / 2) off += N;
       const a = Math.abs(off), vis = a <= 2, centro = a === 0;
       const sc = centro ? 1 : a === 1 ? .78 : .62;
-      // Porcentajes planos (sin calc) para que ningún motor descarte la declaración: sin transform la foto
-      // queda con su esquina superior izquierda en el centro del escenario.
-      return { ...g, center: centro, tf: `translate(${-50 + off * 62}%, -50%) scale(${sc})`,
+      // v9.1: desplazamiento en px (62 % del ancho de la tarjeta). La capa [data-gal] cubre el escenario y
+      // centra la tarjeta con flex, así el transform ya no hace de centrado y nada puede pisarlo.
+      const cardW = Math.min(760, window.innerWidth * .74), x = Math.round(off * .62 * cardW);
+      return { ...g, key: i, center: centro, tf: `translateX(${x}px) scale(${sc})`,
         op: vis ? (centro ? 1 : a === 1 ? .55 : .3) : 0, z: 10 - a,
         filter: centro ? 'none' : `brightness(${a === 1 ? .7 : .5}) saturate(.7)`,
         pe: vis ? 'auto' : 'none', tab: vis ? '0' : '-1', oculta: vis ? 'false' : 'true',
@@ -1857,8 +1969,6 @@ class Component extends DCLogic {
     const lb = st.lb, lbOpen = lb != null;
     return { galSlides, galDots, galGrid, galCount: N,
       galPrev: () => this.setState({ gal: (cur - 1 + N) % N }), galNext: () => this.setState({ gal: (cur + 1) % N }),
-      // El hover pausa el autoplay sin pasar por el estado, para no re-renderizar (igual que el spotlight).
-      galPause: () => { this._galPaused = true; }, galResume: () => { this._galPaused = false; },
       lbOpen, lbSrc: lbOpen ? this.GAL[lb].src : '', lbLabel: lbOpen ? this.GAL[lb].label : '', lbPos: lbOpen ? lb + 1 : 0,
       lbClose: () => this.setState({ lb: null }),
       lbPrev: e => { e.stopPropagation(); this.lbStep(-1); }, lbNext: e => { e.stopPropagation(); this.lbStep(1); } };
@@ -2217,8 +2327,19 @@ class Component extends DCLogic {
     const spDia = SPOT.map((s, i) => ({ key: s.key, name: s.name, logo: s.logo, on: i === si, border: i === si ? 'var(--li)' : 'var(--l10)', hRow: s.h.row + 'px', aria: 'Ver ' + s.name,
       pick: () => { this._spotPaused = true; if (this.state.spSpot !== i) this.setState({ spSpot: i }); } }));
     const sponsorsHome = SPOT.map(s => ({ key: s.key, name: s.name, logo: s.logo, url: s.url, hHome: s.h.home + 'px', hasUrl: hasUrl(s.url), noUrl: !hasUrl(s.url) }));
+    // Marquee del Inicio (Diamante + Oro + Plata en loop infinito): la lista se duplica una vez para
+    // que el bucle sea continuo (spMarquee corre -50%); la copia queda oculta para lector de pantalla/tab.
+    const mqBase = [
+      ...SPOT.map(s => ({ isDia: true, isText: false, key: s.key, name: s.name, logo: s.logo, url: s.url, hHome: s.h.home + 'px', hasUrl: hasUrl(s.url), noUrl: !hasUrl(s.url) })),
+      ...this.SPONSORS.oro.map(o => ({ isDia: false, isText: true, name: o.name, url: o.url, tier: 'oro', hasUrl: hasUrl(o.url), noUrl: !hasUrl(o.url) })),
+      ...this.SPONSORS.plata.map(p => ({ isDia: false, isText: true, name: p.name, url: p.url, tier: 'plata', hasUrl: hasUrl(p.url), noUrl: !hasUrl(p.url) }))
+    ];
+    const sponsorsMarquee = [...mqBase.map(i => ({ ...i, tab: '0', hide: 'false' })), ...mqBase.map(i => ({ ...i, tab: '-1', hide: 'true' }))];
     const withUrl = s => ({ ...s, hasUrl: hasUrl(s.url), noUrl: !hasUrl(s.url) });
     const spOro = this.SPONSORS.oro.map(withUrl), spPlata = this.SPONSORS.plata.map(withUrl);
+    // Filas Oro/Plata de la página Sponsors: también en marquee (duplicadas para el loop continuo).
+    const loop = list => [...list.map(i => ({ ...i, tab: '0', hide: 'false' })), ...list.map(i => ({ ...i, tab: '-1', hide: 'true' }))];
+    const spOroLoop = loop(spOro), spPlataLoop = loop(spPlata);
     const spOrg = this.SPONSORS.organiza.map(o => ({ ...o, h: o.h + 'px' })), spAcom = this.SPONSORS.acompanan.map(a => ({ ...a, h: a.h + 'px' }));
 
     const tFaqs = this.TFAQS.map(([q, a], i) => { const open = st.tFaq === i; return { q, a, open, icon: open ? '−' : '+', border: open ? 'rgba(43,196,214,.45)' : 'var(--l08)', toggle: () => this.setState({ tFaq: open ? -1 : i }) }; });
@@ -2259,6 +2380,7 @@ class Component extends DCLogic {
       errPNombre: !!st.pErrs.nombre, errPEmail: !!st.pErrs.email, pNombreBorder: errB(st.pErrs.nombre), pEmailBorder: errB(st.pErrs.email), pErr: !!(st.pErrs.nombre || st.pErrs.email), pSaved: st.pSaved, saveProfile: this.saveProfile,
       recCount: recCountN ? recCountN + (recCountN === 1 ? ' actividad recomendada' : ' actividades recomendadas') + ' en la agenda' : 'Elegí al menos un eje para recibir recomendaciones.',
       ticketShort: ticketTierObj ? ticketTierObj.name.replace('Entrada ', '').replace('Pase ', '') : '—',
+      ticketAcceso: 'ACCESO ' + (ticketTierObj ? ticketTierObj.name.replace('Entrada ', '').replace('Pase ', '').toUpperCase() : '—'),
       hasTicket: !!st.ticket, noTicket: !st.ticket, ticketTier: ticketTierObj ? ticketTierObj.name : '', ticketDesc: ticketTierObj ? ticketTierObj.desc : '', ticketNro: st.ticket ? st.ticket.nro : '000482', ticketQrRef: this.ticketQrRef,
       ticketHolder: user ? user.nombre : 'Tu nombre acá', buyTicket: this.buyTicket, buyLabel: user ? (st.ticket ? 'Confirmar cambio de pase' : 'Obtener mi QR') : 'Registrarme y obtener mi QR',
       fechasTexto: DATA.FECHAS_TEXTO, predioNombre: DATA.PREDIO.nombre, predioDesc: DATA.PREDIO.ciudad + '. ' + DATA.PREDIO.horario + '. Acreditación en el acceso principal, 30 minutos antes de cada jornada.',
@@ -2271,7 +2393,7 @@ class Component extends DCLogic {
       mobilePrimaryNav, mobileMoreItems, mobileMoreOpen: st.mobileMore, mobileMoreCurrent, toggleMobileMore: () => this.setState({ mobileMore: !st.mobileMore }),
       goInicio: () => this.go('inicio'), goSobre: () => this.go('sobre'), goExpositores: () => this.go('expositores'), goAgenda: () => this.go('agenda'), goNoticias: () => this.go('noticias'), goMapa: () => this.go('mapa'), goSponsors: () => this.go('sponsors'), goFaq: () => this.go('faq'), goContacto: () => this.go('contacto'), goEntradas: () => this.go('entradas'),
       cdUnits, stats, socials, hl0: highlights[0], hlSide: highlights.slice(1),
-      sponsorsHome,
+      sponsorsHome, sponsorsMarquee,
       ...this.sobreVals(st),
       q: st.q, setQ: e => this.setState({ q: e.target.value }), rubroChips, expoList, noExpo: expoList.length === 0,
       expoOpen: !!sel, closeExpo: () => this.setState({ expoSel: null }), stopProp: e => e.stopPropagation(),
@@ -2280,13 +2402,16 @@ class Component extends DCLogic {
       dayTabs, ejeChips, interesChips, agendaList,
       notiFeat: this.NOTIS[0], notiRest: this.NOTIS.slice(1), feed,
       ...this.mapVals(st, expoAll, grad),
-      ...spotVals, spDia, spOro, spPlata, spOrg, spAcom, spMetrics: this.SPONSORS.metricas,
+      ...spotVals, spDia, spOro, spPlata, spOroLoop, spPlataLoop, spOrg, spAcom, spMetrics: this.SPONSORS.metricas,
       faqs,
       fNombre: st.fNombre, fEmail: st.fEmail, fMotivo: st.fMotivo, fMensaje: st.fMensaje,
       ...ctoVals,
       setNombre: e => this.setState({ fNombre: e.target.value }), setEmail: e => this.setState({ fEmail: e.target.value }), setMensaje: e => this.setState({ fMensaje: e.target.value }),
       errNombre: !!st.errs.nombre, errEmail: !!st.errs.email, errMensaje: !!st.errs.mensaje, formOk: st.formOk, submitForm: this.submitForm,
-      tierTabs, tierVals, grupoCtl, tFaqs, tierSelName: this.TIERS[st.tier].name, qrRef: this.qrRef,
+      tierTabs, tierVals, grupoCtl, tFaqs, tierSelName: this.TIERS[st.tier].name,
+      tierSelShort: this.TIERS[st.tier].name.replace('Entrada ', '').replace('Pase ', ''),
+      tierSelAcceso: 'ACCESO ' + this.TIERS[st.tier].name.replace('Entrada ', '').replace('Pase ', '').toUpperCase(),
+      qrRef: this.qrRef,
       showCactus: P.asistenteVisible ?? true, chatOpen: st.chatOpen, toggleChat: () => this.setState({ chatOpen: !st.chatOpen }),
       chatMsgs, chatInput: st.chatInput, setChatInput: e => this.setState({ chatInput: e.target.value }), chatKey: e => { if (e.key === 'Enter') this.sendMsg(st.chatInput); }, sendChat: () => this.sendMsg(st.chatInput), sugerencias,
       footNav1: ['inicio', 'sobre', 'expositores', 'agenda', 'noticias'].map(r => ({ label: labels[r], go: () => this.go(r) })),
